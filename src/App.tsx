@@ -1224,7 +1224,7 @@ function InquiryForm({
         <textarea
           defaultValue={
             params.get("renk")
-              ? `${t("Renk tercihim", "Colour preference")}: ${params.get("renk")}\n`
+              ? `${t("Renk tercihim", "Colour preference")}: ${params.get("renk")}`
               : ""
           }
           name="message"
