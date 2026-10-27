@@ -15,9 +15,11 @@ import {
   writeFileSync,
   chmodSync,
   unlinkSync,
+  readdirSync,
+  statSync,
 } from "node:fs";
 import { resolve, join } from "node:path";
-import { defaultSettings, seedContent, type Content } from "./seed.js";
+import { defaultSettings, seedContent, expansionContent, contentExpansionVersion } from "./seed.js";
 
 export interface AppOptions {
   dataDir?: string;
@@ -42,20 +44,39 @@ const str = (v: unknown, max = 5000) =>
   typeof v === "string" ? v.trim().slice(0, max) : "";
 const validImage = (v: unknown) => {
   const s = str(v, 500);
-  return s.startsWith("/images/") || s.startsWith("/uploads/") ? s : "";
+  return /^\/(?:images|uploads)\/[A-Za-z0-9_-]+\.(?:svg|png|jpe?g|webp)$/i.test(s) ? s : "";
 };
 const safeUrl = (v: unknown) => {
   const s = str(v, 500);
   if (!s) return "";
   try {
     const u = new URL(s);
-    return u.protocol === "https:" ? s : "";
+    return u.protocol === "https:" && !u.username && !u.password ? s : "";
   } catch {
     return "";
   }
 };
-const contentTypes = ["product", "project", "article", "page", "faq"];
+const contentTypes = ["product", "project", "article", "page", "faq", "region"];
+const extraSettings: Record<string, unknown> = {
+  websiteUrl: "", siteUrl: "", contactIntro: "", quoteTitle: "", quoteIntro: "", contactTitle: "Projenizi birlikte planlayalım.", contactText: "İhtiyacınızı anlatın, size uygun çözümü birlikte değerlendirelim.",
+  footerText: "Cam, alüminyum ve metal sistemleri.", primaryColor: "#213f34", accentColor: "#f0f0e6",
+  showProjects: true, showArticles: true, showRegions: true, showFaq: true,
+  servicesTitle: "Camdan metale, projenize uygun çözümler.", processTitle: "İyi bir sonuç, doğru bir süreçle başlar.", regionTitle: "Ankara'da size yakın çözümler.",
+  processStep1Title: "İhtiyacınızı dinliyoruz", processStep1Text: "Kullanım amacınızı, beklentilerinizi ve uygulama alanını birlikte değerlendiriyoruz.",
+  processStep2Title: "Yerinde keşif", processStep2Text: "Ölçü, zemin, cephe ve erişim koşullarını inceleyerek teknik kapsamı belirliyoruz.",
+  processStep3Title: "Size özel planlama", processStep3Text: "Malzeme, tasarım ve uygulama detaylarını yazılı teklifinizde netleştiriyoruz.",
+  processStep4Title: "Uygulama ve teslim", processStep4Text: "Montaj sonrası kullanım, temizlik ve bakım bilgilerini sizinle paylaşıyoruz.",
+};
+const plainObject = (v: unknown): v is Record<string, any> => !!v && typeof v === "object" && !Array.isArray(v);
+const passwordValue = (v: unknown) => typeof v === "string" && v.length <= 256 ? v : "";
+const csvCell = (value: unknown) => {
+  let s = String(value ?? "");
+  if (/^[\s\u0000-\u001f]*[=+\-@]/.test(s) || /^[\t\r\n]/.test(s)) s = "'" + s;
+  return '"' + s.replaceAll('"', '""') + '"';
+};
+const xmlText = (value: string) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 function cleanContent(input: any, previous?: any) {
+  if (!plainObject(input)) throw fail(400, "Geçerli bir içerik gönderin.");
   const source = { ...previous, ...input };
   const type = str(source.type, 30);
   if (!contentTypes.includes(type))
@@ -79,6 +100,9 @@ function cleanContent(input: any, previous?: any) {
     summary: str(source.summary, 3000),
     body: str(source.body, 60000),
     image: validImage(source.image),
+    imageAlt: str(source.imageAlt, 250),
+    seoTitle: str(source.seoTitle, 160),
+    seoDescription: str(source.seoDescription, 320),
     category: str(source.category, 100),
     featured: source.featured === true,
     published: source.published !== false,
@@ -89,8 +113,8 @@ function cleanContent(input: any, previous?: any) {
       ? source.specs
           .slice(0, 30)
           .map((s: any) => ({
-            label: str(s.label, 100),
-            value: str(s.value, 1000),
+            label: str(s?.label, 100),
+            value: str(s?.value, 1000),
           }))
       : [],
     gallery: Array.isArray(source.gallery)
@@ -118,11 +142,15 @@ export function createApp(options: AppOptions = {}) {
  CREATE TABLE IF NOT EXISTS content (id TEXT PRIMARY KEY,type TEXT NOT NULL,slug TEXT NOT NULL,data TEXT NOT NULL,UNIQUE(type,slug));
  CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY,password TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY,username TEXT NOT NULL,expires INTEGER NOT NULL);
- CREATE TABLE IF NOT EXISTS inquiries (id TEXT PRIMARY KEY,data TEXT NOT NULL);`);
+ CREATE TABLE IF NOT EXISTS inquiries (id TEXT PRIMARY KEY,data TEXT NOT NULL);
+ CREATE TABLE IF NOT EXISTS audit (id TEXT PRIMARY KEY,actor TEXT NOT NULL,action TEXT NOT NULL,target TEXT NOT NULL,createdAt TEXT NOT NULL);
+ CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY,count INTEGER NOT NULL,reset INTEGER NOT NULL);
+ CREATE TABLE IF NOT EXISTS schema_migrations (version TEXT PRIMARY KEY,appliedAt TEXT NOT NULL);`);
+  chmodSync(join(dataDir, "site.sqlite"), 0o600);
   const firstRun = !db.prepare("SELECT id FROM settings LIMIT 1").get();
   if (firstRun)
     db.prepare("INSERT INTO settings(id,data) VALUES (1,?)").run(
-      JSON.stringify(defaultSettings),
+      JSON.stringify({ ...extraSettings, ...defaultSettings }),
     );
   if (firstRun) {
     const insert = db.prepare(
@@ -133,9 +161,26 @@ export function createApp(options: AppOptions = {}) {
       insert.run(item.id, item.type, item.slug, JSON.stringify(item));
     }
   }
+  // Add the expanded catalogue only once. Existing edits and future deletions stay intact.
+  if (!db.prepare("SELECT version FROM schema_migrations WHERE version=?").get(contentExpansionVersion)) {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      const insert = db.prepare("INSERT OR IGNORE INTO content(id,type,slug,data) VALUES(?,?,?,?)");
+      for (const seed of expansionContent()) {
+        const item = cleanContent(seed);
+        insert.run(item.id, item.type, item.slug, JSON.stringify(item));
+      }
+      db.prepare("INSERT INTO schema_migrations(version,appliedAt) VALUES(?,?)").run(contentExpansionVersion, new Date().toISOString());
+      db.exec("COMMIT");
+    } catch (error) {
+      db.exec("ROLLBACK");
+      db.close();
+      throw error;
+    }
+  }
   if (!(db.prepare("SELECT COUNT(*) AS count FROM users").get() as any).count) {
     const provided = process.env.ADMIN_PASSWORD;
-    if (provided && provided.length < 12)
+    if (provided && (provided.length < 12 || provided.length > 256))
       throw new Error("ADMIN_PASSWORD en az 12 karakter olmalıdır.");
     const initial = provided || randomBytes(18).toString("base64url");
     const username = process.env.ADMIN_USERNAME || "admin";
@@ -151,8 +196,23 @@ export function createApp(options: AppOptions = {}) {
   }
   const app = express();
   app.disable("x-powered-by");
+  const proxyHops = process.env.TRUST_PROXY || "0";
+  if (!["0", "1"].includes(proxyHops)) throw new Error("TRUST_PROXY yalnızca 0 veya 1 olabilir.");
+  if (proxyHops === "1") app.set("trust proxy", 1);
   app.locals.db = db;
   app.locals.close = () => db.close();
+  const recordAudit = (actor: string, action: string, target: string) => {
+    db.prepare("INSERT INTO audit(id,actor,action,target,createdAt) VALUES(?,?,?,?,?)").run(randomUUID(), actor, action, target, new Date().toISOString());
+    db.exec("DELETE FROM audit WHERE rowid NOT IN (SELECT rowid FROM audit ORDER BY rowid DESC LIMIT 2000)");
+  };
+  app.use((req: any, res, next) => {
+    res.on("finish", () => {
+      if (res.statusCode < 400 && req.admin && !["GET", "HEAD", "OPTIONS"].includes(req.method)) {
+        recordAudit(req.admin, req.method, req.path.replace(/^\/api\/admin/, ""));
+      }
+    });
+    next();
+  });
   app.use((req, res, next) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("X-Frame-Options", "DENY");
@@ -161,19 +221,25 @@ export function createApp(options: AppOptions = {}) {
       "Permissions-Policy",
       "camera=(), microphone=(), geolocation=()",
     );
-    if (production)
+    if (production) {
+      res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
       res.setHeader(
         "Content-Security-Policy",
         "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
       );
+    }
     next();
   });
   app.use("/api", (req, res, next) => {
     res.setHeader("Cache-Control", "no-store");
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
     if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
+      if (["POST", "PUT", "PATCH"].includes(req.method) && req.path !== "/admin/upload" && !req.is("application/json")) {
+        return next(fail(415, "Bu işlem JSON biçiminde gönderilmelidir."));
+      }
       const origin = req.get("origin");
       const site = req.get("sec-fetch-site");
-      if (site === "cross-site")
+      if (site === "cross-site" || (site === "same-site" && !origin))
         return next(fail(403, "Bu kaynaktan gelen istek kabul edilmedi."));
       if (origin) {
         let allowed = false;
@@ -200,10 +266,9 @@ export function createApp(options: AppOptions = {}) {
       },
     }),
   );
-  const settings = () =>
-    JSON.parse(
+  const settings = () => ({ ...extraSettings, ...defaultSettings, ...JSON.parse(
       (db.prepare("SELECT data FROM settings WHERE id=1").get() as any).data,
-    );
+    ) });
   const allContent = () =>
     db
       .prepare("SELECT data FROM content")
@@ -242,21 +307,22 @@ export function createApp(options: AppOptions = {}) {
     req.admin = username;
     next();
   };
-  const loginAttempts = new Map<string, { count: number; reset: number }>();
-  const inquiryAttempts = new Map<string, { count: number; reset: number }>();
+  const loginAttempts = "login";
+  const inquiryAttempts = "inquiry";
   const consume = (
-    map: Map<string, { count: number; reset: number }>,
+    scope: string,
     key: string,
     max: number,
     minutes: number,
   ) => {
     const now = Date.now();
-    for (const [k, v] of map) if (v.reset < now) map.delete(k);
-    const old = map.get(key);
+    db.prepare("DELETE FROM rate_limits WHERE reset<?").run(now);
+    const rateKey = scope + ":" + hash(key);
+    const old = db.prepare("SELECT count,reset FROM rate_limits WHERE key=?").get(rateKey) as {count: number; reset: number} | undefined;
     const entry =
       old && old.reset > now ? old : { count: 0, reset: now + minutes * 60000 };
     entry.count++;
-    map.set(key, entry);
+    db.prepare("INSERT OR REPLACE INTO rate_limits(key,count,reset) VALUES(?,?,?)").run(rateKey, entry.count, entry.reset);
     return entry.count <= max;
   };
   app.get("/api/health", (_req, res) => res.json({ ok: true }));
@@ -302,11 +368,19 @@ export function createApp(options: AppOptions = {}) {
       );
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return next(fail(400, "Geçerli bir e-posta adresi girin."));
+    if (phone && (!/^[+()\d\s.-]+$/.test(phone) || phone.replace(/\D/g, "").length < 7))
+      return next(fail(400, "Geçerli bir telefon numarası girin."));
     const inquiry = {
       id: randomUUID(),
       name,
       email,
       phone,
+      district: str(input.district, 100),
+      service: str(input.service, 200),
+      dimensions: str(input.dimensions, 200),
+      budget: str(input.budget, 100),
+      preferredContact: str(input.preferredContact, 50),
+      notes: "", priority: "normal", followUpDate: "",
       message,
       subject: str(input.subject, 200) || "Teklif talebi",
       product: str(input.product, 200),
@@ -321,6 +395,10 @@ export function createApp(options: AppOptions = {}) {
     res.status(201).json({ id: inquiry.id });
   });
   app.get("/api/catalog.pdf", (req, res, next) => {
+    if (!consume("catalog", req.ip || "", 12, 15)) {
+      res.setHeader("Retry-After", "900");
+      return next(fail(429, "Çok fazla katalog isteği. Lütfen daha sonra tekrar deneyin."));
+    }
     try {
       const s = settings();
       const english = req.query.lang === "en";
@@ -329,7 +407,7 @@ export function createApp(options: AppOptions = {}) {
         margin: 48,
         info: {
           Title: english ? "Kilinc Product Guide" : "Kılınç Ürün Rehberi",
-          Author: s.companyName || "Kılınç Dekarasyon",
+          Author: s.companyName || "Kılınç Dekorasyon",
         },
       });
       res.setHeader("Content-Type", "application/pdf");
@@ -343,7 +421,7 @@ export function createApp(options: AppOptions = {}) {
       doc
         .fillColor("#233b33")
         .fontSize(26)
-        .text(s.companyName || "Kılınç Dekarasyon");
+        .text(s.companyName || "Kılınç Dekorasyon");
       doc
         .moveDown()
         .fontSize(14)
@@ -396,7 +474,9 @@ export function createApp(options: AppOptions = {}) {
         fail(429, "Çok fazla giriş denemesi. 15 dakika sonra tekrar deneyin."),
       );
     const username = str(req.body?.username, 100),
-      password = str(req.body?.password, 256);
+      password = passwordValue(req.body?.password);
+    if (!consume("account", username.toLocaleLowerCase("en"), 30, 15))
+      return next(fail(429, "Çok fazla giriş denemesi. 15 dakika sonra tekrar deneyin."));
     const user = db
       .prepare("SELECT password FROM users WHERE username=?")
       .get(username) as any;
@@ -405,14 +485,18 @@ export function createApp(options: AppOptions = {}) {
       password,
       user?.password || "dummy-salt:" + Buffer.alloc(64).toString("hex"),
     );
-    if (!user || !valid)
+    if (!user || !valid) {
+      recordAudit("anonymous", "LOGIN_FAILED", "/login");
       return next(fail(401, "Kullanıcı adı veya şifre hatalı."));
-    loginAttempts.delete(req.ip || "");
+    }
+    db.prepare("DELETE FROM rate_limits WHERE key=?").run("login:" + hash(req.ip || ""));
+    db.prepare("DELETE FROM rate_limits WHERE key=?").run("account:" + hash(username.toLocaleLowerCase("en")));
     db.prepare("DELETE FROM sessions WHERE expires<?").run(Date.now());
     const token = randomBytes(32).toString("hex");
     db.prepare(
       "INSERT INTO sessions(token,username,expires) VALUES(?,?,?)",
     ).run(hash(token), username, Date.now() + cookieOptions.maxAge);
+    recordAudit(username, "LOGIN", "/login");
     res.cookie(cookieName, token, cookieOptions);
     res.json({ user: { username } });
   });
@@ -480,9 +564,25 @@ export function createApp(options: AppOptions = {}) {
       const old = settings(),
         incoming = req.body?.settings || req.body;
       const updated = { ...old };
-      for (const key of Object.keys(defaultSettings)) {
+      if (!plainObject(incoming)) throw fail(400, "Geçerli ayarlar gönderin.");
+      for (const key of Object.keys({ ...extraSettings, ...defaultSettings })) {
         if (!(key in incoming)) continue;
-        if (key === "heroImage") {
+        if (["showProjects", "showArticles", "showRegions", "showFaq"].includes(key)) {
+          if (typeof incoming[key] !== "boolean") throw fail(400, "Görünürlük ayarları doğru/yanlış olmalıdır.");
+          updated[key] = incoming[key];
+        } else if (["primaryColor", "accentColor"].includes(key)) {
+          if (!/^#[0-9a-f]{6}$/i.test(incoming[key])) throw fail(400, "Renkleri #RRGGBB biçiminde girin.");
+          updated[key] = incoming[key];
+        } else if (["websiteUrl", "siteUrl"].includes(key)) {
+          // The editor sends all settings; the legacy alias must not override
+          // the canonical field with its previous value.
+          if (key === "siteUrl" && "websiteUrl" in incoming) continue;
+          const value = str(incoming[key], 500);
+          if (value && !safeUrl(value)) throw fail(400, "Site adresi https:// ile başlamalıdır.");
+          updated[key] = value ? new URL(value).origin : "";
+          updated.websiteUrl = updated[key];
+          updated.siteUrl = updated[key];
+        } else if (key === "heroImage") {
           const image = validImage(incoming[key]);
           if (incoming[key] && !image)
             throw fail(
@@ -536,9 +636,19 @@ export function createApp(options: AppOptions = {}) {
       .prepare("SELECT data FROM inquiries WHERE id=?")
       .get(String(req.params.id)) as any;
     if (!row) return next(fail(404, "Talep bulunamadı."));
-    if (!["new", "contacted", "closed"].includes(req.body?.status))
+    if (!plainObject(req.body)) return next(fail(400, "Geçerli bir talep güncellemesi gönderin."));
+    const input = req.body;
+    if (input.status !== undefined && !["new", "contacted", "closed"].includes(input.status))
       return next(fail(400, "Geçerli bir durum seçin."));
-    const inquiry = { ...JSON.parse(row.data), status: req.body.status };
+    if (input.priority !== undefined && !["normal", "high"].includes(input.priority))
+      return next(fail(400, "Geçerli bir öncelik seçin."));
+    if (input.followUpDate !== undefined && typeof input.followUpDate !== "string") return next(fail(400, "Takip tarihi metin olmalıdır."));
+    if (input.followUpDate && (!/^\d{4}-\d{2}-\d{2}$/.test(input.followUpDate) || (!Number.isFinite(Date.parse(input.followUpDate)) || new Date(input.followUpDate).toISOString().slice(0, 10) !== input.followUpDate)))
+      return next(fail(400, "Geçerli bir takip tarihi girin."));
+    const inquiry = { ...JSON.parse(row.data), updatedAt: new Date().toISOString() };
+    for (const field of ["status", "priority"]) if (input[field] !== undefined) inquiry[field] = input[field];
+    if (input.notes !== undefined) inquiry.notes = str(input.notes, 10000);
+    if (input.followUpDate !== undefined) inquiry.followUpDate = str(input.followUpDate, 10);
     db.prepare("UPDATE inquiries SET data=? WHERE id=?").run(
       JSON.stringify(inquiry),
       inquiry.id,
@@ -554,7 +664,7 @@ export function createApp(options: AppOptions = {}) {
   });
   const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 8 * 1024 * 1024, files: 1 },
+    limits: { fileSize: 8 * 1024 * 1024, files: 1, fields: 0, parts: 1 },
   });
   app.post("/api/admin/upload", upload.single("image"), (req, res, next) => {
     const file = req.file;
@@ -586,13 +696,19 @@ export function createApp(options: AppOptions = {}) {
       return next(
         fail(400, "Yalnızca geçerli JPG, PNG veya WebP görsel yükleyin."),
       );
+    if (extension === "png") {
+      const width = b.readUInt32BE(16), height = b.readUInt32BE(20);
+      if (!width || !height || width > 16000 || height > 16000 || width * height > 64_000_000)
+        return next(fail(400, "Görsel boyutları en fazla 16000 piksel ve 64 megapiksel olabilir."));
+    }
     const filename = randomUUID() + "." + extension;
     writeFileSync(join(uploadDir, filename), b, { mode: 0o600, flag: "wx" });
     res.status(201).json({ url: "/uploads/" + filename });
   });
   app.put("/api/admin/password", (req: any, res, next) => {
-    const current = str(req.body?.currentPassword, 256),
-      newPassword = str(req.body?.newPassword, 256);
+    if (!consume("password", req.ip || "", 8, 15)) return next(fail(429, "Çok fazla şifre değiştirme denemesi. Daha sonra tekrar deneyin."));
+    const current = passwordValue(req.body?.currentPassword),
+      newPassword = passwordValue(req.body?.newPassword);
     if (newPassword.length < 12)
       return next(fail(400, "Yeni şifre en az 12 karakter olmalıdır."));
     const user = db
@@ -610,6 +726,65 @@ export function createApp(options: AppOptions = {}) {
     res.clearCookie(cookieName, { ...cookieOptions, maxAge: undefined });
     res.json({ ok: true });
   });
+  app.get("/api/admin/audit", (_req, res) => {
+    res.json({ events: db.prepare("SELECT id,actor,action,target,createdAt FROM audit ORDER BY rowid DESC LIMIT 100").all() });
+  });
+  const allInquiries = () => db.prepare("SELECT data FROM inquiries ORDER BY rowid DESC").all().map((row: any) => JSON.parse(row.data));
+  app.get("/api/admin/export", (req: any, res) => {
+    recordAudit(req.admin, "EXPORT", "/export");
+    res.setHeader("Content-Disposition", 'attachment; filename="kilinc-icerik-yedegi.json"');
+    res.json({ version: 1, exportedAt: new Date().toISOString(), settings: settings(), content: allContent(), inquiries: allInquiries() });
+  });
+  app.get("/api/admin/inquiries.csv", (req: any, res) => {
+    recordAudit(req.admin, "EXPORT", "/inquiries.csv");
+    const keys = ["name", "email", "phone", "district", "service", "subject", "message", "status", "priority", "notes", "followUpDate", "createdAt"];
+    res.setHeader("Content-Disposition", 'attachment; filename="kilinc-talepler.csv"');
+    res.type("text/csv").send("\uFEFF" + [keys.map(csvCell).join(";"), ...allInquiries().map(i => keys.map(k => csvCell(i[k])).join(";"))].join("\r\n"));
+  });
+  app.get("/api/admin/security", (_req, res) => res.json({
+    bootstrapPasswordPending: existsSync(join(dataDir, "initial-admin-password")),
+    activeSessions: (db.prepare("SELECT count(*) AS count FROM sessions WHERE expires>?").get(Date.now()) as any).count,
+    production, database: "sqlite",
+  }));
+  app.post("/api/admin/sessions/revoke", (req: any, res) => {
+    const raw = (req.headers.cookie || "").split(";").map((s: string) => s.trim()).find((s: string) => s.startsWith(cookieName + "="));
+    const currentHash = hash(raw?.slice(cookieName.length + 1) || "");
+    db.prepare("DELETE FROM sessions WHERE username=? AND token<>?").run(req.admin, currentHash);
+    res.json({ ok: true });
+  });
+  app.get("/api/admin/media", (_req, res) => {
+    res.json({ media: readdirSync(uploadDir).filter(name => /^[a-f0-9-]+\.(png|jpg|webp)$/.test(name)).map(name => ({
+      url: "/uploads/" + name, size: statSync(join(uploadDir, name)).size, createdAt: statSync(join(uploadDir, name)).mtime.toISOString(),
+    })).sort((a, b) => b.createdAt.localeCompare(a.createdAt)) });
+  });
+  app.delete("/api/admin/media/:filename", (req, res, next) => {
+    const name = String(req.params.filename);
+    if (!/^[a-f0-9-]+\.(png|jpg|webp)$/.test(name)) return next(fail(400, "Geçersiz dosya adı."));
+    const url = "/uploads/" + name;
+    if (JSON.stringify(settings()).includes(url) || allContent().some(c => JSON.stringify(c).includes(url))) return next(fail(409, "Bu görsel bir içerikte kullanılıyor. Önce içeriği güncelleyin."));
+    if (!existsSync(join(uploadDir, name))) return next(fail(404, "Görsel bulunamadı."));
+    unlinkSync(join(uploadDir, name)); res.json({ ok: true });
+  });
+  app.get("/robots.txt", (_req, res) => {
+    const origin = settings().websiteUrl;
+    res.type("text/plain").send("User-agent: *\nDisallow: /api/\nDisallow: /yonetim\nDisallow: /admin\n" + (origin ? "Sitemap: " + origin + "/sitemap.xml\n" : ""));
+  });
+  app.get("/llms.txt", (_req, res) => {
+    const s = settings();
+    const origin = s.websiteUrl || "";
+    const routes: Record<string, string> = { product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler" };
+    const links = allContent().filter(c => c.published && routes[c.type]).map(c =>
+      `- [${str(c.title, 200).replace(/[\[\]\r\n]/g, " ")}](${origin}/${routes[c.type]}/${c.slug}): ${str(c.summary, 500).replace(/[\r\n]/g, " ")}`,
+    );
+    res.type("text/plain").send(`# ${s.companyName}\n\n> Cam, alüminyum ve metal sistemleri hakkında yayınlanmış ürün ve hizmet rehberleri.\n\nTeknik özellikler, uygulama kapsamı, fiyat ve garanti koşulları projeye özel yazılı teklif ile doğrulanmalıdır. Konsept görseller tamamlanmış müşteri referansı değildir.\n\n## Yayındaki içerikler\n\n${links.join("\n")}\n\n## İletişim\n\n- [İletişim ve keşif talebi](${origin}/iletisim)\n`);
+  });
+  app.get("/sitemap.xml", (_req, res) => {
+    const origin = settings().websiteUrl;
+    if (!origin) return res.status(503).type("text/plain").send("Site adresini yönetim panelinden yapılandırın.");
+    const routes: Record<string, string> = { product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler" };
+    const paths = ["", "/urunler", "/projeler", "/blog", "/iletisim", "/bolgeler", ...allContent().filter(c => c.published && routes[c.type]).map(c => "/" + routes[c.type] + "/" + c.slug)];
+    res.type("application/xml").send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + [...new Set(paths)].map(path => "<url><loc>" + xmlText(origin + path) + "</loc></url>").join("") + "</urlset>");
+  });
   app.use("/api", (_req, _res, next) => next(fail(404, "İşlem bulunamadı.")));
   if (options.staticDir) {
     const dir = resolve(options.staticDir);
@@ -618,6 +793,8 @@ export function createApp(options: AppOptions = {}) {
   }
   app.use((err: any, _req: any, res: any, _next: any) => {
     if (res.headersSent) return;
+    if (err.type === "entity.parse.failed") return res.status(400).json({ error: "Geçersiz JSON verisi." });
+    if (err.type === "entity.too.large") return res.status(413).json({ error: "İstek verisi çok büyük." });
     if (
       err.code === "SQLITE_CONSTRAINT_UNIQUE" ||
       String(err.message).includes("UNIQUE constraint")
@@ -627,8 +804,7 @@ export function createApp(options: AppOptions = {}) {
         .json({ error: "Bu bağlantı adı zaten kullanılıyor." });
     if (err.code === "LIMIT_FILE_SIZE")
       return res.status(413).json({ error: "Görsel en fazla 8 MB olabilir." });
-    const status =
-      Number(err.status) || (err instanceof multer.MulterError ? 400 : 500);
+    const status = Math.min(599, Math.max(400, Number(err.status) || (err instanceof multer.MulterError ? 400 : 500)));
     if (status >= 500) console.error("Server request failed:", err.name);
     res
       .status(status)

@@ -43,12 +43,14 @@ test("Persistent CMS, admin authentication, enquiries, uploads and catalogue", a
         assert.equal(data.settings.phone, "");
         assert.equal(
           data.content.filter((c: any) => c.type === "product").length,
-          10,
+          16,
         );
         assert.equal(
           data.content.filter((c: any) => c.type === "project").length,
           6,
         );
+        assert.equal(data.content.filter((c: any) => c.type === "region").length, 7);
+        assert.equal(data.content.filter((c: any) => c.type === "faq").length, 20);
         assert.ok(data.content.every((c: any) => c.titleEn && c.bodyEn));
         assert.ok(data.content.find((c: any) => c.slug === "kvkk"));
       },

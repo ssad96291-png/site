@@ -5,7 +5,7 @@ const app = createApp({
   production,
   staticDir: production ? "dist" : undefined,
 });
-const server = app.listen(port, "0.0.0.0", () =>
+const server = app.listen(port, process.env.APP_HOST || "0.0.0.0", () =>
   console.log(
     `Kılınç server listening on port ${port}. Admin bootstrap details: .data/initial-admin-password (or configured ADMIN_PASSWORD).`,
   ),

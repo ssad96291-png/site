@@ -21,6 +21,9 @@ export interface Content {
   subtitleEn?: string;
   summaryEn?: string;
   bodyEn?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  imageAlt?: string;
   createdAt: string;
   updatedAt: string;
 }

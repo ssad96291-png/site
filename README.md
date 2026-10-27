@@ -1,6 +1,6 @@
-# Kılınç Dekarasyon
+# Kılınç Dekorasyon
 
-Özgün tasarım, metinler ve yerel mimari SVG görselleştirmeler içeren Türkçe/İngilizce cam balkon ve açık alan sitesi. React + TypeScript + Vite, Express ve SQLite.
+Özgün tasarım, metinler ve yerel mimari SVG görselleştirmeler içeren Türkçe/İngilizce cam, alüminyum, metal ve açık alan sitesi. React + TypeScript + Vite, Express ve SQLite.
 
 ## Geliştirme
 
@@ -28,11 +28,13 @@ npm start      # dist/ ve API'yi 3000 portunda üretim modunda sunar
 
 İlk sunucu başlangıcında rastgele güçlü bir parola oluşturulur ve yalnızca `.data/initial-admin-password` dosyasına kaydedilir. Dosyayı kendi güvenli terminalinizde okuyun; parolayı sohbette veya Git'te paylaşmayın. Alternatif olarak ilk başlangıçtan önce `ADMIN_USERNAME` ve en az 12 karakterlik `ADMIN_PASSWORD` ortam değişkenlerini tanımlayın. Mevcut veritabanında bu değişkenler parolayı sıfırlamaz. İlk girişten sonra panelde şifrenizi değiştirin; ilk parola dosyası otomatik silinir ve açık oturumlar kapatılır.
 
-Panelde ürünler, yaşam alanları, yazılar, kurumsal sayfalar ve SSS kayıtları eklenebilir/düzenlenebilir/silinebilir. Taslak/yayın, ana sayfa önceliği, sıralama, TR/EN metinleri, teknik özellikler, kapak ve galeri görselleri desteklenir. JPG/PNG/WebP yüklemeleri en fazla 8 MB'dır; SVG yüklenmez. Site ayarları, gerçek iletişim bilgileri, sosyal hesaplar, SEO, ana sayfa metinleri düzenlenebilir. Gelen talepler listelenir, durumları değiştirilir ve silinebilir.
+Panelde ürünler, yaşam alanları, yazılar, kurumsal sayfalar, hizmet bölgeleri ve SSS kayıtları eklenebilir/düzenlenebilir/silinebilir. Taslak/yayın, ana sayfa önceliği, sıralama, TR/EN metinleri, teknik özellikler, kapak ve galeri görselleri desteklenir. JPG/PNG/WebP yüklemeleri en fazla 8 MB'dır; SVG yüklenmez. Site ayarları, gerçek iletişim bilgileri, sosyal hesaplar, SEO, ana sayfa metinleri düzenlenebilir. Gelen talepler hizmet/bölge bilgileriyle listelenir; özel not, öncelik ve takip tarihi eklenir, durumları değiştirilir ve silinebilir. SEO alanları, renk paleti, görünür bölümler ve süreç metinleri panelden ayarlanır. Medya kütüphanesi, işlem geçmişi, JSON/CSV dışa aktarma ve diğer oturumları kapatma desteklenir.
 
 ## Gerçek çalışan akışlar
 
-- Ürün kategori filtresi, arama, 2–3 ürün karşılaştırma ve detay sayfaları.
+- Ürün/hizmet grubu filtresi, arama, 2–3 ürün karşılaştırma ve detay sayfaları.
+- `/sistem-secici` üzerinde ihtiyaca göre öneri ve yaklaşık açıklık alanı hesabı; ölçülerle hazır teklif bağlantısı. Kesin fiyat veya mühendislik uygunluk hesabı değildir.
+- `/bolgeler` üzerinde Ankara bölge sayfaları; SEO kökeni panelde tanımlandığında sitemap, robots ve llms.txt.
 - Yayındaki içeriklere göre genel site araması.
 - Proje/konsept ve blog listeleri/detayları, SSS akordeonları.
 - Teklif, iletişim ve iş ortaklığı formları; sunucu doğrulaması ve SQLite'a kayıt.
@@ -42,12 +44,18 @@ Panelde ürünler, yaşam alanları, yazılar, kurumsal sayfalar ve SSS kayıtla
 
 ## Veriler ve yayın öncesi
 
-Veritabanı `.data/site.sqlite`, yüklemeler `.data/uploads/` içinde tutulur. Bu klasörler kaynak koddan ayrı kalıcı diskte saklanmalıdır. `DATA_DIR` ile farklı bir kalıcı dizin seçilebilir. Sunucuyu durdurup tüm veri dizinini güvenli bir yere kopyalamak tutarlı yedek alma yöntemidir. Kaynak kodu yeniden dağıtmak veritabanını sıfırlamaz; başlangıç içerikleri yalnızca yeni veritabanında oluşturulur.
+Veritabanı `.data/site.sqlite`, yüklemeler `.data/uploads/` içinde tutulur. Bu klasörler kaynak koddan ayrı kalıcı diskte saklanmalıdır. `DATA_DIR` ile farklı bir kalıcı dizin seçilebilir. Sunucuyu durdurup tüm veri dizinini güvenli bir yere kopyalamak tutarlı yedek alma yöntemidir. Kaynak kodu yeniden dağıtmak veritabanını sıfırlamaz; başlangıç içerikleri yeni veritabanında oluşturulur. İçerik genişletme paketi, mevcut kayıtlara dokunmadan eksik yeni kayıtları bir kez ekleyen sürümlü geçiş kullanır; sonradan silinen kayıtları geri getirmez.
 
-Hazır içerik: 10 sistem, 6 konsept yaşam alanı, 4 rehber yazı, 10 kurumsal/yasal sayfa ve 8 SSS. Görseller özgün yerel mimari illüstrasyonlardır; tamamlanmış müşteri işi olarak sunulmaz. Harici font/görsel/takip servisine istek yapılmaz; fontlar yerel paketlerden sunulur.
+Hazır içerik: 16 sistem, 6 konsept yaşam alanı, 10 rehber yazı, 13 kurumsal/yasal sayfa, 20 SSS ve 7 hizmet bölgesi. Mevcut veritabanında yönetici tarafından düzenlenmiş metinler korunur. Görseller özgün yerel mimari illüstrasyonlardır; tamamlanmış müşteri işi olarak sunulmaz. Harici font/görsel/takip servisine istek yapılmaz; fontlar yerel paketlerden sunulur.
 
 Yayın öncesinde panelde firma iletişim bilgilerini, çalışma saatlerini, hizmet bölgelerini, ürün doğruluğunu ve kendi kullanım izinli fotoğraflarınızı tamamlayın. KVKK/gizlilik/kullanım metinleri taslaktır; gerçek veri sorumlusu ve süreçlerinizle tamamlanmalıdır. Referans siteye ortam ağ politikası nedeniyle erişilemediğinden onun bütün sayfa/kartlarıyla birebir kapsam eşleşmesi doğrulanmamıştır. Başka markanın logo, metin veya görselleri alınmamıştır; telif konusunda hukuki garanti verilmez.
 
 ## Güvenlik
 
 Parolalar scrypt ile özetlenir; rastgele oturum belirteçlerinin yalnızca SHA-256 özeti saklanır. HttpOnly/SameSite oturumlar, oturum zaman aşımı, şifre değişiminde oturum iptali, giriş/form hız sınırı, yazma isteklerinde kaynak denetimi, SQL parametreleri, yükleme imza/tür kontrolleri ve üretimde CSP uygulanır. Canlı ortam için HTTPS, kalıcı disk ve düzenli yedekler sağlayın. İnternet üzerinden ödeme veya satış işlemi içermez.
+
+## Dağıtım ve işletim
+
+[HTTPS, Docker Compose, yedekleme ve canlı kabul rehberi](docs/YAYINLAMA.md) hazırlandı. `npm run build:server` sunucuyu JavaScript olarak derler; `npm run start:compiled` derlenmiş sunucuyu çalıştırır. Docker root olmayan kullanıcı, sağlık kontrolü ve kalıcı veri birimi kullanır. Bu dosyaların bulunması dağıtım yapıldığı anlamına gelmez.
+
+Tarayıcı smoke testi için Playwright ve Chromium gerekir: `node --import tsx scripts/browser-smoke.mjs`. Test geçici veri dizini ve rastgele test parolası kullanır, gerçek verileri değiştirmez. Sistem Playwright kurulumu yoksa `PLAYWRIGHT_MODULE` ve `CHROMIUM_EXECUTABLE` ile yolları belirtin.
