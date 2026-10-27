@@ -36,7 +36,7 @@ export const defaultSettings = {
   facebook: "",
   youtube: "",
   linkedin: "",
-  heroImage: "/images/hero.svg",
+  heroImage: "/images/original-terrace.png",
   heroEyebrow: "CAMIN ÖTESİNDE BİR YAŞAM",
   heroTitle: "Dışarıyla iç içe.\nSize ait bir alan.",
   heroSubtitle:

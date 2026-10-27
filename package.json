@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "concurrently -k \"tsx watch server/index.ts\" \"vite --host 0.0.0.0\"",
     "build": "tsc -b && vite build",
-    "start": "NODE_ENV=production tsx server/index.ts",
+    "start": "tsx server/production.ts",
     "build:server": "tsc -p tsconfig.server.json",
-    "start:compiled": "NODE_ENV=production node build-server/index.js",
+    "start:compiled": "node build-server/production.js",
     "test": "tsx --test server/*.test.ts",
     "typecheck": "tsc -b"
   },

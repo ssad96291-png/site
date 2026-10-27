@@ -128,6 +128,7 @@ test("Existing databases receive one additive content migration without overwrit
   let app = createApp({dataDir, production: false});
   try {
     const db = app.locals.db;
+    const initialCount = db.prepare("SELECT count(*) AS count FROM content").get().count;
     const expansions = expansionContent();
     const retained = expansions[0];
     for (const row of expansions.slice(1)) db.prepare("DELETE FROM content WHERE type=? AND slug=?").run(row.type, row.slug);
@@ -141,7 +142,7 @@ test("Existing databases receive one additive content migration without overwrit
     db.prepare("UPDATE settings SET data=? WHERE id=1").run(JSON.stringify(savedSettings));
     app.locals.close();
     app = createApp({dataDir, production: false});
-    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM content").get().count, 71);
+    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM content").get().count, initialCount - 1);
     const preserved = JSON.parse(app.locals.db.prepare("SELECT data FROM content WHERE id=?").get(retainedRow.id).data);
     assert.equal(preserved.title, "Kullanıcının değiştirdiği başlık");
     assert.equal(JSON.parse(app.locals.db.prepare("SELECT data FROM settings WHERE id=1").get().data).phone, savedSettings.phone);
@@ -149,9 +150,9 @@ test("Existing databases receive one additive content migration without overwrit
     app.locals.db.prepare("DELETE FROM content WHERE type=? AND slug=?").run(removed.type, removed.slug);
     app.locals.close();
     app = createApp({dataDir, production: false});
-    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM content").get().count, 70);
+    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM content").get().count, initialCount - 2);
     assert.equal(app.locals.db.prepare("SELECT id FROM content WHERE type=? AND slug=?").get(removed.type, removed.slug), undefined);
-    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM schema_migrations").get().count, 1);
+    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM schema_migrations").get().count, 2);
   } finally {
     app.locals.close(); rmSync(dataDir, {recursive: true, force: true});
   }

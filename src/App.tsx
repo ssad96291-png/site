@@ -48,16 +48,25 @@ import {
 } from "lucide-react";
 import type { Content, Settings } from "./types";
 const AdminApp = lazy(() => import("./admin/AdminApp"));
-type Context = {
-  settings: Settings;
-  content: Content[];
-  en: boolean;
-  setEn: (v: boolean) => void;
-  t: (tr: string, en: string) => string;
-  local: (c: Content, k: "title" | "subtitle" | "summary" | "body") => string;
-};
-const SiteContext = createContext<Context>(null!);
-const useSite = () => useContext(SiteContext);
+import {
+  SiteContext,
+  useSite,
+  contentImage,
+  type SiteContextValue as Context,
+} from "./site-context";
+import {
+  RecordedHeader as Header,
+  RecordedHome as Home,
+  RecordedFooter as Footer,
+  RecordedProducts as Products,
+  RecordedCorporate as Corporate,
+  RecordedCatalog as Catalog,
+  RecordedGallery,
+  RecordedServiceAreas,
+  RecordedProjectOffice,
+  RecordedInformation,
+  RecordedPageHead,
+} from "./RecordedSite";
 const pathFor = (c: Content) =>
   `/${({ product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler", faq: "sikca-sorulan-sorular" } as Record<string, string>)[c.type] || "kurumsal"}/${c.slug}`;
 function ScrollTop() {
@@ -66,231 +75,6 @@ function ScrollTop() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname]);
   return null;
-}
-function Logo({ light = false }: { light?: boolean }) {
-  const { settings } = useSite();
-  return (
-    <Link
-      to="/"
-      className={`brand ${light ? "light" : ""}`}
-      aria-label={`${settings.logoText || "Kılınç Dekorasyon"} ana sayfa`}
-    >
-      <span className="brand-symbol" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
-      <span>
-        <strong>{settings.logoText || "Kılınç"}</strong>
-        <small>DEKORASYON</small>
-      </span>
-    </Link>
-  );
-}
-function Header() {
-  const { t, en, setEn, content, settings } = useSite();
-  const [menu, setMenu] = useState(false),
-    [products, setProducts] = useState(false),
-    [search, setSearch] = useState(false),
-    [query, setQuery] = useState("");
-  const loc = useLocation();
-  useEffect(() => {
-    setMenu(false);
-    setProducts(false);
-    setSearch(false);
-  }, [loc.pathname]);
-  useEffect(() => {
-    const fn = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMenu(false);
-        setSearch(false);
-        setProducts(false);
-      }
-    };
-    window.addEventListener("keydown", fn);
-    return () => window.removeEventListener("keydown", fn);
-  }, []);
-  const found = content
-    .filter(
-      (c) =>
-        c.type !== "faq" &&
-        `${c.title} ${c.titleEn || ""} ${c.summary}`
-          .toLocaleLowerCase("tr")
-          .includes(query.toLocaleLowerCase("tr")),
-    )
-    .slice(0, 12);
-  return (
-    <>
-      <div className="topline">
-        <div className="container">
-          <span>
-            {t(
-              "Açık havanın özgürlüğü. Evinizin konforu.",
-              "The freedom of outdoors. The comfort of home.",
-            )}
-          </span>
-          <Link to="/katalog">
-            {t(
-              "İlham kataloğunu keşfedin",
-              "Explore our inspiration catalogue",
-            )}{" "}
-            <ArrowUpRight size={12} />
-          </Link>
-        </div>
-      </div>
-      <header className="header">
-        <div className="container header-inner">
-          <Logo />
-          <nav
-            className={menu ? "nav mobile-open" : "nav"}
-            aria-label={t("Ana menü", "Main navigation")}
-          >
-            <div className="nav-products">
-              <div className="nav-product-row">
-                <NavLink to="/urunler">
-                  {t("Sistemlerimiz", "Our systems")}
-                </NavLink>
-                <button
-                  className="icon-button"
-                  aria-label={t("Ürün menüsü", "Product menu")}
-                  aria-expanded={products}
-                  onClick={() => setProducts(!products)}
-                >
-                  <ChevronDown size={14} />
-                </button>
-              </div>
-              {products && (
-                <div className="mega-menu">
-                  <div>
-                    <small>
-                      {t(
-                        "MEKÂNINIZA ÖZEL ÇÖZÜMLER",
-                        "SOLUTIONS FOR YOUR SPACE",
-                      )}
-                    </small>
-                    <h3>
-                      {t("Dışarıya daha yakın.", "Closer to the outdoors.")}
-                    </h3>
-                    <Link to="/urunler">
-                      {t("Tüm sistemler", "All systems")}{" "}
-                      <ArrowRight size={16} />
-                    </Link>
-                  </div>
-                  <div>
-                    {content
-                      .filter((c) => c.type === "product")
-                      .map((c) => (
-                        <Link key={c.id} to={pathFor(c)}>
-                          {en && c.titleEn ? c.titleEn : c.title}
-                          <ArrowUpRight size={15} />
-                        </Link>
-                      ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            {settings.showProjects !== false && (
-              <NavLink to="/projeler">
-                {t("Yaşam Alanları", "Living spaces")}
-              </NavLink>
-            )}
-            <NavLink to="/kurumsal">{t("Biz Kimiz?", "Our story")}</NavLink>
-            {settings.showArticles !== false && (
-              <NavLink to="/blog">{t("Rehber", "Guides")}</NavLink>
-            )}
-            {settings.showRegions !== false && (
-              <NavLink to="/bolgeler">{t("Bölgeler", "Regions")}</NavLink>
-            )}
-            <NavLink to="/iletisim">{t("İletişim", "Contact")}</NavLink>
-          </nav>
-          <div className="header-actions">
-            <button
-              className="icon-button search-trigger"
-              aria-label={t("Sitede ara", "Search website")}
-              onClick={() => setSearch(true)}
-            >
-              <Search size={19} />
-            </button>
-            {(!Array.isArray(settings.languages) || settings.languages.includes("en")) && <button
-              className="language"
-              onClick={() => setEn(!en)}
-              aria-label={en ? "Türkçeye geç" : "Switch to English"}
-            >
-              {en ? "EN" : "TR"}
-              <ChevronDown size={11} />
-            </button>}
-            <Link to="/teklif-al" className="button small header-quote">
-              {t("Projenizi konuşalım", "Let’s talk")}
-              <ArrowUpRight size={15} />
-            </Link>
-            <button
-              className="icon-button mobile-toggle"
-              onClick={() => setMenu(!menu)}
-              aria-expanded={menu}
-              aria-label={t("Menüyü aç/kapat", "Toggle menu")}
-            >
-              {menu ? <X /> : <Menu />}
-            </button>
-          </div>
-        </div>
-      </header>
-      {search && (
-        <div className="modal-overlay" onClick={() => setSearch(false)}>
-          <section
-            className="search-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-label={t("Arama", "Search")}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="dialog-heading">
-              <h2>
-                {t(
-                  "Neyi keşfetmek istersiniz?",
-                  "What would you like to discover?",
-                )}
-              </h2>
-              <button
-                className="icon-button"
-                onClick={() => setSearch(false)}
-                aria-label={t("Kapat", "Close")}
-              >
-                <X />
-              </button>
-            </div>
-            <label className="search-input">
-              <Search />
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t(
-                  "Ürün, fikir veya yaşam alanı arayın…",
-                  "Search systems, ideas or spaces…",
-                )}
-              />
-            </label>
-            <div className="search-results">
-              {found.map((c) => (
-                <Link key={c.id} to={pathFor(c)}>
-                  {en && c.titleEn ? c.titleEn : c.title}
-                  <ArrowUpRight size={18} />
-                </Link>
-              ))}
-              {!found.length && (
-                <p>
-                  {t(
-                    "Sonuç bulunamadı. Başka bir kelime deneyin.",
-                    "No results. Please try another word.",
-                  )}
-                </p>
-              )}
-            </div>
-          </section>
-        </div>
-      )}
-    </>
-  );
 }
 function Eyebrow({
   children,
@@ -322,7 +106,7 @@ function ProductCard({
     <article className="product-card">
       <Link to={pathFor(item)} className="product-image">
         <img
-          src={item.image || `/images/product-${(index % 8) + 1}.svg`}
+          src={contentImage(item)}
           alt={item.imageAlt || local(item, "title")}
           loading="lazy"
         />
@@ -351,458 +135,6 @@ function ProductCard({
       </Link>
       <p>{local(item, "summary")}</p>
     </article>
-  );
-}
-function Home() {
-  const { content, settings, t, en, local } = useSite();
-  const products = content.filter((c) => c.type === "product"),
-    projects = content.filter((c) => c.type === "project"),
-    articles = content.filter((c) => c.type === "article");
-  return (
-    <>
-      <section className="hero">
-        <div className="hero-copy">
-          <Eyebrow>
-            {en
-              ? String(
-                  settings.heroEyebrowEn || "A NEW PERSPECTIVE ON YOUR SPACE",
-                )
-              : settings.heroEyebrow || "MEKÂNINIZA YENİ BİR BAKIŞ"}
-          </Eyebrow>
-          <h1>
-            {en
-              ? String(settings.heroTitleEn || "Open up to a better living.")
-              : settings.heroTitle || "Yaşam alanınıza yeni bir bakış."}
-          </h1>
-          <p>
-            {en
-              ? String(
-                  settings.heroSubtitleEn ||
-                    "Thoughtfully designed glass systems that bring the outdoors closer. Discover a new way to enjoy your balcony, terrace and garden.",
-                )
-              : settings.heroSubtitle ||
-                "Balkonunuzdan bahçenize, hayatın içeriyle dışarı arasında akıp gittiği ferah yaşam alanları tasarlıyoruz."}
-          </p>
-          <Link to="/urunler" className="button">
-            {t("Size uygun sistemi keşfedin", "Find your perfect system")}
-            <ArrowUpRight size={18} />
-          </Link>
-          <div className="hero-bottom">
-            <span className="scroll-line" />
-            <span>{t("DAHA FAZLASINI KEŞFEDİN", "SCROLL TO DISCOVER")}</span>
-          </div>
-        </div>
-        <div className="hero-visual">
-          <img
-            src={String(settings.heroImage || "/images/hero.svg")}
-            alt={t(
-              "Cam panellerle bahçeye açılan, sıcak tonlarda tasarlanmış modern teras görselleştirmesi",
-              "Architectural visualization of a warm modern terrace opening to a garden through glass panels",
-            )}
-          />
-          <div className="hero-image-label">
-            <span className="label-dot" />
-            {t(
-              "İçeride konfor, dışarıda hayat.",
-              "Comfort within. Life beyond.",
-            )}
-            <ArrowUpRight size={17} />
-          </div>
-          <span className="hero-caption">KILINÇ / OUTDOOR LIVING</span>
-        </div>
-      </section>
-      <div className="promise-bar">
-        <div className="container">
-          <span>
-            <Layers size={18} />
-            {t("Mekâna özel tasarım", "Designed for your space")}
-          </span>
-          <span>
-            <Sun size={19} />
-            {t("Dört mevsim kullanım", "Four-season living")}
-          </span>
-          <span>
-            <ShieldCheck size={19} />
-            {t("Özenli uygulama", "Careful installation")}
-          </span>
-          <span>
-            <Wind size={19} />
-            {t("Kesintisiz manzara", "An uninterrupted view")}
-          </span>
-        </div>
-      </div>
-      <ServiceFamilies />
-      <section className="section container">
-        <div className="section-heading">
-          <div>
-            <Eyebrow>{t("SİSTEMLERİMİZ", "OUR SYSTEMS")}</Eyebrow>
-            <h2>
-              {t("Her mekânın bir", "Every space has")}
-              <br />
-              <em>{t("açılma şekli var.", "a way to open up.")}</em>
-            </h2>
-          </div>
-          <div className="section-heading-aside">
-            <p>
-              {t(
-                "İhtiyaçlarınıza göre şekillenen, mimariyle uyumlu çözümler. Size en uygun sistemi birlikte bulalım.",
-                "Architectural solutions shaped around your needs. Let’s find the system that feels right for your space.",
-              )}
-            </p>
-            <Link to="/urunler" className="text-link">
-              {t("Tüm sistemleri inceleyin", "Explore all systems")}
-              <ArrowUpRight size={17} />
-            </Link>
-          </div>
-        </div>
-        <div className="product-grid home-products">
-          {[...products]
-            .sort((a, b) => Number(b.featured) - Number(a.featured))
-            .slice(0, 4)
-            .map((p, i) => (
-              <ProductCard key={p.id} item={p} index={i} />
-            ))}
-        </div>
-      </section>
-      <section className="story-section">
-        <div className="story-image">
-          <img
-            src="/images/project-2.svg"
-            loading="lazy"
-            alt={t(
-              "Modern bir cam balkonun mimari görselleştirmesi",
-              "Architectural concept of a modern glass balcony",
-            )}
-          />
-          <span>
-            {t("DAHA AYDINLIK BİR YAŞAM İÇİN", "FOR A BRIGHTER WAY OF LIVING")}
-          </span>
-        </div>
-        <div className="story-copy">
-          <Eyebrow light>
-            {t("KILINÇ DEKORASYON İLE", "WITH KILINÇ DEKORASYON")}
-          </Eyebrow>
-          <h2>
-            {t("Sadece bir balkon değil,", "More than a balcony,")}
-            <br />
-            <em>{t("yeni bir yaşam alanı.", "a new way to live.")}</em>
-          </h2>
-          <p>
-            {en
-              ? String(
-                  settings.aboutTextEn ||
-                    "A morning coffee, an unhurried conversation, a quiet moment with a view. We create spaces that make room for the little things in life.",
-                )
-              : settings.aboutText ||
-                "Sabah kahvenizin, uzun sohbetlerin ve manzaraya karşı kendinize ayırdığınız anların yeni adresi. İhtiyacınızı dinliyor, mekânınıza uygun çözümü özenle hayata geçiriyoruz."}
-          </p>
-          <div className="story-values">
-            <span>
-              <Check size={17} />
-              {t("İhtiyaca göre sistem seçimi", "A system selected for you")}
-            </span>
-            <span>
-              <Check size={17} />
-              {t("Ölçüye özel üretim", "Made to measure")}
-            </span>
-            <span>
-              <Check size={17} />
-              {t("Montaj sonrası destek", "After-installation support")}
-            </span>
-          </div>
-          <Link to="/kurumsal" className="text-link light">
-            {t("Bizi daha yakından tanıyın", "Get to know us")}
-            <ArrowUpRight size={18} />
-          </Link>
-        </div>
-      </section>
-      {settings.showProjects !== false && (
-        <section className="section container">
-          <div className="section-heading">
-            <div>
-              <Eyebrow>{t("YAŞAM ALANLARI", "LIVING SPACES")}</Eyebrow>
-              <h2>
-                {t("Hayalinizdeki mekâna", "A little closer to")}
-                <br />
-                <em>{t("bir adım daha yakın.", "the space you imagine.")}</em>
-              </h2>
-            </div>
-            <Link to="/projeler" className="text-link">
-              {t("Tüm alanları keşfedin", "Explore living spaces")}
-              <ArrowUpRight size={18} />
-            </Link>
-          </div>
-          <div className="project-grid">
-            {[...projects]
-              .sort((a, b) => Number(b.featured) - Number(a.featured))
-              .slice(0, 3)
-              .map((c, i) => (
-                <Link
-                  className={`project-card project-${i}`}
-                  to={pathFor(c)}
-                  key={c.id}
-                >
-                  <img
-                    src={c.image || `/images/project-${(i % 4) + 1}.svg`}
-                    alt={local(c, "title")}
-                    loading="lazy"
-                  />
-                  <div>
-                    <small>{c.category}</small>
-                    <h3>{local(c, "title")}</h3>
-                    <span>
-                      <ArrowUpRight size={22} />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-          </div>
-          <p className="image-disclosure">
-            {t(
-              "Görseller ve yaşam alanları tasarım önerileridir; tamamlanmış müşteri projesi olarak sunulmaz.",
-              "Images and living spaces are design concepts, not completed customer projects.",
-            )}
-          </p>
-        </section>
-      )}
-      <section className="catalog-band container">
-        <div className="catalog-art" aria-hidden="true">
-          <div className="catalog-book">
-            <span>
-              KILINÇ<small>DEKORASYON</small>
-            </span>
-            <img src="/images/product-3.svg" alt="" />
-            <p>
-              DIŞARIDA HAYAT VAR.<small>YAŞAM ALANLARI / SİSTEMLER</small>
-            </p>
-          </div>
-        </div>
-        <div>
-          <Eyebrow>
-            {t("İLHAMINIZ YANINIZDA OLSUN", "TAKE YOUR INSPIRATION WITH YOU")}
-          </Eyebrow>
-          <h2>
-            {t("Yeni fikirler,", "New ideas,")}
-            <br />
-            <em>{t("yeni olasılıklar.", "new possibilities.")}</em>
-          </h2>
-          <p>
-            {t(
-              "Sistemlerimizi tek bir yerde inceleyin. Projeniz için ilk adımı birlikte atalım.",
-              "Explore our systems in one place. Let’s take the first step towards your project.",
-            )}
-          </p>
-          <Link to="/katalog" className="button outline">
-            {t("Kataloğu keşfedin", "Explore the catalogue")}
-            <Download size={17} />
-          </Link>
-        </div>
-      </section>
-      {settings.showArticles !== false && (
-        <section className="section container">
-          <div className="section-heading">
-            <div>
-              <Eyebrow>{t("İLHAM & FİKİRLER", "IDEAS & INSPIRATION")}</Eyebrow>
-              <h2>
-                {t("İyi bir fikirle", "It starts with")}{" "}
-                <em>{t("başlar.", "a good idea.")}</em>
-              </h2>
-            </div>
-            <Link to="/blog" className="text-link">
-              {t("Tüm yazılar", "All stories")}
-              <ArrowUpRight size={17} />
-            </Link>
-          </div>
-          <div className="journal-grid">
-            {[...articles]
-              .sort((a, b) => Number(b.featured) - Number(a.featured))
-              .slice(0, 3)
-              .map((c) => (
-                <ArticleCard key={c.id} item={c} />
-              ))}
-          </div>
-        </section>
-      )}
-      <ProjectJourney />
-      {settings.showRegions !== false && <RegionPreview />}
-      {settings.showFaq !== false && <FAQPreview />}
-      <CallToAction />
-    </>
-  );
-}
-function ServiceFamilies() {
-  const { t, settings, en } = useSite();
-  const families = [
-    {
-      title: t("Cam ile ferahlık.", "Room to breathe."),
-      name: t("Cam sistemleri", "Glass systems"),
-      text: t(
-        "Katlanır, sürme ve giyotin camdan kış bahçesine; açıklığı, ışığı ve kullanım konforunu birlikte düşünün.",
-        "From folding and sliding glazing to winter gardens, consider light, openness and everyday comfort.",
-      ),
-      image: "/images/product-1.svg",
-      match: /cam|bahçe|pergola|gölge/i,
-    },
-    {
-      title: t("Alüminyum ile denge.", "Precision in aluminium."),
-      name: t("Alüminyum sistemler", "Aluminium systems"),
-      text: t(
-        "Kapı, pencere, cephe ve ofis bölmeleri. Mimariyle uyumlu profil ve birleşim detayları.",
-        "Doors, windows, façades and office partitions. Profiles and connections that fit the architecture.",
-      ),
-      image: "/images/aluminium-facade.svg",
-      match: /alüminyum|cephe|ofis|doğrama/i,
-    },
-    {
-      title: t("Metal ile karakter.", "Character in metal."),
-      name: t("Demir & çelik imalat", "Steel & metalwork"),
-      text: t(
-        "Korkuluk, ferforje, çelik konstrüksiyon ve özel imalat. Ölçü, güvenlik ve uygulama bir arada.",
-        "Railings, gates, structural steel and bespoke fabrication. Dimensions, safety and installation together.",
-      ),
-      image: "/images/metal-gate.svg",
-      match: /demir|çelik|ferforje|metal|yangın/i,
-    },
-  ];
-  return (
-    <section className="section container service-overview">
-      <div className="section-heading">
-        <div>
-          <Eyebrow>
-            {t(
-              "BİR PROJE. BÜTÜNCÜL BİR YAKLAŞIM.",
-              "ONE PROJECT. A COMPLETE APPROACH.",
-            )}
-          </Eyebrow>
-          <h2>
-            {!en && settings.servicesTitle ? (
-              String(settings.servicesTitle)
-            ) : (
-              <>
-                {t("Camın hafifliği,", "The lightness of glass,")}
-                <br />
-                <em>{t("metalin gücü.", "the strength of metal.")}</em>
-              </>
-            )}
-          </h2>
-        </div>
-        <Link className="text-link" to="/sistem-secici">
-          {t("Nereden başlayacağımı bul", "Find my starting point")}
-          <ArrowUpRight size={18} />
-        </Link>
-      </div>
-      <div className="service-family-grid">
-        {families.map((family, i) => {
-          return (
-            <Link
-              to={`/urunler?grup=${["glass", "aluminium", "metal"][i]}`}
-              className="service-family"
-              key={family.name}
-            >
-              <div className="service-family-image">
-                <img src={family.image} alt="" loading="lazy" />
-                <span>
-                  0{i + 1} / {family.name}
-                </span>
-                <ArrowUpRight size={22} />
-              </div>
-              <h3>{family.title}</h3>
-              <p>{family.text}</p>
-              <span className="text-link">
-                {t("Çözümleri inceleyin", "Explore solutions")}
-                <ArrowRight size={16} />
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-function ProjectJourney() {
-  const { t, settings, en } = useSite();
-  const steps = [
-    [
-      t("İhtiyacınızı dinliyoruz", "We listen first"),
-      t(
-        "Kullanım amacınızı, beklentilerinizi ve mekânın koşullarını birlikte netleştirelim.",
-        "Let’s understand your needs, expectations and the conditions of your space.",
-      ),
-    ],
-    [
-      t("Yerinde değerlendiriyoruz", "We assess the site"),
-      t(
-        "Ölçü, taşıyıcı yüzey, su tahliyesi ve erişim gibi uygulama detaylarını inceleyelim.",
-        "We assess dimensions, supporting surfaces, drainage and access.",
-      ),
-    ],
-    [
-      t("Kapsamı birlikte seçiyoruz", "We define the scope"),
-      t(
-        "Malzeme, cam, renk, donanım ve teslim koşulları yazılı teklifin parçası olsun.",
-        "Materials, glazing, colour, hardware and delivery terms form your written proposal.",
-      ),
-    ],
-    [
-      t("Uygulama & teslim", "Installation & handover"),
-      t(
-        "Kontrol, kullanım bilgilendirmesi ve bakım önerileriyle süreci tamamlayalım.",
-        "Complete the project with checks, operating guidance and maintenance advice.",
-      ),
-    ],
-  ];
-  return (
-    <section className="journey-section">
-      <div className="container">
-        <div className="section-heading">
-          <div>
-            <Eyebrow>
-              {t("FİKİRDEN UYGULAMAYA", "FROM IDEA TO INSTALLATION")}
-            </Eyebrow>
-            <h2>
-              {!en && settings.processTitle ? (
-                String(settings.processTitle)
-              ) : (
-                <>
-                  {t("Her adımda,", "At every step,")}{" "}
-                  <em>{t("birlikte.", "together.")}</em>
-                </>
-              )}
-            </h2>
-          </div>
-          <p>
-            {t(
-              "Konutunuz veya kurumsal projeniz için açık, anlaşılır bir süreç.",
-              "A clear, considered process for your home or commercial project.",
-            )}
-          </p>
-        </div>
-        <div className="journey-grid">
-          {steps.map(([title, text], i) => (
-            <article key={title}>
-              <span>0{i + 1}</span>
-              <h3>
-                {!en && settings[`processStep${i + 1}Title`]
-                  ? String(settings[`processStep${i + 1}Title`])
-                  : title}
-              </h3>
-              <p>
-                {!en && settings[`processStep${i + 1}Text`]
-                  ? String(settings[`processStep${i + 1}Text`])
-                  : text}
-              </p>
-            </article>
-          ))}
-        </div>
-        <Link className="text-link" to="/is-ortakligi">
-          {t(
-            "Kurumsal projenizi paylaşın",
-            "Tell us about your commercial project",
-          )}
-          <ArrowUpRight size={18} />
-        </Link>
-      </div>
-    </section>
   );
 }
 function PlanningChecklist() {
@@ -860,119 +192,6 @@ function PlanningChecklist() {
         </div>
       ))}
     </div>
-  );
-}
-function RegionPreview() {
-  const { content, t, local, settings, en } = useSite();
-  const regions = content.filter((c) => c.type === "region");
-  if (!regions.length) return null;
-  return (
-    <section className="section container region-preview">
-      <div>
-        <Eyebrow>{t("ANKARA & ÇEVRESİ", "ANKARA & SURROUNDINGS")}</Eyebrow>
-        <h2>
-          {!en && settings.regionTitle ? (
-            String(settings.regionTitle)
-          ) : (
-            <>
-              {t("Size daha", "A little")}{" "}
-              <em>{t("yakın.", "closer to you.")}</em>
-            </>
-          )}
-        </h2>
-        <p>
-          {t(
-            "Etimesgut merkezli yaklaşımımızla bölgenizin yapı ve kullanım koşullarını birlikte değerlendirelim.",
-            "With an Etimesgut-based approach, let’s assess local building and use conditions together.",
-          )}
-        </p>
-        <Link className="text-link" to="/bolgeler">
-          {t("Tüm hizmet bölgeleri", "All service areas")}
-          <ArrowUpRight size={17} />
-        </Link>
-      </div>
-      <div className="region-links">
-        {regions.slice(0, 7).map((c) => (
-          <Link key={c.id} to={pathFor(c)}>
-            <MapPin size={17} />
-            <span>{local(c, "title")}</span>
-            <ArrowUpRight size={17} />
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-function Regions() {
-  const { content, t, local, settings } = useSite();
-  return (
-    <>
-      <PageHead
-        title={t("Projenizin olduğu yerde.", "Where your project is.")}
-        subtitle={t(
-          "Cam, alüminyum ve metal uygulamalarını bölgenizin ihtiyaçlarıyla birlikte planlayın. Ziyaret ve uygulama uygunluğu talebinize göre teyit edilir.",
-          "Plan glass, aluminium and metal applications around local needs. Site visits and service availability are confirmed for your enquiry.",
-        )}
-        tag={t("HİZMET BÖLGELERİ", "SERVICE AREAS")}
-      />
-      <section className="section container">
-        <div className="regions-grid">
-          {content
-            .filter((c) => c.type === "region")
-            .map((c) => (
-              <Link className="region-card" to={pathFor(c)} key={c.id}>
-                <MapPin size={28} />
-                <small>{c.category || "ANKARA"}</small>
-                <h2>{local(c, "title")}</h2>
-                <p>{local(c, "summary")}</p>
-                <span className="text-link">
-                  {t("Bölgeyi inceleyin", "Explore area")}
-                  <ArrowUpRight size={17} />
-                </span>
-              </Link>
-            ))}
-        </div>
-        {settings.serviceAreas && (
-          <p className="form-note">{String(settings.serviceAreas)}</p>
-        )}
-      </section>
-      <ProjectJourney />
-      <CallToAction />
-    </>
-  );
-}
-function FAQPreview() {
-  const { content, t, local } = useSite();
-  return (
-    <section className="section container faq-preview">
-      <div className="section-heading">
-        <div>
-          <Eyebrow>{t("KARAR VERMEDEN ÖNCE", "BEFORE YOU DECIDE")}</Eyebrow>
-          <h2>
-            {t("Sormak", "It starts with")}{" "}
-            <em>{t("iyi gelir.", "a question.")}</em>
-          </h2>
-        </div>
-        <Link className="text-link" to="/sikca-sorulan-sorular">
-          {t("Tüm sorular & yanıtlar", "All questions & answers")}
-          <ArrowUpRight size={17} />
-        </Link>
-      </div>
-      <div className="faq-preview-grid">
-        {content
-          .filter((c) => c.type === "faq")
-          .slice(0, 4)
-          .map((c) => (
-            <details key={c.id}>
-              <summary>
-                {local(c, "title")}
-                <Plus size={19} />
-              </summary>
-              <p>{local(c, "body")}</p>
-            </details>
-          ))}
-      </div>
-    </section>
   );
 }
 function SystemFinder() {
@@ -1162,29 +381,14 @@ function CallToAction() {
 function PageHead({
   title,
   subtitle,
-  tag,
 }: {
   title: string;
   subtitle?: string;
   tag?: string;
 }) {
-  const { t } = useSite();
-  return (
-    <section className="page-head">
-      <div className="container">
-        <div className="breadcrumbs">
-          <Link to="/">{t("Ana Sayfa", "Home")}</Link>
-          <span>/</span>
-          <span>{title}</span>
-        </div>
-        <Eyebrow>{tag || "KILINÇ DEKORASYON"}</Eyebrow>
-        <h1>{title}</h1>
-        {subtitle && <p>{subtitle}</p>}
-      </div>
-    </section>
-  );
+  return <RecordedPageHead title={title} subtitle={subtitle} />;
 }
-function Products() {
+function ProductComparison() {
   const { content, t, local } = useSite();
   const all = content.filter((c) => c.type === "product");
   const [params] = useSearchParams();
@@ -1341,7 +545,7 @@ function Products() {
                 .filter((c) => selected.includes(c.id))
                 .map((c) => (
                   <div key={c.id}>
-                    <img src={c.image} alt="" />
+                    <img src={contentImage(c)} alt="" />
                     <h3>{local(c, "title")}</h3>
                     <p>{local(c, "summary")}</p>
                     {c.specs.map((s, i) => (
@@ -1376,7 +580,7 @@ function ArticleCard({ item }: { item: Content }) {
     <article className="journal-card">
       <Link className="journal-image" to={pathFor(item)}>
         <img
-          src={item.image || "/images/hero.svg"}
+          src={contentImage(item)}
           alt={item.imageAlt || local(item, "title")}
           loading="lazy"
         />
@@ -1448,10 +652,7 @@ function Listing({ type }: { type: "project" | "article" }) {
                 <ArticleCard key={c.id} item={c} />
               ) : (
                 <Link key={c.id} className="project-card" to={pathFor(c)}>
-                  <img
-                    src={c.image || `/images/project-${(i % 4) + 1}.svg`}
-                    alt={local(c, "title")}
-                  />
+                  <img src={contentImage(c)} alt={local(c, "title")} />
                   <div>
                     <small>{c.category}</small>
                     <h3>{local(c, "title")}</h3>
@@ -1507,10 +708,7 @@ function Detail({
       <section className="container detail-section">
         {type !== "page" && (
           <div className="detail-cover">
-            <img
-              src={c.image || "/images/hero.svg"}
-              alt={c.imageAlt || local(c, "title")}
-            />
+            <img src={contentImage(c)} alt={c.imageAlt || local(c, "title")} />
             <span>
               {t(
                 "Özgün mimari görselleştirme",
@@ -1711,116 +909,6 @@ function Detail({
     </>
   );
 }
-function Corporate() {
-  const { content, settings, t, en } = useSite();
-  return (
-    <>
-      <PageHead
-        title={t(
-          "İyi mekânlar, özenle başlar.",
-          "Good spaces start with care.",
-        )}
-        subtitle={t(
-          "Kılınç Dekorasyon ile balkon, teras ve bahçenizin potansiyelini keşfedin.",
-          "Discover the potential of your balcony, terrace and garden with Kılınç Dekorasyon.",
-        )}
-        tag={t("BİZ KİMİZ?", "OUR STORY")}
-      />
-      <section className="container section corporate-intro">
-        <img
-          src="/images/project-3.svg"
-          alt={t(
-            "Cam sistemli yaşam alanı tasarımı",
-            "Glass-enclosed living space concept",
-          )}
-        />
-        <div>
-          <Eyebrow>{t("İHTİYACINIZI DİNLİYORUZ", "WE LISTEN FIRST")}</Eyebrow>
-          <h2>
-            {t("Mekânı değil,", "Designed around")}
-            <br />
-            <em>{t("yaşamı düşünüyoruz.", "the way you live.")}</em>
-          </h2>
-          <p>
-            {(en ? String(settings.aboutTextEn || "") : settings.aboutText) ||
-              t(
-                "Cam balkon ve açık alan çözümlerinde, kullanım ihtiyaçlarınıza uygun sistemleri bir araya getiriyoruz. Önce sizi ve mekânınızı tanıyor, ardından ölçü, malzeme ve uygulama seçeneklerini birlikte değerlendiriyoruz.",
-                "We bring together glass and outdoor systems that fit your everyday needs. First we get to know you and your space, then explore measurements, materials and installation options together.",
-              )}
-          </p>
-          <Link to="/iletisim" className="text-link">
-            {t("Tanışalım", "Let’s meet")}
-            <ArrowUpRight size={18} />
-          </Link>
-        </div>
-      </section>
-      <section className="process-section">
-        <div className="container">
-          <Eyebrow>{t("NASIL ÇALIŞIYORUZ?", "HOW WE WORK")}</Eyebrow>
-          <h2>
-            {t("İlk fikirden", "From first idea")}{" "}
-            <em>{t("son dokunuşa.", "to final detail.")}</em>
-          </h2>
-          <div className="process-grid">
-            {[
-              [
-                t("Sizi dinliyoruz", "We listen"),
-                t(
-                  "Beklentilerinizi, mekânınızı ve kullanım alışkanlıklarınızı öğreniyoruz.",
-                  "We learn about your expectations, space and everyday needs.",
-                ),
-              ],
-              [
-                t("Birlikte planlıyoruz", "We plan together"),
-                t(
-                  "Keşif ve ölçü sonrası sistem, cam ve renk seçeneklerini değerlendiriyoruz.",
-                  "After a site assessment, we discuss systems, glazing and finishes.",
-                ),
-              ],
-              [
-                t("Özenle uyguluyoruz", "We install with care"),
-                t(
-                  "Onaylanan projeyi planlanan uygulama adımlarıyla hayata geçiriyoruz.",
-                  "We bring the agreed design to life with a considered installation plan.",
-                ),
-              ],
-              [
-                t("Yanınızda oluyoruz", "We stay in touch"),
-                t(
-                  "Kullanım, bakım ve servis sorularınızda destek sağlıyoruz.",
-                  "We support you with use, maintenance and service questions.",
-                ),
-              ],
-            ].map(([title, body], i) => (
-              <div key={i}>
-                <span>0{i + 1}</span>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-      <section className="section container">
-        <div className="corporate-links">
-          {content
-            .filter(
-              (c) =>
-                c.type === "page" &&
-                !["gizlilik", "kvkk", "cerez-politikasi"].includes(c.slug),
-            )
-            .map((c) => (
-              <Link to={pathFor(c)} key={c.id}>
-                <span>{c.title}</span>
-                <ArrowUpRight />
-              </Link>
-            ))}
-        </div>
-      </section>
-      <CallToAction />
-    </>
-  );
-}
 function FAQ() {
   const { content, t, local } = useSite();
   const [open, setOpen] = useState<string | null>(null);
@@ -1930,7 +1018,15 @@ function FAQ() {
     </>
   );
 }
-function InquiryForm({ dealer = false }: { dealer?: boolean }) {
+function InquiryForm({
+  dealer = false,
+  service = false,
+  project = false,
+}: {
+  dealer?: boolean;
+  service?: boolean;
+  project?: boolean;
+}) {
   const { content, t } = useSite();
   const [params] = useSearchParams();
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle"),
@@ -1949,9 +1045,13 @@ function InquiryForm({ dealer = false }: { dealer?: boolean }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
-          subject: dealer
-            ? "İş ortaklığı başvurusu"
-            : data.subject || "Teklif talebi",
+          subject: service
+            ? "Servis talebi"
+            : project
+              ? "Kurumsal proje talebi"
+              : dealer
+                ? "İş ortaklığı başvurusu"
+                : data.subject || "Teklif talebi",
           consent: data.consent === "on",
         }),
       });
@@ -2122,6 +1222,11 @@ function InquiryForm({ dealer = false }: { dealer?: boolean }) {
       <label>
         {t("Projenizi biraz anlatın", "Tell us about your project")} *
         <textarea
+          defaultValue={
+            params.get("renk")
+              ? `${t("Renk tercihim", "Colour preference")}: ${params.get("renk")}\n`
+              : ""
+          }
           name="message"
           required
           minLength={10}
@@ -2341,201 +1446,6 @@ function Contact({
     </>
   );
 }
-function Catalog() {
-  const { t, content, en } = useSite();
-  return (
-    <>
-      <PageHead
-        title={t("İlham veren bir başlangıç.", "An inspiring place to start.")}
-        subtitle={t(
-          "Ürün ve sistem özetlerini tek bir PDF kataloğunda inceleyin.",
-          "Browse product and system overviews in one PDF catalogue.",
-        )}
-        tag={t("DİJİTAL KATALOG", "DIGITAL CATALOGUE")}
-      />
-      <section className="container section catalog-page">
-        <div className="catalog-preview">
-          <div className="catalog-book large">
-            <span>
-              KILINÇ<small>DEKORASYON</small>
-            </span>
-            <img
-              src="/images/hero.svg"
-              alt={t(
-                "Kılınç Dekorasyon katalog kapağı",
-                "Kılınç Dekorasyon catalogue cover",
-              )}
-            />
-            <p>
-              DIŞARIDA HAYAT VAR.<small>YAŞAM ALANLARI / SİSTEMLER</small>
-            </p>
-          </div>
-        </div>
-        <div>
-          <Eyebrow>
-            {t("SİSTEMLERE GENEL BAKIŞ", "SYSTEMS AT A GLANCE")}
-          </Eyebrow>
-          <h2>
-            {t("Birlikte keşfedeceğimiz", "A world of")}
-            <br />
-            <em>{t("yeni olasılıklar.", "new possibilities.")}</em>
-          </h2>
-          <p>
-            {t(
-              "Kataloğumuzda cam balkon, sürme, giyotin ve açık alan çözümlerimizi bulabilirsiniz. İçerik, güncel ürün bilgilerimizden oluşturulur.",
-              "Explore glass balcony, sliding, guillotine and outdoor solutions. The catalogue is generated from our current product information.",
-            )}
-          </p>
-          <div className="catalog-facts">
-            <span>
-              {content.filter((c) => c.type === "product").length}{" "}
-              {t("sistem", "systems")}
-            </span>
-            <span>PDF</span>
-            <span>{t("Ücretsiz indirme", "Free download")}</span>
-          </div>
-          <a
-            href={en ? "/api/catalog.pdf?lang=en" : "/api/catalog.pdf"}
-            download="kilinc-dekarasyon-katalog.pdf"
-            className="button"
-          >
-            {t("PDF kataloğu indir", "Download PDF catalogue")}
-            <Download size={18} />
-          </a>
-          <p className="muted">
-            {t(
-              "Nihai teknik özellikler ve fiyatlar, projeniz için hazırlanacak teklifte belirtilir.",
-              "Final technical specifications and prices are confirmed in your project quotation.",
-            )}
-          </p>
-        </div>
-      </section>
-      <CallToAction />
-    </>
-  );
-}
-function Footer() {
-  const { settings, content, t } = useSite();
-  const socials = [
-    { key: "instagram", Icon: Instagram },
-    { key: "facebook", Icon: Facebook },
-    { key: "youtube", Icon: Youtube },
-    { key: "linkedin", Icon: Linkedin },
-  ];
-  return (
-    <footer className="footer">
-      <div className="container footer-main">
-        <div className="footer-brand">
-          <Logo />
-          <p>
-            {String(
-              settings.footerText ||
-                t(
-                  "Hayata açılan mekânlar. Cam, alüminyum ve metal çözümleri, projenize özel.",
-                  "Spaces that open up to life. Glass, aluminium and metal, designed for your project.",
-                ),
-            )}
-          </p>
-          <div className="social-links">
-            {socials.map(
-              ({ key, Icon }) =>
-                Boolean(settings[key]) && (
-                  <a
-                    key={key}
-                    href={String(settings[key])}
-                    aria-label={key}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Icon size={18} />
-                  </a>
-                ),
-            )}
-          </div>
-        </div>
-        <div>
-          <h4>{t("SİSTEMLERİMİZ", "OUR SYSTEMS")}</h4>
-          {content
-            .filter((c) => c.type === "product")
-            .slice(0, 6)
-            .map((c) => (
-              <Link to={pathFor(c)} key={c.id}>
-                {t(c.title, c.titleEn || c.title)}
-              </Link>
-            ))}
-          <Link to="/urunler">
-            {t("Tüm sistemler", "All systems")}
-            <ArrowUpRight size={13} />
-          </Link>
-        </div>
-        <div>
-          <h4>{t("KEŞFEDİN", "EXPLORE")}</h4>
-          <Link to="/kurumsal">{t("Hakkımızda", "About us")}</Link>
-          {settings.showProjects !== false && (
-            <Link to="/projeler">{t("Yaşam alanları", "Living spaces")}</Link>
-          )}
-          {settings.showArticles !== false && (
-            <Link to="/blog">
-              {t("İlham & fikirler", "Ideas & inspiration")}
-            </Link>
-          )}
-          {settings.showRegions !== false && (
-            <Link to="/bolgeler">{t("Hizmet bölgeleri", "Service areas")}</Link>
-          )}
-          <Link to="/sistem-secici">{t("Sistem seçici", "System finder")}</Link>
-          <Link to="/katalog">{t("Dijital katalog", "Digital catalogue")}</Link>
-          {settings.showFaq !== false && (
-            <Link to="/sikca-sorulan-sorular">
-              {t("Sıkça sorulan sorular", "FAQs")}
-            </Link>
-          )}
-          <Link to="/is-ortakligi">{t("İş ortaklığı", "Partnerships")}</Link>
-          <Link to="/kurumsal/garanti-ve-servis">
-            {t("Garanti & servis", "Warranty & service")}
-          </Link>
-        </div>
-        <div>
-          <h4>{t("BİRLİKTE PLANLAYALIM", "LET’S MAKE A PLAN")}</h4>
-          <p>
-            {t(
-              "Mekânınız için yeni bir fikir mi var?",
-              "Have an idea for your space?",
-            )}
-          </p>
-          <Link to="/teklif-al" className="footer-contact">
-            {t("Projenizi konuşalım", "Let’s talk")}
-            <ArrowUpRight size={23} />
-          </Link>
-          {settings.phone && (
-            <a href={`tel:${settings.phone.replace(/[^+\d]/g, "")}`}>
-              {settings.phone}
-            </a>
-          )}
-          {settings.email && (
-            <a href={`mailto:${settings.email}`}>{settings.email}</a>
-          )}
-          <Link to="/iletisim">
-            {t("İletişim bilgileri", "Contact details")}
-          </Link>
-        </div>
-      </div>
-      <div className="container footer-bottom">
-        <span>
-          © {new Date().getFullYear()} Kılınç Dekorasyon.{" "}
-          {t("Tüm hakları saklıdır.", "All rights reserved.")}
-        </span>
-        <div>
-          <Link to="/kurumsal/kvkk">KVKK</Link>
-          <Link to="/kurumsal/gizlilik">{t("Gizlilik", "Privacy")}</Link>
-          <Link to="/kurumsal/cerez-politikasi">
-            {t("Çerez politikası", "Cookie policy")}
-          </Link>
-          <Link to="/yonetim">{t("Yönetim", "Admin")}</Link>
-        </div>
-      </div>
-    </footer>
-  );
-}
 function NotFound() {
   const { t } = useSite();
   return (
@@ -2578,7 +1488,11 @@ export default function App() {
       .catch(() => setError(true));
   }, []);
   useEffect(() => {
-    if (data && Array.isArray(data.settings.languages) && !data.settings.languages.includes("en")) {
+    if (
+      data &&
+      Array.isArray(data.settings.languages) &&
+      !data.settings.languages.includes("en")
+    ) {
       setEnglish(false);
       localStorage.setItem("kilinc-locale", "tr");
     }
@@ -2617,6 +1531,10 @@ export default function App() {
         "Cam, Alüminyum ve Metal Sistemleri",
         "Glass, Aluminium & Metal Systems",
       ],
+      "/galeri": ["Galeri ve Tasarım Konseptleri", "Gallery & Design Concepts"],
+      "/proje-birimi": ["Proje Birimi", "Project Office"],
+      "/servis-talebi": ["Servis Talebi", "Service Request"],
+      "/urun-karsilastir": ["Ürün Karşılaştırma", "Compare Systems"],
       "/projeler": [
         "Yaşam Alanları ve Tasarım Önerileri",
         "Living Spaces & Design Concepts",
@@ -2800,45 +1718,102 @@ export default function App() {
   };
   return (
     <SiteContext.Provider value={ctx}>
-      <ScrollTop />
-      <a className="skip-link" href="#main">
-        {en ? "Skip to content" : "İçeriğe geç"}
-      </a>
-      <Header />
-      <main id="main">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/urunler" element={<Products />} />
-          <Route path="/sistem-secici" element={<SystemFinder />} />
-          <Route path="/bolgeler" element={<Regions />} />
-          <Route path="/bolgeler/:slug" element={<Detail type="region" />} />
-          <Route path="/urunler/:slug" element={<Detail type="product" />} />
-          <Route path="/projeler" element={<Listing type="project" />} />
-          <Route path="/projeler/:slug" element={<Detail type="project" />} />
-          <Route path="/blog" element={<Listing type="article" />} />
-          <Route path="/blog/:slug" element={<Detail type="article" />} />
-          <Route path="/kurumsal" element={<Corporate />} />
-          <Route path="/kurumsal/:slug" element={<Detail type="page" />} />
-          <Route path="/sikca-sorulan-sorular" element={<FAQ />} />
-          <Route path="/iletisim" element={<Contact />} />
-          <Route path="/teklif-al" element={<Contact quote />} />
-          <Route path="/is-ortakligi" element={<Contact dealer />} />
-          <Route path="/katalog" element={<Catalog />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
-      {data.settings.whatsapp && (
-        <a
-          className="whatsapp-float"
-          href={`https://wa.me/${data.settings.whatsapp.replace(/\D/g, "")}`}
-          target="_blank"
-          rel="noreferrer"
-          aria-label="WhatsApp"
-        >
-          <MessageCircle size={25} />
+      <div className="recorded-site">
+        <ScrollTop />
+        <a className="skip-link" href="#main">
+          {en ? "Skip to content" : "İçeriğe geç"}
         </a>
-      )}
+        <Header />
+        <main id="main">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/urunler" element={<Products />} />
+            <Route path="/urun-karsilastir" element={<ProductComparison />} />
+            <Route path="/galeri" element={<RecordedGallery />} />
+            <Route
+              path="/proje-birimi"
+              element={
+                <RecordedProjectOffice>
+                  <InquiryForm dealer project />
+                </RecordedProjectOffice>
+              }
+            />
+            <Route
+              path="/servis-talebi"
+              element={
+                <>
+                  <RecordedPageHead
+                    title={en ? "Service request" : "Servis Talebi"}
+                  />
+                  <section className="rs-container rs-service-form">
+                    <div>
+                      <h2>
+                        {en
+                          ? "How can we help?"
+                          : "Size nasıl yardımcı olabiliriz?"}
+                      </h2>
+                      <p>
+                        {en
+                          ? "Tell us about the system and the support you need."
+                          : "Sisteminiz ve destek ihtiyacınız hakkında bilgi verin. Talebiniz yönetim panelinden takip edilir."}
+                      </p>
+                    </div>
+                    <InquiryForm service />
+                  </section>
+                </>
+              }
+            />
+            <Route
+              path="/kurumsal/terimler-sozlugu"
+              element={<RecordedInformation kind="glossary" />}
+            />
+            <Route
+              path="/kurumsal/renk-kartelasi"
+              element={<RecordedInformation kind="colours" />}
+            />
+            <Route
+              path="/kurumsal/olcu-rehberi"
+              element={<RecordedInformation kind="measuring" />}
+            />
+            <Route
+              path="/kurumsal/uygulama-sureci"
+              element={<RecordedInformation kind="process" />}
+            />
+            <Route
+              path="/kurumsal/garanti-servis"
+              element={<RecordedInformation kind="warranty" />}
+            />
+            <Route path="/sistem-secici" element={<SystemFinder />} />
+            <Route path="/bolgeler" element={<RecordedServiceAreas />} />
+            <Route path="/bolgeler/:slug" element={<Detail type="region" />} />
+            <Route path="/urunler/:slug" element={<Detail type="product" />} />
+            <Route path="/projeler" element={<Listing type="project" />} />
+            <Route path="/projeler/:slug" element={<Detail type="project" />} />
+            <Route path="/blog" element={<Listing type="article" />} />
+            <Route path="/blog/:slug" element={<Detail type="article" />} />
+            <Route path="/kurumsal" element={<Corporate />} />
+            <Route path="/kurumsal/:slug" element={<Detail type="page" />} />
+            <Route path="/sikca-sorulan-sorular" element={<FAQ />} />
+            <Route path="/iletisim" element={<Contact />} />
+            <Route path="/teklif-al" element={<Contact quote />} />
+            <Route path="/is-ortakligi" element={<Contact dealer />} />
+            <Route path="/katalog" element={<Catalog />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+        {data.settings.whatsapp && (
+          <a
+            className="whatsapp-float"
+            href={`https://wa.me/${data.settings.whatsapp.replace(/\D/g, "")}`}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="WhatsApp"
+          >
+            <MessageCircle size={25} />
+          </a>
+        )}
+      </div>
     </SiteContext.Provider>
   );
 }

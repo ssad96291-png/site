@@ -1,5 +1,7 @@
 # Kılınç Dekorasyon
 
+**Yeni sürüm:** [Videolardan uyarlanan tasarım, önizlemeler ve Windows başlatma rehberi](docs/YENI-TASARIM.md). Windows için `BASLAT-WINDOWS.cmd` dosyasını kullanabilirsiniz (Node.js 24+ gerekir).
+
 Özgün tasarım, metinler ve yerel mimari SVG görselleştirmeler içeren Türkçe/İngilizce cam, alüminyum, metal ve açık alan sitesi. React + TypeScript + Vite, Express ve SQLite.
 
 ## Geliştirme
@@ -46,9 +48,9 @@ Panelde ürünler, yaşam alanları, yazılar, kurumsal sayfalar, hizmet bölgel
 
 Veritabanı `.data/site.sqlite`, yüklemeler `.data/uploads/` içinde tutulur. Bu klasörler kaynak koddan ayrı kalıcı diskte saklanmalıdır. `DATA_DIR` ile farklı bir kalıcı dizin seçilebilir. Sunucuyu durdurup tüm veri dizinini güvenli bir yere kopyalamak tutarlı yedek alma yöntemidir. Kaynak kodu yeniden dağıtmak veritabanını sıfırlamaz; başlangıç içerikleri yeni veritabanında oluşturulur. İçerik genişletme paketi, mevcut kayıtlara dokunmadan eksik yeni kayıtları bir kez ekleyen sürümlü geçiş kullanır; sonradan silinen kayıtları geri getirmez.
 
-Hazır içerik: 16 sistem, 6 konsept yaşam alanı, 10 rehber yazı, 13 kurumsal/yasal sayfa, 20 SSS ve 7 hizmet bölgesi. Mevcut veritabanında yönetici tarafından düzenlenmiş metinler korunur. Görseller özgün yerel mimari illüstrasyonlardır; tamamlanmış müşteri işi olarak sunulmaz. Harici font/görsel/takip servisine istek yapılmaz; fontlar yerel paketlerden sunulur.
+Hazır içerik: 16 sistem, 6 konsept yaşam alanı, 10 rehber yazı, 17 kurumsal/yasal sayfa, 20 SSS ve 7 hizmet bölgesi. Mevcut veritabanında yönetici tarafından düzenlenmiş metinler korunur. Görseller özgün yerel mimari illüstrasyonlardır; tamamlanmış müşteri işi olarak sunulmaz. Harici font/görsel/takip servisine istek yapılmaz; fontlar yerel paketlerden sunulur.
 
-Yayın öncesinde panelde firma iletişim bilgilerini, çalışma saatlerini, hizmet bölgelerini, ürün doğruluğunu ve kendi kullanım izinli fotoğraflarınızı tamamlayın. KVKK/gizlilik/kullanım metinleri taslaktır; gerçek veri sorumlusu ve süreçlerinizle tamamlanmalıdır. Referans siteye ortam ağ politikası nedeniyle erişilemediğinden onun bütün sayfa/kartlarıyla birebir kapsam eşleşmesi doğrulanmamıştır. Başka markanın logo, metin veya görselleri alınmamıştır; telif konusunda hukuki garanti verilmez.
+Yayın öncesinde panelde firma iletişim bilgilerini, çalışma saatlerini, hizmet bölgelerini, ürün doğruluğunu ve kendi kullanım izinli fotoğraflarınızı tamamlayın. KVKK/gizlilik/kullanım metinleri taslaktır; gerçek veri sorumlusu ve süreçlerinizle tamamlanmalıdır. Doğrudan referans siteye ağ erişimi engellidir; sağlanan yedi video parçası görsel olarak incelenerek sayfa ve gezinme düzeni uyarlanmıştır. Başka markanın logo, metin veya görselleri alınmamıştır; telif konusunda hukuki garanti verilmez.
 
 ## Güvenlik
 

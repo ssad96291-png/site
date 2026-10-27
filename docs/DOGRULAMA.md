@@ -1,4 +1,6 @@
-# Doğrulama kaydı
+# Önceki sürümün doğrulama kaydı
+
+Yeni sürümün 28 Ekim 2026 sonuçları için [YENI-TASARIM.md](YENI-TASARIM.md) dosyasına bakın.
 
 27 Ekim 2026 tarihinde bu çalışma ortamında:
 

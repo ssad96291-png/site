@@ -1,4 +1,5 @@
 import express from "express";
+import { referencePages, referencePagesVersion } from "./reference-content.js";
 import multer from "multer";
 import PDFDocument from "pdfkit";
 import { DatabaseSync } from "node:sqlite";
@@ -177,6 +178,18 @@ export function createApp(options: AppOptions = {}) {
       db.close();
       throw error;
     }
+  }
+  if (!db.prepare("SELECT version FROM schema_migrations WHERE version=?").get(referencePagesVersion)) {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      const insert = db.prepare("INSERT OR IGNORE INTO content(id,type,slug,data) VALUES(?,?,?,?)");
+      for (const seed of referencePages()) {
+        const item = cleanContent(seed);
+        insert.run(item.id, item.type, item.slug, JSON.stringify(item));
+      }
+      db.prepare("INSERT INTO schema_migrations(version,appliedAt) VALUES(?,?)").run(referencePagesVersion, new Date().toISOString());
+      db.exec("COMMIT");
+    } catch (error) { db.exec("ROLLBACK"); db.close(); throw error; }
   }
   if (!(db.prepare("SELECT COUNT(*) AS count FROM users").get() as any).count) {
     const provided = process.env.ADMIN_PASSWORD;
@@ -394,6 +407,21 @@ export function createApp(options: AppOptions = {}) {
     );
     res.status(201).json({ id: inquiry.id });
   });
+  const pdfFont = () => [process.env.PDF_FONT_PATH, "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "C:/Windows/Fonts/arial.ttf"].find((file): file is string => !!file && existsSync(file));
+  app.get("/api/measurement-guide.pdf", (req, res, next) => {
+    if (!consume("catalog", req.ip || "", 12, 15)) { res.setHeader("Retry-After", "900"); return next(fail(429, "Çok fazla belge isteği. Daha sonra tekrar deneyin.")); }
+    const item = allContent().find(c => c.type === "page" && c.slug === "olcu-rehberi" && c.published);
+    if (!item) return next(fail(404, "Bu rehber henüz yayında değil."));
+    try {
+      const doc = new PDFDocument({ size: "A4", margin: 48 });
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", 'attachment; filename="kilinc-on-olcu-rehberi.pdf"');
+      doc.pipe(res); const font = pdfFont(); if (font) doc.font(font);
+      doc.fontSize(22).text(settings().companyName).moveDown().fontSize(18).text(item.title).moveDown().fontSize(10).text(item.body).moveDown();
+      for (const step of item.specs) { if (doc.y > 650) doc.addPage(); doc.fontSize(13).text(step.label).moveDown(.4).fontSize(10).text(step.value).moveDown(); }
+      doc.end();
+    } catch (error) { next(error); }
+  });
   app.get("/api/catalog.pdf", (req, res, next) => {
     if (!consume("catalog", req.ip || "", 12, 15)) {
       res.setHeader("Retry-After", "900");
@@ -402,6 +430,9 @@ export function createApp(options: AppOptions = {}) {
     try {
       const s = settings();
       const english = req.query.lang === "en";
+      const family = typeof req.query.family === "string" ? req.query.family : "all";
+      if (!["all", "outdoor", "aluminium", "metal"].includes(family)) return next(fail(400, "Geçerli bir katalog seçin."));
+      const matchesFamily = (title: string) => family === "all" || (family === "metal" ? /demir|çelik|ferforje|yangın|metal|korkuluk/i.test(title) : family === "aluminium" ? /alüminyum|cephe|ofis|doğrama/i.test(title) && !/çelik|ferforje|yangın/i.test(title) : /pergola|bahçe|gölge/i.test(title));
       const doc = new PDFDocument({
         size: "A4",
         margin: 48,
@@ -416,8 +447,8 @@ export function createApp(options: AppOptions = {}) {
         'attachment; filename="kilinc-dekarasyon-katalog.pdf"',
       );
       doc.pipe(res);
-      const font = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
-      if (existsSync(font)) doc.font(font);
+      const font = pdfFont();
+      if (font) doc.font(font);
       doc
         .fillColor("#233b33")
         .fontSize(26)
@@ -440,7 +471,7 @@ export function createApp(options: AppOptions = {}) {
             : "Genel ürün bilgilendirmesi. Teknik özellikler ve fiyatlar projenize özel teklifte netleştirilir. Sitedeki görseller temsili tasarım çalışmalarıdır.",
         );
       for (const item of allContent().filter(
-        (i) => i.type === "product" && i.published,
+        (i) => i.type === "product" && i.published && matchesFamily(i.title),
       )) {
         if (doc.y > 650) doc.addPage();
         doc
@@ -782,7 +813,7 @@ export function createApp(options: AppOptions = {}) {
     const origin = settings().websiteUrl;
     if (!origin) return res.status(503).type("text/plain").send("Site adresini yönetim panelinden yapılandırın.");
     const routes: Record<string, string> = { product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler" };
-    const paths = ["", "/urunler", "/projeler", "/blog", "/iletisim", "/bolgeler", ...allContent().filter(c => c.published && routes[c.type]).map(c => "/" + routes[c.type] + "/" + c.slug)];
+    const paths = ["", "/urunler", "/projeler", "/blog", "/iletisim", "/bolgeler", "/galeri", "/proje-birimi", "/katalog", "/kurumsal", "/sistem-secici", ...allContent().filter(c => c.published && routes[c.type]).map(c => "/" + routes[c.type] + "/" + c.slug)];
     res.type("application/xml").send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + [...new Set(paths)].map(path => "<url><loc>" + xmlText(origin + path) + "</loc></url>").join("") + "</urlset>");
   });
   app.use("/api", (_req, _res, next) => next(fail(404, "İşlem bulunamadı.")));
