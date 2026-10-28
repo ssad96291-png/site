@@ -23,7 +23,7 @@ test("Customer portal ownership, private documents, staff scopes and recovery", 
     second = "",
     third = "",
     memberId = "",
-    dealerId = "",
+    teamId = "",
     docId = "";
   const cookies = (response: Response, name: string) =>
     response.headers
@@ -196,13 +196,13 @@ test("Customer portal ownership, private documents, staff scopes and recovery", 
       "Pipeline assignment and private messages update customer view without internal notes",
       async () => {
         const created = await req(
-          "/api/admin/dealers",
+          "/api/admin/teams",
           "POST",
           {
-            name: "Geçici Test Bayisi",
+            name: "Geçici Teknik İrtibat",
             contactName: "Test Yetkilisi",
             phone: "05000000000",
-            email: "dealer@example.com",
+            email: "technician@example.com",
             city: "Ankara",
             district: "Etimesgut",
             address: "Sentetik test adresi",
@@ -212,13 +212,13 @@ test("Customer portal ownership, private documents, staff scopes and recovery", 
           admin,
         );
         assert.equal(created.status, 201);
-        dealerId = (await created.json()).dealer.id;
+        teamId = (await created.json()).team.id;
         const changed = await req(
           "/api/admin/pipeline/" + first,
           "PATCH",
           {
             stage: "surveyed",
-            dealerId,
+            teamId,
             technician: "Test Teknisyeni",
             appointmentAt: "2030-01-15T10:00:00.000Z",
             customerMessage: "Keşif tamamlandı.",
@@ -239,7 +239,7 @@ test("Customer portal ownership, private documents, staff scopes and recovery", 
           ).json()
         ).inquiry;
         assert.equal(customer.stage, "surveyed");
-        assert.equal(customer.dealer.id, dealerId);
+        assert.equal(customer.assignedTeam.id, teamId);
         assert.equal(customer.technician, "Test Teknisyeni");
         assert.ok(
           customer.timeline.some((row: any) => row.stage === "surveyed"),
@@ -433,19 +433,24 @@ test("Customer portal ownership, private documents, staff scopes and recovery", 
       },
     );
     await t.test(
-      "Dealer authorization cannot inherit an admin cookie or access unrelated customers",
+      "Technician authorization cannot inherit an admin cookie or access unrelated customers",
       async () => {
         const created = await req(
           "/api/admin/staff",
           "POST",
-          { username: "test-dealer", password: pass, role: "dealer", dealerId },
+          {
+            username: "test-technician",
+            password: pass,
+            role: "technician",
+            teamId,
+          },
           admin,
         );
         assert.equal(created.status, 201);
         const signed = await req(
           "/api/staff/login",
           "POST",
-          { username: "test-dealer", password: pass },
+          { username: "test-technician", password: pass },
           admin,
         );
         assert.equal(signed.status, 200);

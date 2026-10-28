@@ -4,6 +4,7 @@ import { installTelemetry } from "./telemetry.js";
 import { deliverNotification, deliveryConfigured } from "./messaging.js";
 import { referencePages, referencePagesVersion } from "./reference-content.js";
 import { applyOriginalityContentMigration } from "./originality-content.js";
+import { applySingleShopContentMigration } from "./single-shop-content.js";
 import { installMediaRights } from "./media-rights.js";
 import { legacyImageReplacement } from "./media-assets.js";
 import multer from "multer";
@@ -254,6 +255,7 @@ export function createApp(options: AppOptions = {}) {
     }
   }
   applyOriginalityContentMigration(db);
+  applySingleShopContentMigration(db);
   if (!(db.prepare("SELECT COUNT(*) AS count FROM users").get() as any).count) {
     const provided = process.env.ADMIN_PASSWORD;
     if (provided && (provided.length < 12 || provided.length > 256))
@@ -491,6 +493,24 @@ export function createApp(options: AppOptions = {}) {
         ),
       );
     const input = req.body || {};
+    const obsoleteKind = String(input.kind || input.type || "").toLowerCase();
+    const obsoleteSubject = str(input.subject, 200).toLocaleLowerCase("tr");
+    if (
+      ["dealer", "dealership", "franchise", "partnership"].includes(
+        obsoleteKind,
+      ) ||
+      [
+        "iş ortaklığı başvurusu",
+        "bayilik başvurusu",
+        "dealership application",
+      ].includes(obsoleteSubject)
+    )
+      return next(
+        fail(
+          410,
+          "Bu başvuru türü kullanıma kapalıdır. Keşif, uygulama veya servis talebi oluşturabilirsiniz.",
+        ),
+      );
     if (input.website) return res.status(201).json({ id: "received" });
     const name = str(input.name, 100),
       email = str(input.email, 254),
@@ -1211,15 +1231,13 @@ export function createApp(options: AppOptions = {}) {
     };
     const paths = [
       "",
-      "/urunler",
-      "/projeler",
+      "/hizmetler",
+      "/fikir-defteri",
       "/blog",
       "/iletisim",
-      "/bolgeler",
-      "/galeri",
-      "/proje-birimi",
+      "/hizmet-alani",
       "/katalog",
-      "/kurumsal",
+      "/dukkanimiz",
       "/sistem-secici",
       ...allContent()
         .filter((c) => c.published && routes[c.type])
@@ -1238,6 +1256,24 @@ export function createApp(options: AppOptions = {}) {
       );
   });
   app.use("/api", (_req, _res, next) => next(fail(404, "İşlem bulunamadı.")));
+  app.get(
+    ["/is-ortakligi", "/bayilik", "/bayi", "/bayiler", "/franchise"],
+    (_req, res) => {
+      res.setHeader("X-Robots-Tag", "noindex, nofollow");
+      res.status(410).type("text/plain").send("Bu sayfa kullanıma kapalıdır.");
+    },
+  );
+  const publicAliases: Record<string, string> = {
+    "/urunler": "/hizmetler",
+    "/galeri": "/fikir-defteri",
+    "/projeler": "/fikir-defteri",
+    "/kurumsal": "/dukkanimiz",
+    "/bolgeler": "/hizmet-alani",
+    "/proje-birimi": "/teklif-al",
+  };
+  app.get(Object.keys(publicAliases), (req, res) =>
+    res.redirect(302, publicAliases[req.path]),
+  );
   app.use(["/hesabim", "/yonetim", "/admin"], (_req, res, next) => {
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
     res.setHeader("Cache-Control", "private, no-store");

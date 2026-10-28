@@ -65,7 +65,7 @@ interface LiveData {
 const eventLabels: Record<string, string> = {
   pageview: "Sayfayı görüntüledi",
   document_download: "Belge indirme bağlantısına tıkladı",
-  dealer_click: "Hizmet bölgesini açtı",
+  area_click: "Hizmet bölgesini açtı",
   form_start: "Formu doldurmaya başladı",
   form_abandoned: "Formdan gönderim yapmadan ayrıldı",
 };

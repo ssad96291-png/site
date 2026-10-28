@@ -9,7 +9,7 @@ type EventKind =
   | "pageview"
   | "heartbeat"
   | "document_download"
-  | "dealer_click"
+  | "area_click"
   | "form_start"
   | "form_abandoned";
 const privatePath = (path: string) =>
@@ -89,10 +89,10 @@ export default function VisitorConsent() {
         if (/^\/api\/(catalog\.pdf|measurement-guide\.pdf)$/.test(url.pathname))
           trackVisitorEvent("document_download", { path: pathname });
         else if (
-          url.pathname === "/bolgeler" ||
+          url.pathname === "/hizmet-alani" ||
           url.pathname.startsWith("/bolgeler/")
         )
-          trackVisitorEvent("dealer_click", { path: pathname });
+          trackVisitorEvent("area_click", { path: pathname });
       } catch {}
     };
     const focus = (event: Event) => {

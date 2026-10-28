@@ -147,15 +147,3 @@
     gap: 5px;
   }
 }
-@media (max-width: 400px) {
-  .recorded-site .rs-language {
-    gap: 2px;
-    right: 30px;
-  }
-  .recorded-site .rs-brand strong {
-    font-size: 22px;
-  }
-  .recorded-site .rs-brand small {
-    font-size: 6px;
-  }
-}

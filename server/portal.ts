@@ -10,6 +10,7 @@ import {
 import { mkdirSync, writeFileSync, unlinkSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import multer from "multer";
+import { migrateSingleShopOperations } from "./single-shop.js";
 
 export const portalStages = [
   "received",
@@ -21,7 +22,7 @@ export const portalStages = [
 ] as const;
 export const portalStageLabels: Record<string, string> = {
   received: "Talebiniz alındı",
-  assigned: "Bayi / keşif atandı",
+  assigned: "Keşif planlanıyor",
   surveyed: "Keşif tamamlandı",
   production: "Üretimde",
   installation: "Montaj bekliyor",
@@ -30,8 +31,8 @@ export const portalStageLabels: Record<string, string> = {
 type Actor = {
   id: string;
   username: string;
-  role: "admin" | "manager" | "editor" | "dealer";
-  dealerId?: string;
+  role: "admin" | "manager" | "editor" | "technician";
+  teamId?: string;
   region?: string;
 };
 type DeliveryResult = {
@@ -108,6 +109,7 @@ export function installPortal(options: PortalOptions) {
  CREATE INDEX IF NOT EXISTS portal_activity_customer_idx ON portal_activity(customerId,createdAt);
  CREATE INDEX IF NOT EXISTS portal_session_customer_idx ON portal_sessions(customerId);
  CREATE TABLE IF NOT EXISTS rate_limits(key TEXT PRIMARY KEY,count INTEGER NOT NULL,reset INTEGER NOT NULL);`);
+  migrateSingleShopOperations(db);
   db.prepare(
     "UPDATE portal_outbox SET status='failed',error='Önceki gönderimin sonucu belirsiz; sağlayıcı kaydını kontrol edin.' WHERE status='processing'",
   ).run();
@@ -244,7 +246,7 @@ export function installPortal(options: PortalOptions) {
       id: row.id,
       username: row.username,
       role: info.role,
-      dealerId: info.dealerId || "",
+      teamId: info.teamId || "",
       region: info.region || "",
     };
   };
@@ -259,11 +261,23 @@ export function installPortal(options: PortalOptions) {
     req.portalActor.role === "admin"
       ? next()
       : next(error(403, "Bu işlem için yönetici yetkisi gerekir."));
-  const dealer = (id: string) => {
+  const team = (id: string) => {
     const row = db
       .prepare("SELECT data FROM portal_dealers WHERE id=?")
       .get(id) as any;
     return row ? JSON.parse(row.data) : null;
+  };
+  const publicTeam = (id: string) => {
+    const row = team(id);
+    if (!row || row.active === false) return null;
+    return {
+      id: row.id,
+      name: row.name,
+      contactName: row.contactName || "",
+      phone: row.phone || "",
+      email: row.email || "",
+      active: row.active !== false,
+    };
   };
   const originalInquiry = (id: string) => {
     const row = db
@@ -310,9 +324,9 @@ export function installPortal(options: PortalOptions) {
       .run(s.inquiryId, s.customerId || null, JSON.stringify(s));
   const allowed = (actor: Actor, inq: any, s: any) =>
     actor.role === "admin" ||
-    (actor.role === "dealer" &&
-      !!actor.dealerId &&
-      s.dealerId === actor.dealerId) ||
+    (actor.role === "technician" &&
+      !!actor.teamId &&
+      s.dealerId === actor.teamId) ||
     (actor.role === "manager" &&
       !!actor.region &&
       canonical(inq.district || "") === canonical(actor.region));
@@ -363,18 +377,22 @@ export function installPortal(options: PortalOptions) {
     appointmentAt: s.appointmentAt,
     technician: s.technician,
     customerMessage: s.customerMessage,
-    dealer: s.dealerId ? dealer(s.dealerId) : null,
+    assignedTeam: s.dealerId ? publicTeam(s.dealerId) : null,
     timeline: s.timeline || [],
     messages: s.messages || [],
     documents: documents(inq.id),
   });
-  const managedInquiry = (inq: any, s: any) => ({
-    ...inq,
-    ...s,
-    id: inq.id,
-    dealer: s.dealerId ? dealer(s.dealerId) : null,
-    documents: documents(inq.id, true),
-  });
+  const managedInquiry = (inq: any, s: any) => {
+    const { dealerId, ...publicState } = s;
+    return {
+      ...inq,
+      ...publicState,
+      id: inq.id,
+      teamId: dealerId || "",
+      assignedTeam: dealerId ? publicTeam(dealerId) : null,
+      documents: documents(inq.id, true),
+    };
+  };
   const notify = (
     customerId: string | null,
     inquiryId: string | null,
@@ -617,29 +635,8 @@ export function installPortal(options: PortalOptions) {
     }
     const s = initialState(inq);
     s.customerId = id;
-    const region = canonical(inq.district || "");
-    if (region) {
-      const routes = db
-        .prepare("SELECT data FROM portal_dealers")
-        .all()
-        .map((r: any) => JSON.parse(r.data))
-        .filter(
-          (d: any) =>
-            d.active &&
-            Array.isArray(d.regions) &&
-            d.regions.some((r: string) => canonical(r) === region),
-        );
-      if (routes.length === 1) {
-        s.dealerId = routes[0].id;
-        s.stage = "assigned";
-        s.timeline.push({
-          id: randomUUID(),
-          stage: "assigned",
-          message: "Bölgenizdeki ekip talebinize atandı.",
-          createdAt: now(),
-        });
-      }
-    }
+    // One shop receives every request directly. Assignment is an explicit internal
+    // scheduling action; district matching never creates an external network.
     saveState(s);
     notify(
       null,
@@ -1044,7 +1041,7 @@ export function installPortal(options: PortalOptions) {
         user: {
           username: row.username,
           role: data.role,
-          dealerId: data.dealerId,
+          teamId: data.teamId || "",
           region: data.region,
         },
       });
@@ -1095,6 +1092,7 @@ export function installPortal(options: PortalOptions) {
   const prefixes = [
     "customers",
     "pipeline",
+    "teams",
     "dealers",
     "notifications",
     "outbox",
@@ -1298,22 +1296,16 @@ export function installPortal(options: PortalOptions) {
         !["normal", "high"].includes(input.priority)
       )
         throw error(400, "Geçerli öncelik seçin.");
-      if (input.dealerId !== undefined) {
-        if (req.portalActor.role === "dealer")
-          throw error(403, "Bayi atamasını yalnızca yönetici yapabilir.");
-        const id = text(input.dealerId, 100);
+      if (input.dealerId !== undefined)
+        throw error(400, "Atama için ekip alanını kullanın.");
+      if (input.teamId !== undefined) {
+        if (req.portalActor.role === "technician")
+          throw error(403, "Ekip atamasını yetkili sorumlu yapabilir.");
+        const id = text(input.teamId, 100);
         if (id) {
-          const assigned = dealer(id);
+          const assigned = team(id);
           if (!assigned || !assigned.active)
-            throw error(400, "Aktif bayi seçin.");
-          if (
-            req.portalActor.role === "manager" &&
-            !assigned.regions.some(
-              (r: string) =>
-                canonical(r) === canonical(req.portalActor.region || ""),
-            )
-          )
-            throw error(403, "Bu bayi bölgenizde değil.");
+            throw error(400, "Aktif bir teknik ekip seçin.");
         }
         s.dealerId = id;
       }
@@ -1517,89 +1509,75 @@ export function installPortal(options: PortalOptions) {
       }
     },
   );
-  const cleanDealer = (input: any, previous: any = {}) => {
-    const data = { ...previous };
-    for (const key of [
-      "name",
-      "contactName",
-      "phone",
-      "email",
-      "address",
-      "city",
-      "district",
-    ])
-      if (input[key] !== undefined)
-        data[key] = text(input[key], key === "address" ? 1000 : 200);
+  const cleanTeam = (input: any, previous: any = {}) => {
+    const data: any = {};
+    for (const key of ["name", "contactName", "phone", "email"])
+      data[key] = text(input[key] ?? previous[key], 200);
     if (!data.name || data.name.length < 2)
-      throw error(400, "Bayi adını girin.");
+      throw error(400, "Teknik ekip adını girin.");
     if (data.email && !validEmail(data.email))
-      throw error(400, "Geçerli bayi e-postası girin.");
-    if (input.regions !== undefined) {
-      if (!Array.isArray(input.regions))
-        throw error(400, "Bölgeler liste olmalıdır.");
-      data.regions = [
-        ...new Set(input.regions.map((v: any) => text(v, 100)).filter(Boolean)),
-      ].slice(0, 100);
-    }
-    data.regions ??= [];
+      throw error(400, "Geçerli ekip e-postası girin.");
     if (input.active !== undefined && typeof input.active !== "boolean")
-      throw error(400, "Bayi durumu doğru/yanlış olmalıdır.");
-    data.active = input.active ?? data.active ?? true;
+      throw error(400, "Ekip durumu doğru/yanlış olmalıdır.");
+    data.active = input.active ?? previous.active ?? true;
     data.id = previous.id || randomUUID();
     data.createdAt = previous.createdAt || now();
     data.updatedAt = now();
     return data;
   };
-  app.get("/api/admin/dealers", (req: any, res) => {
+  app.get("/api/admin/teams", (req: any, res) => {
     const rows = db
       .prepare("SELECT data FROM portal_dealers ORDER BY rowid DESC")
       .all()
       .map((r: any) => JSON.parse(r.data));
     res.json({
-      dealers: rows.filter(
-        (d: any) =>
-          req.portalActor.role === "admin" ||
-          (req.portalActor.role === "dealer"
-            ? d.id === req.portalActor.dealerId
-            : req.portalActor.role === "manager" &&
-              d.regions.some(
-                (r: string) =>
-                  canonical(r) === canonical(req.portalActor.region || ""),
-              )),
-      ),
+      teams: rows
+        .filter(
+          (row: any) =>
+            req.portalActor.role === "admin" ||
+            req.portalActor.role === "manager" ||
+            (req.portalActor.role === "technician" &&
+              row.id === req.portalActor.teamId),
+        )
+        .map((row: any) => ({
+          ...cleanTeam({}, row),
+          updatedAt: row.updatedAt || row.createdAt || null,
+        })),
     });
   });
-  app.post("/api/admin/dealers", onlyAdmin, (req: any, res, next) => {
+  app.post("/api/admin/teams", onlyAdmin, (req: any, res, next) => {
     try {
-      const data = cleanDealer(req.body || {});
+      const data = cleanTeam(req.body || {});
       db.prepare("INSERT INTO portal_dealers(id,data) VALUES(?,?)").run(
         data.id,
         JSON.stringify(data),
       );
-      audit(req.portalActor.username, "DEALER_CREATE", data.id);
-      res.status(201).json({ dealer: data });
+      audit(req.portalActor.username, "TEAM_CREATE", data.id);
+      res.status(201).json({ team: data });
     } catch (e) {
       next(e);
     }
   });
-  app.patch("/api/admin/dealers/:id", onlyAdmin, (req: any, res, next) => {
+  app.patch("/api/admin/teams/:id", onlyAdmin, (req: any, res, next) => {
     try {
-      const old = dealer(req.params.id);
-      if (!old) throw error(404, "Bayi bulunamadı.");
-      const data = cleanDealer(req.body || {}, old);
+      const old = team(req.params.id);
+      if (!old) throw error(404, "Teknik ekip bulunamadı.");
+      const data = cleanTeam(req.body || {}, old);
+      // Retain any historical fields privately; they are never used to route
+      // enquiries or shown as branches, regions or partner listings.
       db.prepare("UPDATE portal_dealers SET data=? WHERE id=?").run(
-        JSON.stringify(data),
+        JSON.stringify({ ...old, ...data }),
         data.id,
       );
-      audit(req.portalActor.username, "DEALER_UPDATE", data.id);
-      res.json({ dealer: data });
+      audit(req.portalActor.username, "TEAM_UPDATE", data.id);
+      res.json({ team: data });
     } catch (e) {
       next(e);
     }
   });
-  app.delete("/api/admin/dealers/:id", onlyAdmin, (req: any, res, next) => {
+  app.delete("/api/admin/teams/:id", onlyAdmin, (req: any, res, next) => {
     try {
-      if (!dealer(req.params.id)) throw error(404, "Bayi bulunamadı.");
+      if (!team(req.params.id)) throw error(404, "Teknik ekip bulunamadı.");
       const used = db
         .prepare("SELECT data FROM portal_inquiries")
         .all()
@@ -1607,43 +1585,37 @@ export function installPortal(options: PortalOptions) {
       if (used)
         throw error(
           409,
-          "Bu bayi taleplere atanmış. Önce atamaları kaldırın veya bayiyi pasife alın.",
+          "Bu ekip taleplere atanmış. Önce atamaları kaldırın veya ekibi pasife alın.",
         );
       db.prepare("DELETE FROM portal_dealers WHERE id=?").run(req.params.id);
       db.prepare(
-        "DELETE FROM portal_staff_sessions WHERE staffId IN (SELECT id FROM portal_staff WHERE json_extract(data,'$.dealerId')=?)",
+        "DELETE FROM portal_staff_sessions WHERE staffId IN (SELECT id FROM portal_staff WHERE json_extract(data,'$.teamId')=?)",
       ).run(req.params.id);
-      audit(req.portalActor.username, "DEALER_DELETE", req.params.id);
+      audit(req.portalActor.username, "TEAM_DELETE", req.params.id);
       res.json({ ok: true });
     } catch (e) {
       next(e);
     }
   });
-  app.get("/api/dealers", (_req, res) =>
-    res.json({
-      dealers: db
-        .prepare("SELECT data FROM portal_dealers")
-        .all()
-        .map((r: any) => JSON.parse(r.data))
-        .filter((d: any) => d.active)
-        .map((d: any) => ({
-          id: d.id,
-          name: d.name,
-          contactName: d.contactName,
-          phone: d.phone,
-          email: d.email,
-          address: d.address,
-          city: d.city,
-          district: d.district,
-          regions: d.regions,
-        })),
-    }),
+  app.use("/api/admin/dealers", (_req, res) =>
+    res.status(410).json({ error: "Bu uç nokta kullanımdan kaldırıldı." }),
   );
-  const safeStaff = (row: any) => ({
-    id: row.id,
-    username: row.username,
-    ...JSON.parse(row.data),
-  });
+  app.use("/api/dealers", (_req, res) =>
+    res.status(410).json({ error: "Bu uç nokta kullanımdan kaldırıldı." }),
+  );
+  const safeStaff = (row: any) => {
+    const data = JSON.parse(row.data);
+    return {
+      id: row.id,
+      username: row.username,
+      role: data.role,
+      teamId: data.teamId || "",
+      region: data.region || "",
+      status: data.status,
+      createdAt: data.createdAt,
+      lastLoginAt: data.lastLoginAt || null,
+    };
+  };
   app.get("/api/admin/staff", onlyAdmin, (_req, res) =>
     res.json({
       staff: db
@@ -1656,20 +1628,20 @@ export function installPortal(options: PortalOptions) {
   );
   const staffFields = (input: any, old: any = {}) => {
     const role = input.role ?? old.role;
-    if (!["manager", "editor", "dealer"].includes(role))
+    if (!["manager", "editor", "technician"].includes(role))
       throw error(400, "Geçerli çalışan rolü seçin.");
-    const dealerId = text(input.dealerId ?? old.dealerId, 100),
+    const teamId = text(input.teamId ?? old.teamId, 100),
       region = text(input.region ?? old.region, 100);
-    if (role === "dealer" && (!dealerId || !dealer(dealerId)))
-      throw error(400, "Bayi rolü için bayi seçin.");
+    if (role === "technician" && (!teamId || !team(teamId)))
+      throw error(400, "Teknik personel için ekip seçin.");
     if (role === "manager" && !region)
-      throw error(400, "Bölge yöneticisi için bölge girin.");
+      throw error(400, "Operasyon sorumlusu için hizmet alanı girin.");
     const status = input.status ?? old.status ?? "active";
     if (!["active", "suspended"].includes(status))
       throw error(400, "Geçerli çalışan durumu seçin.");
     return {
       role,
-      dealerId: role === "dealer" ? dealerId : "",
+      teamId: role === "technician" ? teamId : "",
       region: role === "manager" ? region : "",
       status,
       createdAt: old.createdAt || now(),

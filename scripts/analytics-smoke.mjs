@@ -87,7 +87,7 @@ try {
       r.url().endsWith("/api/telemetry") &&
       r.request().postDataJSON()?.path?.startsWith("/urunler/"),
   );
-  await page.locator(".rs-feature-grid a").first().click();
+  await page.locator(".ls-service-row h3 a").first().click();
   assert.equal((await productEvent).status(), 202);
   report = await metrics();
   assert.ok(report.topProducts.length);
@@ -102,7 +102,7 @@ try {
   await page.locator("[name=name]").fill("UNSUBMITTED-PRIVATE-NAME");
   await formStarted;
   await page.locator("[name=phone]").fill("05559998877");
-  await page.goto(base + "/urunler", { waitUntil: "domcontentloaded" });
+  await page.goto(base + "/hizmetler", { waitUntil: "domcontentloaded" });
   report = await metrics();
   assert.ok(report.stream.some((e) => e.kind === "form_start"));
   assert.ok(report.stream.some((e) => e.kind === "form_abandoned"));
@@ -137,7 +137,7 @@ try {
   assert.equal(report.kpis.activeVisitors, 0);
   assert.equal(report.stream.length, 0);
   const before = telemetryRequests;
-  await page.goto(base + "/galeri", { waitUntil: "domcontentloaded" });
+  await page.goto(base + "/fikir-defteri", { waitUntil: "domcontentloaded" });
   assert.equal(telemetryRequests, before);
   assert.deepEqual(errors, []);
   pass("revoking consent deletes session history and stops further tracking");

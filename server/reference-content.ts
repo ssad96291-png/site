@@ -1,4 +1,4 @@
-// Original editable content for the recorded-layout adaptation.
+// Editable service notes; independent from the public site layout.
 export const referencePagesVersion = "recorded-layout-2026-10-28";
 export function referencePages() {
   const make = (
@@ -22,7 +22,7 @@ export function referencePages() {
     body,
     bodyEn,
     specs,
-    category: "Bilgi merkezi",
+    category: "Uygulama notları",
     image: "",
     imageAlt: "",
     gallery: [],
@@ -170,10 +170,10 @@ export function referencePages() {
       "uygulama-sureci",
       "Çalışma Sürecimiz",
       "Our Project Process",
-      "İlk fikirden teslimata, açık ve anlaşılır bir yol.",
-      "A clear journey from the first idea to handover.",
-      "Her projenin koşulları farklıdır. Kullanım amacı, yapı, erişim, malzeme ve hedef takvimi birlikte değerlendirerek kapsamı netleştiririz.\nBu süreç akışı bir teslim süresi veya performans garantisi değildir. Onaylanacak ürün, uygulama, takvim ve ticari koşullar projeye özel yazılı teklifte yer almalıdır.",
-      "Every project has different needs. We review the intended use, building, access, materials and target timing together. This process is not a delivery or performance guarantee; scope and terms are confirmed in a project-specific proposal.",
+      "Etimesgut’taki dükkânımızla görüşmeden uygulamaya.",
+      "From a conversation with our Etimesgut shop to installation.",
+      "Etimesgut’taki tek dükkânımızla doğrudan iletişim kurarsınız. Kullanım amacı, yapı, erişim, malzeme ve hedef takvimi birlikte değerlendirerek kapsamı netleştiririz.\nBu süreç akışı bir teslim süresi veya performans garantisi değildir. Onaylanacak ürün, uygulama, takvim ve ticari koşullar projeye özel yazılı teklifte yer almalıdır.",
+      "You speak directly with our single shop in Etimesgut. We review the intended use, building, access, materials and target timing together. This process is not a delivery or performance guarantee; scope and terms are confirmed in a project-specific proposal.",
       [
         {
           label: "İhtiyaç ve ilk görüşme",

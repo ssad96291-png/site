@@ -71,10 +71,10 @@ type Section =
   | "live"
   | "customers"
   | "pipeline"
-  | "dealers"
+  | "teams"
   | "notifications"
   | "staff";
-type OperatorRole = "admin" | "manager" | "editor" | "dealer";
+type OperatorRole = "admin" | "manager" | "editor" | "technician";
 type Operator = {
   username: string;
   role?: OperatorRole;
@@ -134,7 +134,7 @@ const groups: {
   { id: "live", label: "Canlı izleme & analiz", icon: Activity },
   { id: "customers", label: "Müşteriler", icon: Users },
   { id: "pipeline", label: "Talep süreçleri", icon: Columns3 },
-  { id: "dealers", label: "Bayi & teknik ekip", icon: Network },
+  { id: "teams", label: "Teknik ekip", icon: Network },
   { id: "notifications", label: "Bildirim merkezi", icon: Bell },
   { id: "staff", label: "Personel ve roller", icon: UserCog },
 
@@ -229,7 +229,7 @@ export default function AdminApp() {
     setSection(
       account.role === "editor"
         ? "product"
-        : account.role === "dealer"
+        : account.role === "technician"
           ? "pipeline"
           : account.role === "manager"
             ? "live"
@@ -258,7 +258,7 @@ export default function AdminApp() {
     setLoading(true);
     setError("");
     try {
-      if (role === "manager" || role === "dealer") return;
+      if (role === "manager" || role === "technician") return;
       const [c, i, s] = await Promise.all([
         api<{ content: Content[] }>("/api/admin/content"),
         role === "admin"
@@ -404,11 +404,11 @@ export default function AdminApp() {
                       "live",
                       "customers",
                       "pipeline",
-                      "dealers",
+                      "teams",
                       "notifications",
                       "security",
                     ]
-                  : role === "dealer"
+                  : role === "technician"
                     ? ["pipeline", "notifications", "security"]
                     : [
                         "product",
@@ -567,7 +567,7 @@ export default function AdminApp() {
               {[
                 "customers",
                 "pipeline",
-                "dealers",
+                "teams",
                 "notifications",
                 "staff",
               ].includes(section) && (
@@ -1513,7 +1513,7 @@ function Login({
               }}
             >
               <option value="admin">Ana yönetici</option>
-              <option value="staff">Personel / bayi</option>
+              <option value="staff">Personel</option>
             </select>
           </label>
           <label className="ka-field">
@@ -2987,11 +2987,11 @@ function OperatorHeaderTools({
             "live",
             "customers",
             "pipeline",
-            "dealers",
+            "teams",
             "notifications",
             "security",
           ]
-        : role === "dealer"
+        : role === "technician"
           ? ["pipeline", "notifications", "security"]
           : [
               "product",

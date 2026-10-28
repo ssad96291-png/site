@@ -50,7 +50,9 @@ try {
     viewport: { width: 1440, height: 1000 },
     reducedMotion: "reduce",
   });
-  await context.addInitScript(() => localStorage.setItem("kilinc-analytics-consent-v1", "off"));
+  await context.addInitScript(() =>
+    localStorage.setItem("kilinc-analytics-consent-v1", "off"),
+  );
   const page = await context.newPage();
   page.setDefaultTimeout(10000);
   page.on("pageerror", (e) => errors.push(e.message));
@@ -127,24 +129,20 @@ try {
     .getByRole("navigation", { name: "Müşteri paneli menüsü" })
     .getByRole("button", { name: /Taleplerim & Projelerim/ })
     .click();
-  const dealerResponse = await adminContext.request.post(
-    base + "/api/admin/dealers",
+  const teamResponse = await adminContext.request.post(
+    base + "/api/admin/teams",
     {
       data: {
         name: "Sentetik Etimesgut Ekibi",
         contactName: "Teknik Ekip",
         phone: "05000000001",
         email: "synthetic-team@example.com",
-        address: "Sentetik test adresi",
-        city: "Ankara",
-        district: "Etimesgut",
-        regions: ["Etimesgut"],
         active: true,
       },
     },
   );
-  assert.equal(dealerResponse.status(), 201);
-  const dealer = (await dealerResponse.json()).dealer;
+  assert.equal(teamResponse.status(), 201);
+  const team = (await teamResponse.json()).team;
   assert.equal(
     (
       await adminContext.request.patch(
@@ -152,7 +150,7 @@ try {
         {
           data: {
             stage: "assigned",
-            dealerId: dealer.id,
+            teamId: team.id,
             technician: "Sentetik Teknisyen",
             appointmentAt: "2030-01-15T10:00:00.000Z",
             customerMessage: "Keşif randevunuz planlandı.",
@@ -166,12 +164,34 @@ try {
     .getByRole("button", { name: "Taleplerimi yenile", exact: true })
     .click();
   await page.getByText("Sentetik Etimesgut Ekibi", { exact: true }).waitFor();
+  await page
+    .getByRole("heading", { name: "Teknik irtibat", exact: true })
+    .waitFor();
+  await page.getByText("Keşif planlanıyor", { exact: true }).first().waitFor();
+  assert.doesNotMatch(
+    await page.locator(".cp-request-detail").innerText(),
+    /bayi|dealership/i,
+  );
+  assert.equal(
+    await page.locator('.cp-team-card a[href="tel:05000000001"]').count(),
+    1,
+  );
+  const publicRequest = await (
+    await context.request.get(base + "/api/customer/inquiries/" + inquiryId)
+  ).json();
+  assert.equal(publicRequest.inquiry.assignedTeam.id, team.id);
+  assert.equal("dealer" in publicRequest.inquiry, false);
+  assert.equal("dealerId" in publicRequest.inquiry, false);
+  for (const key of ["address", "city", "district", "regions"])
+    assert.equal(key in publicRequest.inquiry.assignedTeam, false);
   assert.match(await page.locator(".cp-appointment").innerText(), /2030/);
   assert.match(
     await page.locator(".cp-team-update").innerText(),
     /Keşif randevunuz/,
   );
-  pass("admin assignment, technician and appointment appear in customer view");
+  pass(
+    "internal technical contact and planning appear without a dealership or region directory",
+  );
   assert.equal(
     (
       await adminContext.request.patch(

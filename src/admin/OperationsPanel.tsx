@@ -19,7 +19,6 @@ import {
   KeyRound,
   Loader2,
   LockKeyhole,
-  MapPin,
   MessageSquare,
   Plus,
   RefreshCw,
@@ -35,7 +34,7 @@ import {
 import "./operations.css";
 
 export type OperationsSection =
-  "customers" | "pipeline" | "dealers" | "notifications" | "staff";
+  "customers" | "pipeline" | "teams" | "notifications" | "staff";
 type Stage =
   | "received"
   | "assigned"
@@ -45,7 +44,7 @@ type Stage =
   | "completed";
 const stages: { id: Stage; label: string; short: string }[] = [
   { id: "received", label: "Talep alındı", short: "Yeni talep" },
-  { id: "assigned", label: "Bayi / keşif atandı", short: "Keşif atandı" },
+  { id: "assigned", label: "Planlama", short: "Planlama" },
   { id: "surveyed", label: "Keşif tamamlandı", short: "Keşif tamam" },
   { id: "production", label: "Üretimde", short: "Üretimde" },
   { id: "installation", label: "Montaj bekliyor", short: "Montaj" },
@@ -66,16 +65,12 @@ type Customer = {
   activeInquiryCount: number;
   online: boolean;
 };
-type Dealer = {
+type Team = {
   id: string;
   name: string;
   contactName: string;
   phone: string;
   email: string;
-  address: string;
-  city: string;
-  district: string;
-  regions: string[];
   active: boolean;
   inquiryCount?: number;
   completedCount?: number;
@@ -116,7 +111,7 @@ type Lead = {
   service?: string;
   customerId?: string;
   stage: Stage;
-  dealerId?: string;
+  teamId?: string;
   technician?: string;
   appointmentAt?: string;
   customerMessage?: string;
@@ -132,14 +127,14 @@ type Lead = {
     message?: string;
     at?: string;
   }[];
-  dealer?: Dealer;
+  assignedTeam?: Team;
 };
 type Staff = {
   id: string;
   username: string;
-  role: "manager" | "editor" | "dealer";
+  role: "manager" | "editor" | "technician";
   status: "active" | "suspended";
-  dealerId?: string;
+  teamId?: string;
   region?: string;
   lastLoginAt?: string;
 };
@@ -149,9 +144,9 @@ const customerTypes = {
   corporate: "Müteahhit / kurumsal",
 };
 const roles = {
-  manager: "Bölge yöneticisi",
+  manager: "Operasyon sorumlusu",
   editor: "İçerik editörü",
-  dealer: "Bayi kullanıcısı",
+  technician: "Teknik personel",
 };
 const date = (value?: string) =>
   value
@@ -221,16 +216,16 @@ export function OperationsPanel({
   const allowed =
     role === "admin" ||
     (role === "manager" && section !== "staff") ||
-    (role === "dealer" && ["pipeline", "notifications"].includes(section));
+    (role === "technician" && ["pipeline", "notifications"].includes(section));
   if (!allowed) return <Alert>Bu bölüm için erişim yetkiniz bulunmuyor.</Alert>;
   return (
     <div className="op-workspace">
       {section === "customers" ? (
         <Customers canManage={role === "admin"} />
       ) : section === "pipeline" ? (
-        <Pipeline canAssign={role !== "dealer"} />
-      ) : section === "dealers" ? (
-        <Dealers canManage={role === "admin"} />
+        <Pipeline canAssign={role !== "technician"} />
+      ) : section === "teams" ? (
+        <Teams canManage={role === "admin"} />
       ) : section === "staff" ? (
         <StaffManager />
       ) : (
@@ -243,20 +238,20 @@ export function OperationsSummary({ role = "admin" }: { role?: string } = {}) {
   const [data, setData] = useState<{
     customers: Customer[];
     inquiries: Lead[];
-    dealers: Dealer[];
+    teams: Team[];
   } | null>(null);
   const [error, setError] = useState("");
   useEffect(() => {
     let alive = true;
     const load = async () => {
       try {
-        const [customers, pipeline, dealers] = await Promise.all([
+        const [customers, pipeline, teams] = await Promise.all([
           api<{ customers: Customer[] }>("/api/admin/customers"),
           api<{ inquiries: Lead[] }>("/api/admin/pipeline"),
-          api<{ dealers: Dealer[] }>("/api/admin/dealers"),
+          api<{ teams: Team[] }>("/api/admin/teams"),
         ]);
         if (alive) {
-          setData({ ...customers, ...pipeline, ...dealers });
+          setData({ ...customers, ...pipeline, ...teams });
           setError("");
         }
       } catch (e) {
@@ -282,9 +277,9 @@ export function OperationsSummary({ role = "admin" }: { role?: string } = {}) {
           icon: MessageSquare,
         },
         {
-          label: "Aktif bayi / ekip",
-          value: data?.dealers.filter((d) => d.active).length,
-          icon: MapPin,
+          label: "Aktif teknik ekip",
+          value: data?.teams.filter((d) => d.active).length,
+          icon: Users,
         },
         {
           label: "Keşif / montaj randevusu",
@@ -766,7 +761,7 @@ function CustomerEditor({
 
 function Pipeline({ canAssign }: { canAssign: boolean }) {
   const [leads, setLeads] = useState<Lead[]>([]),
-    [dealers, setDealers] = useState<Dealer[]>([]),
+    [teams, setTeams] = useState<Team[]>([]),
     [selected, setSelected] = useState<Lead | null>(null),
     [query, setQuery] = useState(""),
     [view, setView] = useState<"board" | "list">("board"),
@@ -777,10 +772,10 @@ function Pipeline({ canAssign }: { canAssign: boolean }) {
     try {
       const [p, d] = await Promise.all([
         api<{ inquiries: Lead[] }>("/api/admin/pipeline"),
-        api<{ dealers: Dealer[] }>("/api/admin/dealers"),
+        api<{ teams: Team[] }>("/api/admin/teams"),
       ]);
       setLeads(p.inquiries);
-      setDealers(d.dealers);
+      setTeams(d.teams);
       setSelected((current) =>
         current ? p.inquiries.find((l) => l.id === current.id) || null : null,
       );
@@ -1029,7 +1024,7 @@ function Pipeline({ canAssign }: { canAssign: boolean }) {
             <LeadEditor
               key={selected.id}
               lead={selected}
-              dealers={dealers}
+              teams={teams}
               canAssign={canAssign}
               onRefresh={load}
               onSaved={(message) => setNotice(message)}
@@ -1098,20 +1093,20 @@ function localDate(value?: string) {
 }
 function LeadEditor({
   lead,
-  dealers,
+  teams,
   canAssign,
   onRefresh,
   onSaved,
 }: {
   lead: Lead;
-  dealers: Dealer[];
+  teams: Team[];
   canAssign: boolean;
   onRefresh: () => Promise<void>;
   onSaved: (message: string) => void;
 }) {
   const [draft, setDraft] = useState({
       stage: stageOf(lead),
-      dealerId: lead.dealerId || "",
+      teamId: lead.teamId || "",
       technician: lead.technician || "",
       appointmentAt: localDate(lead.appointmentAt),
       customerMessage: lead.customerMessage || "",
@@ -1133,7 +1128,7 @@ function LeadEditor({
         `/api/admin/pipeline/${lead.id}`,
         json("PATCH", {
           ...draft,
-          ...(!canAssign ? { dealerId: undefined } : {}),
+          ...(!canAssign ? { teamId: undefined } : {}),
           appointmentAt: draft.appointmentAt
             ? new Date(draft.appointmentAt).toISOString()
             : "",
@@ -1240,15 +1235,15 @@ function LeadEditor({
             </select>
           </label>
           <label className="ka-field">
-            Atanan bayi / ekip
+            Sorumlu teknik ekip
             <select
               disabled={!canAssign}
-              value={draft.dealerId}
-              onChange={(e) => setDraft({ ...draft, dealerId: e.target.value })}
+              value={draft.teamId}
+              onChange={(e) => setDraft({ ...draft, teamId: e.target.value })}
             >
               <option value="">Henüz atanmadı</option>
-              {dealers
-                .filter((d) => d.active || d.id === draft.dealerId)
+              {teams
+                .filter((d) => d.active || d.id === draft.teamId)
                 .map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
@@ -1488,18 +1483,16 @@ function LeadEditor({
   );
 }
 
-function Dealers({ canManage }: { canManage: boolean }) {
-  const [dealers, setDealers] = useState<Dealer[]>([]),
-    [draft, setDraft] = useState<Dealer | null>(null),
+function Teams({ canManage }: { canManage: boolean }) {
+  const [teams, setTeams] = useState<Team[]>([]),
+    [draft, setDraft] = useState<Team | null>(null),
     [query, setQuery] = useState(""),
     [error, setError] = useState(""),
     [notice, setNotice] = useState(""),
     [busy, setBusy] = useState(false);
   const load = useCallback(async () => {
     try {
-      setDealers(
-        (await api<{ dealers: Dealer[] }>("/api/admin/dealers")).dealers,
-      );
+      setTeams((await api<{ teams: Team[] }>("/api/admin/teams")).teams);
       setError("");
     } catch (e) {
       setError(errorText(e));
@@ -1508,16 +1501,12 @@ function Dealers({ canManage }: { canManage: boolean }) {
   useEffect(() => {
     void load();
   }, [load]);
-  const empty: Dealer = {
+  const empty: Team = {
     id: "",
     name: "",
     contactName: "",
     phone: "",
     email: "",
-    address: "",
-    city: "Ankara",
-    district: "",
-    regions: [],
     active: true,
   };
   async function save(e: FormEvent) {
@@ -1526,14 +1515,21 @@ function Dealers({ canManage }: { canManage: boolean }) {
     setBusy(true);
     setError("");
     try {
+      const body = {
+        name: draft.name,
+        contactName: draft.contactName,
+        phone: draft.phone,
+        email: draft.email,
+        active: draft.active,
+      };
       await api(
-        draft.id ? `/api/admin/dealers/${draft.id}` : "/api/admin/dealers",
-        json(draft.id ? "PATCH" : "POST", draft),
+        draft.id ? `/api/admin/teams/${draft.id}` : "/api/admin/teams",
+        json(draft.id ? "PATCH" : "POST", body),
       );
       await load();
       setDraft(null);
       setNotice(
-        "Bayi / ekip kaydedildi. Bölge eşleşmeleri yeni talep yönlendirmesinde kullanılır.",
+        "Teknik ekip kaydedildi. Taleplerde sorumlu ekibi siz seçebilirsiniz.",
       );
     } catch (e) {
       setError(errorText(e));
@@ -1541,31 +1537,38 @@ function Dealers({ canManage }: { canManage: boolean }) {
       setBusy(false);
     }
   }
-  async function remove(dealer: Dealer) {
+  async function remove(team: Team) {
     if (
       !window.confirm(
-        `“${dealer.name}” kaydı silinsin mi? Aktif atamaları varsa önce bunları değiştirin.`,
+        `“${team.name}” kaydı silinsin mi? Atanmış talepler varsa önce sorumlu ekibi değiştirin.`,
       )
     )
       return;
     try {
-      await api(`/api/admin/dealers/${dealer.id}`, { method: "DELETE" });
+      await api(`/api/admin/teams/${team.id}`, { method: "DELETE" });
       await load();
-      setNotice("Bayi kaydı silindi.");
+      setNotice("Teknik ekip kaydı silindi.");
     } catch (e) {
       setError(errorText(e));
     }
   }
+  const visible = teams.filter((team) =>
+    [team.name, team.contactName, team.phone, team.email]
+      .join(" ")
+      .toLocaleLowerCase("tr-TR")
+      .includes(query.toLocaleLowerCase("tr-TR")),
+  );
   return (
     <>
       {error && <Alert>{error}</Alert>}
       {notice && <Notice text={notice} onClose={() => setNotice("")} />}
       <div className="op-section-intro">
         <div>
-          <h2>Bayi ve teknik ekip ağı</h2>
+          <h2>Dükkânın teknik ekibi</h2>
           <p>
-            Gerçek bayi ve ekiplerinizi tanımlayın. Bölge listesi yeni
-            taleplerin otomatik atamasında kullanılır.
+            Keşif, üretim veya montaj işlerini birlikte yaptığınız kendi
+            çalışanlarınızın iletişim kayıtları. Tek başınıza çalışıyorsanız bu
+            alanı boş bırakabilirsiniz.
           </p>
         </div>
         <button
@@ -1574,17 +1577,17 @@ function Dealers({ canManage }: { canManage: boolean }) {
           onClick={() => setDraft(empty)}
         >
           <Plus size={16} />
-          Bayi / ekip ekle
+          Teknik ekip ekle
         </button>
       </div>
       {draft && (
-        <section className="ka-panel op-dealer-editor">
+        <section className="ka-panel op-team-editor">
           <div className="ka-panel-title">
-            <h2>{draft.id ? "Bayi / ekip düzenle" : "Yeni bayi / ekip"}</h2>
+            <h2>{draft.id ? "Teknik ekip düzenle" : "Yeni teknik ekip"}</h2>
             <button
               type="button"
               onClick={() => setDraft(null)}
-              aria-label="Bayi editörünü kapat"
+              aria-label="Ekip editörünü kapat"
             >
               <X size={18} />
             </button>
@@ -1592,60 +1595,26 @@ function Dealers({ canManage }: { canManage: boolean }) {
           <form onSubmit={save} className="op-form">
             <div className="ka-field-grid">
               {[
-                { key: "name", label: "Bayi / ekip adı", required: true },
-                { key: "contactName", label: "Yetkili kişi" },
-                { key: "phone", label: "Telefon" },
+                { key: "name", label: "Ekip adı", required: true },
+                { key: "contactName", label: "Sorumlu çalışan" },
+                { key: "phone", label: "Telefon", type: "tel" },
                 { key: "email", label: "E-posta", type: "email" },
-                { key: "city", label: "Şehir" },
-                { key: "district", label: "Merkez ilçe" },
-              ].map((f) => (
-                <label key={f.key} className="ka-field">
-                  {f.label}
-                  {f.required ? " *" : ""}
+              ].map((field) => (
+                <label key={field.key} className="ka-field">
+                  {field.label}
+                  {field.required ? " *" : ""}
                   <input
-                    required={f.required}
-                    type={f.type || "text"}
+                    required={field.required}
+                    type={field.type || "text"}
                     maxLength={200}
-                    value={String(draft[f.key as keyof Dealer] || "")}
+                    value={String(draft[field.key as keyof Team] || "")}
                     onChange={(e) =>
-                      setDraft({ ...draft, [f.key]: e.target.value })
+                      setDraft({ ...draft, [field.key]: e.target.value })
                     }
                   />
                 </label>
               ))}
             </div>
-            <label className="ka-field">
-              Adres
-              <textarea
-                maxLength={1000}
-                rows={2}
-                value={draft.address}
-                onChange={(e) =>
-                  setDraft({ ...draft, address: e.target.value })
-                }
-              />
-            </label>
-            <label className="ka-field">
-              Sorumlu bölgeler
-              <input
-                placeholder="Etimesgut, Bağlıca, Eryaman"
-                key={draft.id || "new"}
-                defaultValue={draft.regions.join(", ")}
-                onChange={(e) =>
-                  setDraft({
-                    ...draft,
-                    regions: e.target.value
-                      .split(",")
-                      .map((s) => s.trim())
-                      .filter(Boolean),
-                  })
-                }
-              />
-              <small>
-                İlçe / bölge adlarını virgülle ayırın. Belirsiz veya birden
-                fazla eşleşme yönetici tarafından kontrol edilmelidir.
-              </small>
-            </label>
             <label className="ka-checkbox">
               <input
                 type="checkbox"
@@ -1654,11 +1623,11 @@ function Dealers({ canManage }: { canManage: boolean }) {
                   setDraft({ ...draft, active: e.target.checked })
                 }
               />
-              <span>Aktif — yeni talep atanabilir</span>
+              <span>Aktif — taleplerde sorumlu ekip olarak seçilebilir</span>
             </label>
             <button className="ka-button primary" disabled={busy} type="submit">
               <Save size={16} />
-              Bayi / ekibi kaydet
+              Teknik ekibi kaydet
             </button>
           </form>
         </section>
@@ -1668,77 +1637,69 @@ function Dealers({ canManage }: { canManage: boolean }) {
           <label className="ka-search">
             <Search size={17} />
             <input
-              aria-label="Bayi ara"
-              placeholder="Bayi, yetkili veya bölge ara…"
+              aria-label="Teknik ekip ara"
+              placeholder="Ekip veya çalışan ara…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </label>
-          <span>{dealers.length} kayıt</span>
+          <span>{teams.length} kayıt</span>
         </div>
-        <div className="op-dealer-grid">
-          {dealers
-            .filter((d) =>
-              [d.name, d.contactName, d.city, d.district, ...d.regions]
-                .join(" ")
-                .toLocaleLowerCase("tr-TR")
-                .includes(query.toLocaleLowerCase("tr-TR")),
-            )
-            .map((d) => (
-              <article key={d.id}>
-                <div>
-                  <MapPin size={22} />
-                  <span
-                    className={`ka-badge ${d.active ? "published" : "draft"}`}
-                  >
-                    {d.active ? "Aktif" : "Pasif"}
-                  </span>
-                </div>
-                <h3>{d.name}</h3>
-                <p>{d.contactName || "Yetkili kişi belirtilmedi"}</p>
-                <p>
-                  {[d.city, d.district].filter(Boolean).join(" / ") ||
-                    "Konum belirtilmedi"}
-                </p>
-                {d.phone && (
-                  <a href={`tel:${d.phone.replace(/[^+\d]/g, "")}`}>
-                    {d.phone}
-                  </a>
-                )}
-                <div className="op-tags">
-                  {d.regions.map((r) => (
-                    <span key={r}>{r}</span>
-                  ))}
-                </div>
-                {typeof d.inquiryCount === "number" && (
-                  <small>
-                    {d.inquiryCount} atanan · {d.completedCount || 0} tamamlanan
-                  </small>
-                )}
-                <div className="op-button-row">
-                  <button
-                    className="ka-button secondary"
-                    disabled={!canManage}
-                    onClick={() => setDraft(d)}
-                  >
-                    Düzenle
-                  </button>
-                  <button
-                    className="ka-icon-button danger"
-                    disabled={!canManage}
-                    aria-label={`${d.name} kaydını sil`}
-                    onClick={() => void remove(d)}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </article>
-            ))}
+        <div className="op-team-grid">
+          {visible.map((team) => (
+            <article key={team.id}>
+              <div>
+                <Users size={22} />
+                <span
+                  className={`ka-badge ${team.active ? "published" : "draft"}`}
+                >
+                  {team.active ? "Aktif" : "Pasif"}
+                </span>
+              </div>
+              <h3>{team.name}</h3>
+              <p>{team.contactName || "Sorumlu çalışan belirtilmedi"}</p>
+              {team.phone && (
+                <a href={`tel:${team.phone.replace(/[^+\d]/g, "")}`}>
+                  {team.phone}
+                </a>
+              )}
+              {team.email && <a href={`mailto:${team.email}`}>{team.email}</a>}
+              {typeof team.inquiryCount === "number" && (
+                <small>
+                  {team.inquiryCount} atanan · {team.completedCount || 0}{" "}
+                  tamamlanan
+                </small>
+              )}
+              <div className="op-button-row">
+                <button
+                  className="ka-button secondary"
+                  disabled={!canManage}
+                  onClick={() => setDraft(team)}
+                >
+                  Düzenle
+                </button>
+                <button
+                  className="ka-icon-button danger"
+                  disabled={!canManage}
+                  aria-label={`${team.name} kaydını sil`}
+                  onClick={() => void remove(team)}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </article>
+          ))}
         </div>
-        {!dealers.length && (
+        {!visible.length && (
           <Empty
-            title="Henüz bayi / ekip yok"
-            text="İlk gerçek bayi veya teknik ekibinizi ekleyerek başlayın."
+            title={
+              query ? "Eşleşen teknik ekip yok" : "Henüz teknik ekip eklenmedi"
+            }
+            text={
+              query
+                ? "Başka bir ekip veya çalışan adıyla arayın."
+                : "Ekibiniz varsa iletişim kaydı ekleyin. Talepleri ekip eklemeden de kendiniz takip edebilirsiniz."
+            }
           />
         )}
       </section>
@@ -1748,7 +1709,7 @@ function Dealers({ canManage }: { canManage: boolean }) {
 
 function StaffManager() {
   const [staff, setStaff] = useState<Staff[]>([]),
-    [dealers, setDealers] = useState<Dealer[]>([]),
+    [teams, setTeams] = useState<Team[]>([]),
     [error, setError] = useState(""),
     [notice, setNotice] = useState(""),
     [busy, setBusy] = useState(false),
@@ -1757,10 +1718,10 @@ function StaffManager() {
     try {
       const [s, d] = await Promise.all([
         api<{ staff: Staff[] }>("/api/admin/staff"),
-        api<{ dealers: Dealer[] }>("/api/admin/dealers"),
+        api<{ teams: Team[] }>("/api/admin/teams"),
       ]);
       setStaff(s.staff);
-      setDealers(d.dealers);
+      setTeams(d.teams);
       setError("");
     } catch (e) {
       setError(errorText(e));
@@ -1805,8 +1766,8 @@ function StaffManager() {
         <div>
           <h2>Personel ve erişim rolleri</h2>
           <p>
-            Herkese ayrı hesap verin. Bayi kullanıcıları atandıkları taleplere,
-            editörler içerik yönetimine erişir.
+            Dükkânınızdaki çalışanlara ayrı hesap verin. Teknik personel
+            atandığı taleplere, editörler içerik yönetimine erişir.
           </p>
         </div>
         <button
@@ -1816,7 +1777,7 @@ function StaffManager() {
             setEditing({
               id: "",
               username: "",
-              role: "dealer",
+              role: "technician",
               status: "active",
             })
           }
@@ -1826,7 +1787,7 @@ function StaffManager() {
         </button>
       </div>
       {editing && (
-        <section className="ka-panel op-dealer-editor">
+        <section className="ka-panel op-team-editor">
           <div className="ka-panel-title">
             <h2>{editing.id ? "Yetkileri düzenle" : "Yeni personel hesabı"}</h2>
             <button
@@ -1880,7 +1841,16 @@ function StaffManager() {
               )}
               <label className="ka-field">
                 Rol
-                <select name="role" defaultValue={editing.role}>
+                <select
+                  name="role"
+                  defaultValue={editing.role}
+                  onChange={(event) =>
+                    setEditing({
+                      ...editing,
+                      role: event.target.value as Staff["role"],
+                    })
+                  }
+                >
                   {Object.entries(roles).map(([id, label]) => (
                     <option key={id} value={id}>
                       {label}
@@ -1895,26 +1865,42 @@ function StaffManager() {
                   <option value="suspended">Dondurulmuş</option>
                 </select>
               </label>
-              <label className="ka-field">
-                Bayi / ekip
-                <select name="dealerId" defaultValue={editing.dealerId || ""}>
-                  <option value="">Atanmamış</option>
-                  {dealers.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="ka-field">
-                Sorumlu bölge
-                <input
-                  name="region"
-                  maxLength={100}
-                  defaultValue={editing.region || ""}
-                  placeholder="Örn. Etimesgut"
-                />
-              </label>
+              {editing.role === "technician" && (
+                <label className="ka-field">
+                  Teknik ekip
+                  <select
+                    name="teamId"
+                    required
+                    defaultValue={editing.teamId || ""}
+                  >
+                    <option value="">Teknik ekip seçin</option>
+                    {teams.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </select>
+                  <small>
+                    Bu personel yalnızca seçtiğiniz ekibin taleplerine erişir.
+                  </small>
+                </label>
+              )}
+              {editing.role === "manager" && (
+                <label className="ka-field">
+                  Müşteri ilçesi filtresi
+                  <input
+                    name="region"
+                    required
+                    maxLength={100}
+                    defaultValue={editing.region || ""}
+                    placeholder="Örn. Etimesgut"
+                  />
+                  <small>
+                    Operasyon sorumlusu yalnızca bu ilçedeki müşteri taleplerini
+                    görür.
+                  </small>
+                </label>
+              )}
             </div>
             <button className="ka-button primary" type="submit" disabled={busy}>
               <Save size={16} />
@@ -1941,7 +1927,7 @@ function StaffManager() {
                   <td>
                     <strong>{s.username}</strong>
                     <small className="op-table-sub">
-                      {dealers.find((d) => d.id === s.dealerId)?.name ||
+                      {teams.find((d) => d.id === s.teamId)?.name ||
                         s.region ||
                         "—"}
                     </small>

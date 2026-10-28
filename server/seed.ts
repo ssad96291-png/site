@@ -26,7 +26,7 @@ export interface Content {
 export const defaultSettings = {
   logoText: "KILINÇ",
   companyName: "Kılınç Dekorasyon",
-  tagline: "Mekânınıza yeni bir bakış.",
+  tagline: "Etimesgut’ta ölçü, keşif ve uygulama.",
   phone: "",
   whatsapp: "",
   email: "",
@@ -37,23 +37,23 @@ export const defaultSettings = {
   youtube: "",
   linkedin: "",
   heroImage: "/images/original-terrace.png",
-  heroEyebrow: "CAMIN ÖTESİNDE BİR YAŞAM",
-  heroTitle: "Dışarıyla iç içe.\nSize ait bir alan.",
+  heroEyebrow: "KILINÇ DEKORASYON · ETİMESGUT",
+  heroTitle: "Ölçünüze göre.\nUstanızla doğrudan.",
   heroSubtitle:
-    "Cam balkon, sürme cam ve açık alan çözümleriyle yaşam alanınızın potansiyelini keşfedin.",
-  heroTitleEn: "Closer to the outdoors.\nA space of your own.",
+    "Balkonunuz, terasınız veya işyeriniz için neye ihtiyacınız var? Etimesgut’taki tek dükkânımızdan sizinle doğrudan görüşüp ölçü, malzeme ve uygulama adımlarını birlikte netleştiriyoruz.",
+  heroTitleEn: "Made to fit.\nTalk to your installer.",
   heroSubtitleEn:
-    "Discover the potential of your space with glazing, sliding glass and outdoor living solutions.",
-  heroEyebrowEn: "LIFE BEYOND THE GLASS",
+    "What do you need for your balcony, terrace or business premises? Talk directly with our single shop in Etimesgut to agree measurements, materials and the installation steps.",
+  heroEyebrowEn: "KILINÇ DEKORASYON · ETİMESGUT",
   aboutTextEn:
-    "At Kılınç Dekorasyon, we believe every space has its own story. From balconies to terraces, we plan glass and shading solutions around the way you live.",
+    "Kılınç Dekorasyon is a local business with one shop in Ankara’s Etimesgut district. Share your needs directly with us and follow your survey, written proposal, installation and service enquiries in one place.",
   aboutText:
-    "Kılınç Dekorasyon olarak her mekânın kendine özgü bir hikâyesi olduğuna inanıyoruz. Balkonlardan teraslara, yaşam alanınıza uygun cam ve gölgelendirme çözümlerini birlikte tasarlıyoruz.",
+    "Kılınç Dekorasyon, Ankara Etimesgut’ta tek dükkânı olan yerel bir firmadır. İhtiyacınızı bizimle doğrudan paylaşabilir; keşif, yazılı teklif, uygulama ve servis taleplerinizi tek yerden takip edebilirsiniz.",
   serviceAreas: "",
   languages: ["tr", "en"],
-  seoTitle: "Kılınç Dekorasyon | Cam Balkon ve Açık Alan Çözümleri",
+  seoTitle: "Kılınç Dekorasyon | Etimesgut’ta Keşif ve Uygulama",
   seoDescription:
-    "Mekânınıza uygun cam balkon, sürme cam, giyotin cam, pergola ve kış bahçesi çözümleri. Kılınç Dekorasyon ile projenizi birlikte planlayın.",
+    "Etimesgut’taki tek dükkânımızdan cam balkon, alüminyum ve metal uygulamaları için doğrudan iletişim. Ölçü, keşif, yazılı teklif ve talep takibi.",
 };
 const products = [
   [
@@ -268,9 +268,9 @@ export function seedContent(): Omit<
   const pages = [
     [
       "hakkimizda",
-      "Mekânınıza yeni bir bakış.",
-      "Hakkımızda",
-      "Kılınç Dekorasyon olarak balkon, teras ve bahçelerin günlük yaşamın daha çok parçası olmasını istiyoruz. Cam kapama, gölgelendirme ve mimari tamamlayıcıları mekânınızın ihtiyacına göre birlikte ele alıyoruz.\n\nSürecimiz sizi dinlemekle başlar. Kullanım amacınızı ve beklentinizi öğrenir; keşif, ölçülendirme ve teklif aşamalarında seçenekleri açıkça paylaşırız.\n\nHer projenin kendi koşulları vardır. Malzeme, uygulama ve takvim ayrıntılarını projenize özel netleştirerek ilerleriz.",
+      "Dükkânımızdan, doğrudan sizinle.",
+      "Etimesgut’taki dükkânımız",
+      "Kılınç Dekorasyon, Ankara Etimesgut’ta tek dükkândan hizmet veren yerel bir firmadır. Balkon, teras veya işyerinizde neyi değiştirmek istediğinizi doğrudan bizimle konuşabilirsiniz.\n\nÖnce ihtiyacı ve mekânın koşullarını anlarız. Yaklaşık ölçü ve konumla başlayan görüşmeyi, uygun olduğunda yerinde keşifle tamamlarız. Malzeme seçeneği, iş kapsamı, ücret ve takvim yazılı teklifte netleşir.\n\nTalebinizi hesabınızdan izleyebilir, belgelerinize ulaşabilir ve uygulama ya da servis hakkında mesaj bırakabilirsiniz. Her işin uygunluğu kendi koşullarıyla değerlendirilir; sitedeki konsept görseller tamamlanmış müşteri işi olarak sunulmaz.",
     ],
     [
       "kalite-yaklasimimiz",
@@ -289,12 +289,6 @@ export function seedContent(): Omit<
       "Kullanım boyunca yanınızdayız.",
       "Garanti ve servis",
       "Garanti süresi, kapsamı ve servis koşulları seçilen ürün, tedarikçi ve sözleşmeye göre belirlenir. Kesin koşulları teklif ve teslim belgelerinizden kontrol edin.\n\nServis talebinizde uygulama adresini, varsa sipariş bilginizi ve ihtiyacı anlatan fotoğrafları paylaşmanız değerlendirmeyi kolaylaştırır. Bu sayfada belirtilmeyen bir garanti taahhüdü verilmez.",
-    ],
-    [
-      "is-ortakligi",
-      "Birlikte daha iyi mekânlar.",
-      "İş ortaklığı",
-      "Mimar, uygulayıcı veya çözüm ortağı olarak birlikte çalışmak isterseniz iletişim formunu kullanabilirsiniz.\n\nFaaliyet bölgenizi, uzmanlığınızı ve iş birliği beklentinizi kısaca paylaşın. Başvurular kayıt altına alınır; değerlendirme sonrasında iletişim bilgileriniz üzerinden dönüş yapılabilir.",
     ],
     [
       "kataloglar",
@@ -336,7 +330,14 @@ export function seedContent(): Omit<
       summary: p[3].split("\n")[0],
       body: p[3],
       image: "/images/hero.svg",
-      category: i < 6 ? "Kurumsal" : "Yasal",
+      category: [
+        "gizlilik",
+        "kullanim-kosullari",
+        "kvkk",
+        "cerez-politikasi",
+      ].includes(p[0])
+        ? "Yasal"
+        : "Dükkânımız",
       featured: false,
       published: true,
       sortOrder: i,
@@ -552,9 +553,9 @@ export function seedContent(): Omit<
     });
   const enPages = [
     [
-      "A new perspective for your space.",
-      "About us",
-      "At Kılınç Dekorasyon, we want balconies, terraces and gardens to become a greater part of daily life. We consider glazing, shading and architectural details around the needs of your space.\n\nOur process starts with listening. We discuss how you want to use the area, then explain the options during survey, measurement and proposal stages.\n\nEvery project has its own conditions. We agree the materials, scope and schedule for your specific project.",
+      "From our shop, directly to you.",
+      "Our shop in Etimesgut",
+      "Kılınç Dekorasyon is a local business operating from one shop in Ankara’s Etimesgut district. Talk directly with us about what you need for your balcony, terrace or business premises.\n\nWe start by understanding the space and the intended use. Approximate dimensions and location support the first discussion; a site survey follows where appropriate. Materials, scope, price and timing are agreed in a written proposal.\n\nUse your account to follow the request, access documents and leave an installation or service message. Each job is assessed on its own conditions. Concept images on this website are not presented as completed customer work.",
     ],
     [
       "Good results begin with considered details.",
@@ -570,11 +571,6 @@ export function seedContent(): Omit<
       "Support throughout everyday use.",
       "Warranty and service",
       "Warranty terms, duration and service arrangements depend on the selected product, supplier and contract. Check your written proposal and handover documents for exact conditions.\n\nFor a service enquiry, include your installation address, order reference where available and photographs explaining the issue. No additional warranty is implied by this page.",
-    ],
-    [
-      "Better spaces, together.",
-      "Partnerships",
-      "Architects, installers and potential partners can contact us through the enquiry form.\n\nInclude your area, specialism and what you would like to achieve together. Enquiries are saved for review and follow-up using your contact details.",
     ],
     [
       "Explore our solutions in one place.",
@@ -659,22 +655,64 @@ export function seedContent(): Omit<
       });
     });
   const productPlanning = [
-    ["Panel toplanma yönünü mobilya ve geçiş alanlarıyla birlikte planlayın. Panellerin içe veya dışa hareketi, temizlik erişimi, alt eşik ve tahliye noktaları keşifte netleştirilmelidir. Cam türü ve panel ölçüsü sistem gereksinimlerine göre seçilir.", "Plan the stacking direction around furniture and circulation. Confirm panel movement, cleaning access, threshold and drainage during the survey. Glass type and panel size must suit the complete system."],
-    ["Ray sayısı ve panel park alanı, elde edilen net açıklığı etkiler. Eşik yüksekliği, temizlik, su tahliyesi ve varsa sineklik/perde uyumu birlikte değerlendirilmelidir. Büyük panellerde taşıma kapasitesi ve donanım seçimi kritik önemdedir.", "Track count and panel parking determine the usable opening. Consider threshold height, cleaning, drainage and compatibility with screens or blinds. Larger panels require appropriate hardware and load capacity."],
-    ["Çift cam bileşimi, profilin ısı köprüsü detayı, contalar ve çevre birleşimleri birlikte düşünülmelidir. Isıtma beklentisini ve yoğuşma riskini paylaşın. Balkon kapaması tek başına yapının oda seviyesinde yalıtıldığı anlamına gelmez.", "Consider double-glazing build-up, profile thermal breaks, seals and perimeter junctions together. Discuss heating expectations and condensation risk. Balcony enclosure alone does not establish room-level insulation."],
-    ["Motor ve hareketli panel seçimi; yük, ölçü ve kullanım sıklığına göre yapılır. Sıkışma riski, acil durdurma, enerji kesintisi davranışı ve servis erişimi onaylı sistemin güvenlik dokümanlarıyla birlikte değerlendirilmelidir.", "Motors and moving panels are specified for weight, size and operating frequency. Trapping risks, stopping, power-failure behaviour and service access must be assessed with the selected system's safety documentation."],
-    ["Sabit ve açılır örtü seçeneklerini güneş yönüyle birlikte karşılaştırın. Taşıyıcı bağlantıları, rüzgâr etkisi, suyun aktarılacağı nokta ve elektrik hazırlığı baştan belirlenmelidir. Çatıya sonradan yük eklemek uzman değerlendirmesi gerektirir.", "Compare fixed and retractable coverings with sun orientation. Establish structural fixings, wind exposure, drainage discharge and power preparation early. Adding roof loads later requires professional assessment."],
-    ["Kanatların açılım yönü ve hareketi ışık kadar suyun yönlendirilmesini de etkiler. Kar, rüzgâr, enerji kesintisi ve bakım erişimi kullanım senaryosuna göre konuşulmalıdır. Sensör veya otomasyon eklenmesi güvenli kullanım talimatlarını ortadan kaldırmaz.", "Blade direction and movement influence light and drainage. Discuss snow, wind, power failure and maintenance access for the intended use. Sensors and automation do not replace safe operating instructions."],
-    ["Çatı eğimi, cam yüzeyler, havalandırma, ısıtma ihtiyacı ve zemin yalıtımı birlikte planlanmalıdır. Su tahliyesi ile mevcut binaya birleşim detaylarını netleştirin. Statik uygunluk ve gerekli izinler uygulama başlamadan doğrulanmalıdır.", "Plan roof falls, glazing, ventilation, heating and floor insulation together. Confirm drainage and junctions with the existing building. Structural suitability and necessary permissions must be verified before work begins."],
-    ["Kumaşın açıklık oranı, renk ve güneş yönü görüş ile mahremiyeti farklı etkiler. Kaset konumu, kılavuz raylar, motor erişimi ve elektrik hattı uygulama alanına göre planlanır. Rüzgârlı koşullarda kullanım sınırlarını ürün kılavuzundan öğrenin.", "Fabric openness, colour and orientation affect views and privacy differently. Plan cassette position, guides, motor access and power supply for the site. Follow the product guide for operating limits in windy conditions."],
-    ["Cam türü ve bileşimi, bağlantı tipi, kenar detayları ve taşıyıcı zemin güvenlik gereksinimine göre değerlendirilir. Yalnızca cam kalınlığını karşılaştırmak yeterli değildir. Kullanım yükleri ve yapı kuralları yetkin uzmanlarca doğrulanmalıdır.", "Glass type and build-up, fixings, edge details and substrate are selected for safety requirements. Comparing thickness alone is insufficient. Qualified professionals must verify loads and applicable building rules."],
-    ["Kapı ve pencere açılımı, eşik, kilit ve aksesuarlar kullanım yoğunluğuna göre seçilir. Isı yalıtımlı veya standart profil seçenekleri cam ve çevre birleşimleriyle birlikte değerlendirilir. Donanım, su tahliyesi ve bakım erişimi teklif kapsamına dahil edilmelidir.", "Specify door and window openings, thresholds, locks and accessories for daily use. Assess thermally broken or standard profiles with glass and perimeter junctions. Include hardware, drainage and maintenance access in the proposal."],
+    [
+      "Panel toplanma yönünü mobilya ve geçiş alanlarıyla birlikte planlayın. Panellerin içe veya dışa hareketi, temizlik erişimi, alt eşik ve tahliye noktaları keşifte netleştirilmelidir. Cam türü ve panel ölçüsü sistem gereksinimlerine göre seçilir.",
+      "Plan the stacking direction around furniture and circulation. Confirm panel movement, cleaning access, threshold and drainage during the survey. Glass type and panel size must suit the complete system.",
+    ],
+    [
+      "Ray sayısı ve panel park alanı, elde edilen net açıklığı etkiler. Eşik yüksekliği, temizlik, su tahliyesi ve varsa sineklik/perde uyumu birlikte değerlendirilmelidir. Büyük panellerde taşıma kapasitesi ve donanım seçimi kritik önemdedir.",
+      "Track count and panel parking determine the usable opening. Consider threshold height, cleaning, drainage and compatibility with screens or blinds. Larger panels require appropriate hardware and load capacity.",
+    ],
+    [
+      "Çift cam bileşimi, profilin ısı köprüsü detayı, contalar ve çevre birleşimleri birlikte düşünülmelidir. Isıtma beklentisini ve yoğuşma riskini paylaşın. Balkon kapaması tek başına yapının oda seviyesinde yalıtıldığı anlamına gelmez.",
+      "Consider double-glazing build-up, profile thermal breaks, seals and perimeter junctions together. Discuss heating expectations and condensation risk. Balcony enclosure alone does not establish room-level insulation.",
+    ],
+    [
+      "Motor ve hareketli panel seçimi; yük, ölçü ve kullanım sıklığına göre yapılır. Sıkışma riski, acil durdurma, enerji kesintisi davranışı ve servis erişimi onaylı sistemin güvenlik dokümanlarıyla birlikte değerlendirilmelidir.",
+      "Motors and moving panels are specified for weight, size and operating frequency. Trapping risks, stopping, power-failure behaviour and service access must be assessed with the selected system's safety documentation.",
+    ],
+    [
+      "Sabit ve açılır örtü seçeneklerini güneş yönüyle birlikte karşılaştırın. Taşıyıcı bağlantıları, rüzgâr etkisi, suyun aktarılacağı nokta ve elektrik hazırlığı baştan belirlenmelidir. Çatıya sonradan yük eklemek uzman değerlendirmesi gerektirir.",
+      "Compare fixed and retractable coverings with sun orientation. Establish structural fixings, wind exposure, drainage discharge and power preparation early. Adding roof loads later requires professional assessment.",
+    ],
+    [
+      "Kanatların açılım yönü ve hareketi ışık kadar suyun yönlendirilmesini de etkiler. Kar, rüzgâr, enerji kesintisi ve bakım erişimi kullanım senaryosuna göre konuşulmalıdır. Sensör veya otomasyon eklenmesi güvenli kullanım talimatlarını ortadan kaldırmaz.",
+      "Blade direction and movement influence light and drainage. Discuss snow, wind, power failure and maintenance access for the intended use. Sensors and automation do not replace safe operating instructions.",
+    ],
+    [
+      "Çatı eğimi, cam yüzeyler, havalandırma, ısıtma ihtiyacı ve zemin yalıtımı birlikte planlanmalıdır. Su tahliyesi ile mevcut binaya birleşim detaylarını netleştirin. Statik uygunluk ve gerekli izinler uygulama başlamadan doğrulanmalıdır.",
+      "Plan roof falls, glazing, ventilation, heating and floor insulation together. Confirm drainage and junctions with the existing building. Structural suitability and necessary permissions must be verified before work begins.",
+    ],
+    [
+      "Kumaşın açıklık oranı, renk ve güneş yönü görüş ile mahremiyeti farklı etkiler. Kaset konumu, kılavuz raylar, motor erişimi ve elektrik hattı uygulama alanına göre planlanır. Rüzgârlı koşullarda kullanım sınırlarını ürün kılavuzundan öğrenin.",
+      "Fabric openness, colour and orientation affect views and privacy differently. Plan cassette position, guides, motor access and power supply for the site. Follow the product guide for operating limits in windy conditions.",
+    ],
+    [
+      "Cam türü ve bileşimi, bağlantı tipi, kenar detayları ve taşıyıcı zemin güvenlik gereksinimine göre değerlendirilir. Yalnızca cam kalınlığını karşılaştırmak yeterli değildir. Kullanım yükleri ve yapı kuralları yetkin uzmanlarca doğrulanmalıdır.",
+      "Glass type and build-up, fixings, edge details and substrate are selected for safety requirements. Comparing thickness alone is insufficient. Qualified professionals must verify loads and applicable building rules.",
+    ],
+    [
+      "Kapı ve pencere açılımı, eşik, kilit ve aksesuarlar kullanım yoğunluğuna göre seçilir. Isı yalıtımlı veya standart profil seçenekleri cam ve çevre birleşimleriyle birlikte değerlendirilir. Donanım, su tahliyesi ve bakım erişimi teklif kapsamına dahil edilmelidir.",
+      "Specify door and window openings, thresholds, locks and accessories for daily use. Assess thermally broken or standard profiles with glass and perimeter junctions. Include hardware, drainage and maintenance access in the proposal.",
+    ],
   ];
-  rows.filter(r => r.type === "product").forEach((r, i) => {
-    r.body += "\n\nPlanlamada dikkat edilecekler\n" + productPlanning[i][0] + "\n\nTeslim kontrolü\nAçılım ve kilitleri uygulayıcıyla birlikte deneyin. Yüzeyleri, tahliye yollarını ve birleşimleri kontrol edin. Kullanım talimatları, teknik kapsam ve servis koşullarını yazılı olarak teslim alın.";
-    r.bodyEn += "\n\nPlanning details\n" + productPlanning[i][1] + "\n\nHandover checks\nOperate panels and locks with the installer. Review surfaces, drainage paths and junctions. Receive written operating instructions, specification and service terms.";
+  rows
+    .filter((r) => r.type === "product")
+    .forEach((r, i) => {
+      r.body +=
+        "\n\nPlanlamada dikkat edilecekler\n" +
+        productPlanning[i][0] +
+        "\n\nTeslim kontrolü\nAçılım ve kilitleri uygulayıcıyla birlikte deneyin. Yüzeyleri, tahliye yollarını ve birleşimleri kontrol edin. Kullanım talimatları, teknik kapsam ve servis koşullarını yazılı olarak teslim alın.";
+      r.bodyEn +=
+        "\n\nPlanning details\n" +
+        productPlanning[i][1] +
+        "\n\nHandover checks\nOperate panels and locks with the installer. Review surfaces, drainage paths and junctions. Receive written operating instructions, specification and service terms.";
+    });
+  rows.forEach((r) => {
+    r.seoTitle = r.title + " | Kılınç Dekorasyon";
+    r.seoDescription = r.summary.slice(0, 300);
+    r.imageAlt = r.image ? r.title + " için temsili mimari çizim" : "";
   });
-  rows.forEach(r => { r.seoTitle = r.title + " | Kılınç Dekorasyon"; r.seoDescription = r.summary.slice(0, 300); r.imageAlt = r.image ? r.title + " için temsili mimari çizim" : ""; });
   return [...rows, ...expansionContent()];
 }
 
@@ -684,161 +722,594 @@ type SeedRow = Omit<Content, "id" | "createdAt" | "updatedAt">;
 
 export function expansionContent(): SeedRow[] {
   const rows: SeedRow[] = [];
-  const add = (type: string, slug: string, tr: [string, string, string, string], en: [string, string, string, string], category: string, image: string, specs: {label: string; value: string}[] = []) => {
-    rows.push({ type, slug, title: tr[0], subtitle: tr[1], summary: tr[2], body: tr[3], titleEn: en[0], subtitleEn: en[1], summaryEn: en[2], bodyEn: en[3], category, image, seoTitle: tr[0] + " | Kılınç Dekorasyon", seoDescription: tr[2], imageAlt: image ? tr[0] + " için temsili mimari çizim" : "", specs, gallery: image ? [image] : [], featured: false, published: true, sortOrder: 20 + rows.length });
+  const add = (
+    type: string,
+    slug: string,
+    tr: [string, string, string, string],
+    en: [string, string, string, string],
+    category: string,
+    image: string,
+    specs: { label: string; value: string }[] = [],
+  ) => {
+    rows.push({
+      type,
+      slug,
+      title: tr[0],
+      subtitle: tr[1],
+      summary: tr[2],
+      body: tr[3],
+      titleEn: en[0],
+      subtitleEn: en[1],
+      summaryEn: en[2],
+      bodyEn: en[3],
+      category,
+      image,
+      seoTitle: tr[0] + " | Kılınç Dekorasyon",
+      seoDescription: tr[2],
+      imageAlt: image ? tr[0] + " için temsili mimari çizim" : "",
+      specs,
+      gallery: image ? [image] : [],
+      featured: false,
+      published: true,
+      sortOrder: 20 + rows.length,
+    });
   };
 
-  add("product", "aluminyum-giydirme-cephe", [
-    "Alüminyum Giydirme Cephe", "Yapının kimliğini ayrıntılar belirler.",
-    "Ofis, ticari yapı ve kurumsal projeler için cam, alüminyum ve birleşim detaylarının birlikte değerlendirildiği cephe çözümleri.",
-    "Tasarım yaklaşımı\nCepheyi yalnızca dış görünüş olarak değerlendirmiyoruz. Cam bölünmeleri, taşıyıcı sistem, iç mekân kullanımı, bakım erişimi ve bina kabuğunun sürekliliği birlikte ele alınır. Kapaklı ve yapısal silikonlu sistem seçeneklerinin uygunluğu mimari proje üzerinden incelenir.\n\nProjelendirmede gerekenler\nMevcut mimari çizimler, cephe ölçüleri, kat yükseklikleri, açıklık detayları ve uygulama konumu ilk değerlendirmeyi kolaylaştırır. Statik hesap, rüzgâr yükü ve cam seçimi yetkin proje uzmanları tarafından yapı koşullarına göre doğrulanmalıdır.\n\nMalzeme ve birleşimler\nProfil serisi, yüzey işlemi, cam bileşimi, ankrajlar, ısı köprüleri ve kat arası birleşimler yazılı teknik kapsamda tanımlanır. Su tahliyesi ve hava sızdırmazlık detayları sistem bütünlüğünün parçasıdır. Bir ürün adı tek başına performans belgesi yerine geçmez.\n\nUygulama koordinasyonu\nŞantiye erişimi, iskele veya kaldırma ekipmanı, iş programı ve diğer disiplinlerle birleşimler uygulama öncesinde planlanır. Ölçü onayı ve çizim revizyonları kesinleşmeden üretim programı netleştirilmez.\n\nTeklifte neler bulunmalı?\nMetraj, sistem ve cam tanımı, yüzey rengi, bağlantı kapsamı, nakliye, montaj, test veya belge talepleri ve teslim şartları ayrı ayrı belirtilmelidir. Kesin fiyat ve süre projeye özel değerlendirmeyle belirlenir."
-  ], [
-    "Aluminium Curtain Walling", "A building's identity is shaped by its details.",
-    "Coordinated glass, aluminium and connection design for offices, commercial buildings and corporate projects.",
-    "Design approach\nA façade is more than its appearance. Glass divisions, structure, interior use, maintenance access and continuity of the building envelope are considered together. Capped and structural-silicone options are assessed against the architectural design.\n\nProject information\nDrawings, façade dimensions, floor heights, opening details and site location support an initial assessment. Qualified specialists must verify structural calculations, wind loads and glazing for the actual building.\n\nMaterials and junctions\nProfile series, finish, glass build-up, anchors, thermal bridges and floor junctions belong in the written scope. Drainage and air-sealing details form part of the complete system; a product name does not establish certified performance.\n\nSite coordination\nAccess, scaffolding or lifting equipment, work sequence and interfaces with other trades are planned before installation. Production dates follow approved dimensions and drawings.\n\nA clear proposal\nRequest measured quantities, system and glass specifications, colour, fixings, transport, installation, requested documentation and handover terms. Pricing and timing are project-specific."
-  ], "Alüminyum sistemler", "/images/aluminium-facade.svg", [
-    {label:"Sistem seçenekleri",value:"Kapaklı / yapısal silikonlu; proje uygunluğuna göre"},
-    {label:"Değerlendirme",value:"Mimari çizim, statik gereksinimler ve rüzgâr yükü"},
-    {label:"Cam bileşimi",value:"Isıl, akustik ve güvenlik ihtiyacına göre"},
-    {label:"Birleşimler",value:"Ankraj, kat arası, su tahliyesi ve yalıtım detayları"},
-    {label:"Belgelendirme",value:"Seçilen sistem ve proje şartnamesine göre"},
-    {label:"Fiyatlandırma",value:"Metraj ve yazılı teknik kapsam üzerinden"},
-  ]);
+  add(
+    "product",
+    "aluminyum-giydirme-cephe",
+    [
+      "Alüminyum Giydirme Cephe",
+      "Yapının kimliğini ayrıntılar belirler.",
+      "Ofis, ticari yapı ve kurumsal projeler için cam, alüminyum ve birleşim detaylarının birlikte değerlendirildiği cephe çözümleri.",
+      "Tasarım yaklaşımı\nCepheyi yalnızca dış görünüş olarak değerlendirmiyoruz. Cam bölünmeleri, taşıyıcı sistem, iç mekân kullanımı, bakım erişimi ve bina kabuğunun sürekliliği birlikte ele alınır. Kapaklı ve yapısal silikonlu sistem seçeneklerinin uygunluğu mimari proje üzerinden incelenir.\n\nProjelendirmede gerekenler\nMevcut mimari çizimler, cephe ölçüleri, kat yükseklikleri, açıklık detayları ve uygulama konumu ilk değerlendirmeyi kolaylaştırır. Statik hesap, rüzgâr yükü ve cam seçimi yetkin proje uzmanları tarafından yapı koşullarına göre doğrulanmalıdır.\n\nMalzeme ve birleşimler\nProfil serisi, yüzey işlemi, cam bileşimi, ankrajlar, ısı köprüleri ve kat arası birleşimler yazılı teknik kapsamda tanımlanır. Su tahliyesi ve hava sızdırmazlık detayları sistem bütünlüğünün parçasıdır. Bir ürün adı tek başına performans belgesi yerine geçmez.\n\nUygulama koordinasyonu\nŞantiye erişimi, iskele veya kaldırma ekipmanı, iş programı ve diğer disiplinlerle birleşimler uygulama öncesinde planlanır. Ölçü onayı ve çizim revizyonları kesinleşmeden üretim programı netleştirilmez.\n\nTeklifte neler bulunmalı?\nMetraj, sistem ve cam tanımı, yüzey rengi, bağlantı kapsamı, nakliye, montaj, test veya belge talepleri ve teslim şartları ayrı ayrı belirtilmelidir. Kesin fiyat ve süre projeye özel değerlendirmeyle belirlenir.",
+    ],
+    [
+      "Aluminium Curtain Walling",
+      "A building's identity is shaped by its details.",
+      "Coordinated glass, aluminium and connection design for offices, commercial buildings and corporate projects.",
+      "Design approach\nA façade is more than its appearance. Glass divisions, structure, interior use, maintenance access and continuity of the building envelope are considered together. Capped and structural-silicone options are assessed against the architectural design.\n\nProject information\nDrawings, façade dimensions, floor heights, opening details and site location support an initial assessment. Qualified specialists must verify structural calculations, wind loads and glazing for the actual building.\n\nMaterials and junctions\nProfile series, finish, glass build-up, anchors, thermal bridges and floor junctions belong in the written scope. Drainage and air-sealing details form part of the complete system; a product name does not establish certified performance.\n\nSite coordination\nAccess, scaffolding or lifting equipment, work sequence and interfaces with other trades are planned before installation. Production dates follow approved dimensions and drawings.\n\nA clear proposal\nRequest measured quantities, system and glass specifications, colour, fixings, transport, installation, requested documentation and handover terms. Pricing and timing are project-specific.",
+    ],
+    "Alüminyum sistemler",
+    "/images/aluminium-facade.svg",
+    [
+      {
+        label: "Sistem seçenekleri",
+        value: "Kapaklı / yapısal silikonlu; proje uygunluğuna göre",
+      },
+      {
+        label: "Değerlendirme",
+        value: "Mimari çizim, statik gereksinimler ve rüzgâr yükü",
+      },
+      {
+        label: "Cam bileşimi",
+        value: "Isıl, akustik ve güvenlik ihtiyacına göre",
+      },
+      {
+        label: "Birleşimler",
+        value: "Ankraj, kat arası, su tahliyesi ve yalıtım detayları",
+      },
+      {
+        label: "Belgelendirme",
+        value: "Seçilen sistem ve proje şartnamesine göre",
+      },
+      {
+        label: "Fiyatlandırma",
+        value: "Metraj ve yazılı teknik kapsam üzerinden",
+      },
+    ],
+  );
 
-  add("product", "ofis-cam-aluminyum-bolme", [
-    "Ofis Cam ve Alüminyum Bölme", "Birlikte çalışın. İhtiyaç duyduğunuzda ayrışın.",
-    "Toplantı odaları, çalışma alanları ve yönetim ofislerinde gün ışığını koruyan cam bölme ve kapı çözümleri.",
-    "Kullanıma göre planlama\nAçık ofis, toplantı odası ve yönetim odası farklı mahremiyet ihtiyaçlarına sahiptir. Bölme konumları; dolaşım, gün ışığı, masa düzeni ve acil çıkış güzergâhlarıyla birlikte değerlendirilir.\n\nCam ve profil seçimi\nTek camlı veya çift camlı düzenler, uygun güvenlik camı ve farklı profil kesitleri proje kapsamında ele alınır. Ses yalıtımı yalnızca cam kalınlığına bağlı değildir; kapı, conta, tavan ve zemin birleşimleri de sonucu etkiler.\n\nMahremiyet seçenekleri\nBuzlu yüzey, uygun film veya jaluzili cam seçenekleri kullanım amacına göre konuşulabilir. Görsel mahremiyet ile akustik mahremiyetin ayrı ihtiyaçlar olduğu unutulmamalıdır.\n\nKapı ve donanım detayları\nAçılır kapı yönü, geçiş genişliği, kilit, kol ve kapatıcı seçimi erişilebilirlik ve günlük yoğunluk düşünülerek planlanır. Kablo geçişleri ve mevcut yangın algılama sistemleri ilgili ekiplerle koordine edilmelidir.\n\nTeslim ve bakım\nCam yüzeyler, bağlantılar ve kapı hareketleri teslimde kontrol edilir. Temizlikte aşındırıcı ürünlerden kaçının; ayar gerektiren donanımları zorlamadan servis talebi oluşturun."
-  ], [
-    "Office Glass and Aluminium Partitions", "Work together. Create space when you need it.",
-    "Glass partitions and doors that preserve daylight in meeting rooms, workspaces and private offices.",
-    "Plan around use\nOpen workspaces, meeting rooms and private offices need different levels of privacy. Partition locations are considered with circulation, daylight, furniture and escape routes.\n\nGlass and profiles\nSingle or double glazing, suitable safety glass and different profile sections can be assessed. Acoustic performance depends on the whole assembly, including doors, seals, ceiling and floor junctions.\n\nPrivacy\nFrosted finishes, suitable films or integral blinds may be considered. Visual privacy and acoustic privacy are separate requirements.\n\nDoors and hardware\nOpening direction, clear width, locks, handles and closers are planned for accessibility and daily traffic. Coordinate cable routes and existing fire detection with the relevant specialists.\n\nHandover and care\nCheck surfaces, connections and door operation at handover. Avoid abrasive cleaners and arrange a service inspection rather than forcing hardware that needs adjustment."
-  ], "Alüminyum sistemler", "/images/aluminium-facade.svg", [
-    {label:"Kullanım",value:"Toplantı odası, ofis ve ticari iç mekân"},
-    {label:"Panel",value:"Proje ihtiyacına göre tek / çift cam"},
-    {label:"Mahremiyet",value:"Yüzey, film ve jaluzi seçenekleri"},
-    {label:"Donanım",value:"Kapı, kilit, kol ve kapatıcı seçimi"},
-    {label:"Akustik",value:"Tüm birleşimlerin birlikte değerlendirilmesi"},
-    {label:"Keşif",value:"Yerleşim, tavan, zemin ve geçişlerin incelenmesi"},
-  ]);
+  add(
+    "product",
+    "ofis-cam-aluminyum-bolme",
+    [
+      "Ofis Cam ve Alüminyum Bölme",
+      "Birlikte çalışın. İhtiyaç duyduğunuzda ayrışın.",
+      "Toplantı odaları, çalışma alanları ve yönetim ofislerinde gün ışığını koruyan cam bölme ve kapı çözümleri.",
+      "Kullanıma göre planlama\nAçık ofis, toplantı odası ve yönetim odası farklı mahremiyet ihtiyaçlarına sahiptir. Bölme konumları; dolaşım, gün ışığı, masa düzeni ve acil çıkış güzergâhlarıyla birlikte değerlendirilir.\n\nCam ve profil seçimi\nTek camlı veya çift camlı düzenler, uygun güvenlik camı ve farklı profil kesitleri proje kapsamında ele alınır. Ses yalıtımı yalnızca cam kalınlığına bağlı değildir; kapı, conta, tavan ve zemin birleşimleri de sonucu etkiler.\n\nMahremiyet seçenekleri\nBuzlu yüzey, uygun film veya jaluzili cam seçenekleri kullanım amacına göre konuşulabilir. Görsel mahremiyet ile akustik mahremiyetin ayrı ihtiyaçlar olduğu unutulmamalıdır.\n\nKapı ve donanım detayları\nAçılır kapı yönü, geçiş genişliği, kilit, kol ve kapatıcı seçimi erişilebilirlik ve günlük yoğunluk düşünülerek planlanır. Kablo geçişleri ve mevcut yangın algılama sistemleri ilgili ekiplerle koordine edilmelidir.\n\nTeslim ve bakım\nCam yüzeyler, bağlantılar ve kapı hareketleri teslimde kontrol edilir. Temizlikte aşındırıcı ürünlerden kaçının; ayar gerektiren donanımları zorlamadan servis talebi oluşturun.",
+    ],
+    [
+      "Office Glass and Aluminium Partitions",
+      "Work together. Create space when you need it.",
+      "Glass partitions and doors that preserve daylight in meeting rooms, workspaces and private offices.",
+      "Plan around use\nOpen workspaces, meeting rooms and private offices need different levels of privacy. Partition locations are considered with circulation, daylight, furniture and escape routes.\n\nGlass and profiles\nSingle or double glazing, suitable safety glass and different profile sections can be assessed. Acoustic performance depends on the whole assembly, including doors, seals, ceiling and floor junctions.\n\nPrivacy\nFrosted finishes, suitable films or integral blinds may be considered. Visual privacy and acoustic privacy are separate requirements.\n\nDoors and hardware\nOpening direction, clear width, locks, handles and closers are planned for accessibility and daily traffic. Coordinate cable routes and existing fire detection with the relevant specialists.\n\nHandover and care\nCheck surfaces, connections and door operation at handover. Avoid abrasive cleaners and arrange a service inspection rather than forcing hardware that needs adjustment.",
+    ],
+    "Alüminyum sistemler",
+    "/images/aluminium-facade.svg",
+    [
+      { label: "Kullanım", value: "Toplantı odası, ofis ve ticari iç mekân" },
+      { label: "Panel", value: "Proje ihtiyacına göre tek / çift cam" },
+      { label: "Mahremiyet", value: "Yüzey, film ve jaluzi seçenekleri" },
+      { label: "Donanım", value: "Kapı, kilit, kol ve kapatıcı seçimi" },
+      {
+        label: "Akustik",
+        value: "Tüm birleşimlerin birlikte değerlendirilmesi",
+      },
+      {
+        label: "Keşif",
+        value: "Yerleşim, tavan, zemin ve geçişlerin incelenmesi",
+      },
+    ],
+  );
 
-  add("product", "aluminyum-kupeste-korkuluk", [
-    "Alüminyum Küpeşte ve Korkuluk", "Güvenli bir sınır. Hafif bir görünüm.",
-    "Merdiven, balkon ve teraslar için yapıya uygun bağlantı ve dolgu seçenekleriyle planlanan korkuluk çözümleri.",
-    "Yapıyla birlikte değerlendirme\nKorkuluk, yalnızca dekoratif bir tamamlayıcı değildir. Kullanım yeri, yük gereksinimleri, düşme yüksekliği ve zeminin taşıma koşulları öncelikle değerlendirilir. Ölçü ve detaylar geçerli yapı kuralları ve uzman proje değerlendirmesi doğrultusunda netleştirilir.\n\nSistem seçenekleri\nAlüminyum dikme ve tutamaklar; cam, düşey eleman veya projeye uygun farklı dolgularla ele alınabilir. Çocuk güvenliği, tırmanmaya elverişli detaylar ve boşluk düzeni tasarım aşamasında incelenmelidir.\n\nBağlantı detayları\nÜstten veya yandan bağlantı seçimi zemine, kenar mesafelerine ve su yalıtımına göre yapılır. Mevcut seramik veya kaplama tek başına taşıyıcı yüzey kabul edilmez. Ankraj sistemi gerçek taşıyıcıya uygun seçilmelidir.\n\nRenk ve yüzey\nEloksal ve boya seçenekleri çevresel koşullar ve bakım beklentisiyle birlikte değerlendirilir. Numune ve renk onayı, farklı yapı elemanlarıyla uyumu netleştirmeye yardımcı olur.\n\nKullanım ve kontrol\nGevşeme, çatlak veya darbe hasarı fark edildiğinde alanın kullanımını güvenli biçimde sınırlandırın ve uzman kontrolü isteyin. Bağlantıları kendiniz sökmeyin ya da korkuluğa sonradan yük eklemeyin."
-  ], [
-    "Aluminium Handrails and Balustrades", "A secure boundary. A light appearance.",
-    "Balustrades for stairs, balconies and terraces, planned with suitable fixings and infill options.",
-    "Assess the building\nBalustrades are safety elements. Intended use, loads, fall height and substrate condition come first. Dimensions and details must follow applicable building rules and qualified project assessment.\n\nSystem options\nAluminium posts and handrails can be considered with glass, vertical members or other appropriate infills. Child safety, climbable details and openings need attention during design.\n\nConnections\nTop or side fixing depends on the substrate, edge distances and waterproofing. Tiles and surface finishes alone are not structural support; anchors must suit the actual load-bearing material.\n\nFinish\nAnodised and painted finishes are selected for exposure and maintenance requirements. Samples help coordinate colours with other building elements.\n\nInspection\nIf looseness, cracks or impact damage appear, limit access safely and arrange professional inspection. Do not remove connections or add loads yourself."
-  ], "Alüminyum sistemler", "/images/aluminium-facade.svg", [
-    {label:"Uygulama",value:"Balkon, merdiven, teras ve sahanlık"},
-    {label:"Dolgu",value:"Proje güvenliğine uygun cam / dikey eleman"},
-    {label:"Bağlantı",value:"Gerçek taşıyıcı zemine uygun ankraj"},
-    {label:"Yüzey",value:"Projeye göre eloksal veya boya seçenekleri"},
-    {label:"Ölçülendirme",value:"Yapı ve kullanım koşullarına göre"},
-    {label:"Kontrol",value:"Bağlantı, boşluk ve son kullanım kontrolü"},
-  ]);
+  add(
+    "product",
+    "aluminyum-kupeste-korkuluk",
+    [
+      "Alüminyum Küpeşte ve Korkuluk",
+      "Güvenli bir sınır. Hafif bir görünüm.",
+      "Merdiven, balkon ve teraslar için yapıya uygun bağlantı ve dolgu seçenekleriyle planlanan korkuluk çözümleri.",
+      "Yapıyla birlikte değerlendirme\nKorkuluk, yalnızca dekoratif bir tamamlayıcı değildir. Kullanım yeri, yük gereksinimleri, düşme yüksekliği ve zeminin taşıma koşulları öncelikle değerlendirilir. Ölçü ve detaylar geçerli yapı kuralları ve uzman proje değerlendirmesi doğrultusunda netleştirilir.\n\nSistem seçenekleri\nAlüminyum dikme ve tutamaklar; cam, düşey eleman veya projeye uygun farklı dolgularla ele alınabilir. Çocuk güvenliği, tırmanmaya elverişli detaylar ve boşluk düzeni tasarım aşamasında incelenmelidir.\n\nBağlantı detayları\nÜstten veya yandan bağlantı seçimi zemine, kenar mesafelerine ve su yalıtımına göre yapılır. Mevcut seramik veya kaplama tek başına taşıyıcı yüzey kabul edilmez. Ankraj sistemi gerçek taşıyıcıya uygun seçilmelidir.\n\nRenk ve yüzey\nEloksal ve boya seçenekleri çevresel koşullar ve bakım beklentisiyle birlikte değerlendirilir. Numune ve renk onayı, farklı yapı elemanlarıyla uyumu netleştirmeye yardımcı olur.\n\nKullanım ve kontrol\nGevşeme, çatlak veya darbe hasarı fark edildiğinde alanın kullanımını güvenli biçimde sınırlandırın ve uzman kontrolü isteyin. Bağlantıları kendiniz sökmeyin ya da korkuluğa sonradan yük eklemeyin.",
+    ],
+    [
+      "Aluminium Handrails and Balustrades",
+      "A secure boundary. A light appearance.",
+      "Balustrades for stairs, balconies and terraces, planned with suitable fixings and infill options.",
+      "Assess the building\nBalustrades are safety elements. Intended use, loads, fall height and substrate condition come first. Dimensions and details must follow applicable building rules and qualified project assessment.\n\nSystem options\nAluminium posts and handrails can be considered with glass, vertical members or other appropriate infills. Child safety, climbable details and openings need attention during design.\n\nConnections\nTop or side fixing depends on the substrate, edge distances and waterproofing. Tiles and surface finishes alone are not structural support; anchors must suit the actual load-bearing material.\n\nFinish\nAnodised and painted finishes are selected for exposure and maintenance requirements. Samples help coordinate colours with other building elements.\n\nInspection\nIf looseness, cracks or impact damage appear, limit access safely and arrange professional inspection. Do not remove connections or add loads yourself.",
+    ],
+    "Alüminyum sistemler",
+    "/images/aluminium-facade.svg",
+    [
+      { label: "Uygulama", value: "Balkon, merdiven, teras ve sahanlık" },
+      { label: "Dolgu", value: "Proje güvenliğine uygun cam / dikey eleman" },
+      { label: "Bağlantı", value: "Gerçek taşıyıcı zemine uygun ankraj" },
+      { label: "Yüzey", value: "Projeye göre eloksal veya boya seçenekleri" },
+      { label: "Ölçülendirme", value: "Yapı ve kullanım koşullarına göre" },
+      { label: "Kontrol", value: "Bağlantı, boşluk ve son kullanım kontrolü" },
+    ],
+  );
 
-  add("product", "ferforje-bahce-kapisi-korkuluk", [
-    "Ferforje Kapı ve Demir Korkuluk", "Metal işçiliğini mimarinize uyarlayın.",
-    "Bahçe kapısı, pencere korkuluğu ve sınır elemanlarında ölçüye özel metal tasarım ve yüzey koruma seçenekleri.",
-    "Tasarımı ihtiyacınız belirler\nSade geometrik çizgilerden klasik ferforje detaylara kadar farklı görünümler değerlendirilebilir. Kapı açılımı, araç veya yaya geçişi, komşu sınırlar ve bakım erişimi tasarımın başlangıç noktasıdır.\n\nMalzeme kapsamı\nProfil kesiti, dolgu elemanları, menteşe, kilit, sabitleme ve varsa otomasyon hazırlığı yazılı kapsamda tanımlanır. Yalnızca metrekare fiyatına bakmak; ağırlık, donanım ve yüzey koruma farklarını görünmez kılabilir.\n\nDış ortam koruması\nMetal yüzey hazırlığı, korozyon koruması ve son kat uygulaması birbiriyle uyumlu seçilmelidir. Uygun çözüm kullanım yeri ve çevresel maruziyete göre belirlenir; hiçbir kaplama düzenli gözlem ihtiyacını ortadan kaldırmaz.\n\nGüvenli kullanım\nOtomasyon varsa sıkışma riskleri, durdurma ve engel algılama gibi güvenlik önlemleri yetkin uygulayıcıyla değerlendirilir. Pencere korkulukları kaçış veya kurtarma ihtiyacını engellememelidir.\n\nTeklif ve teslim\nTasarım çizimi, ölçü, yüzey rengi, donanım, montaj ve nakliye kapsamı onaylanır. Hareketli elemanlar teslimde birlikte denenir; bakım talimatı ve varsa garanti koşulları yazılı olarak istenir."
-  ], [
-    "Wrought-Iron Gates and Steel Railings", "Metalwork shaped around your architecture.",
-    "Made-to-measure design and protective finish options for garden gates, window guards and boundaries.",
-    "Start with the use\nSimple geometric designs and more traditional decorative details can be explored. Opening direction, pedestrian or vehicle access, boundaries and maintenance access shape the layout.\n\nDefine the specification\nSections, infill, hinges, locks, fixings and any automation preparation belong in the written scope. Price per square metre alone cannot explain differences in weight, hardware and surface protection.\n\nOutdoor protection\nSurface preparation, corrosion protection and topcoats must be compatible. Selection depends on exposure and location; regular inspection is still needed.\n\nSafe operation\nFor automated gates, qualified installers must assess trapping risks, stopping and obstacle detection. Window guards must not compromise required escape or rescue access.\n\nProposal and handover\nApprove drawings, dimensions, colour, hardware, transport and installation. Test moving elements at handover and request written care and warranty terms."
-  ], "Demir ve çelik", "/images/metal-gate.svg", [
-    {label:"Kapsam",value:"Bahçe kapısı, pencere korkuluğu ve sınır elemanları"},
-    {label:"Tasarım",value:"Geometrik veya dekoratif metal detaylar"},
-    {label:"Donanım",value:"Kullanıma uygun menteşe, kilit ve bağlantılar"},
-    {label:"Yüzey koruma",value:"Ortam koşullarına göre projelendirilir"},
-    {label:"Otomasyon",value:"Uygunluk ve güvenlik değerlendirmesi sonrası"},
-    {label:"Teklif",value:"Ölçü, metal ağırlığı, yüzey ve donanım kapsamıyla"},
-  ]);
+  add(
+    "product",
+    "ferforje-bahce-kapisi-korkuluk",
+    [
+      "Ferforje Kapı ve Demir Korkuluk",
+      "Metal işçiliğini mimarinize uyarlayın.",
+      "Bahçe kapısı, pencere korkuluğu ve sınır elemanlarında ölçüye özel metal tasarım ve yüzey koruma seçenekleri.",
+      "Tasarımı ihtiyacınız belirler\nSade geometrik çizgilerden klasik ferforje detaylara kadar farklı görünümler değerlendirilebilir. Kapı açılımı, araç veya yaya geçişi, komşu sınırlar ve bakım erişimi tasarımın başlangıç noktasıdır.\n\nMalzeme kapsamı\nProfil kesiti, dolgu elemanları, menteşe, kilit, sabitleme ve varsa otomasyon hazırlığı yazılı kapsamda tanımlanır. Yalnızca metrekare fiyatına bakmak; ağırlık, donanım ve yüzey koruma farklarını görünmez kılabilir.\n\nDış ortam koruması\nMetal yüzey hazırlığı, korozyon koruması ve son kat uygulaması birbiriyle uyumlu seçilmelidir. Uygun çözüm kullanım yeri ve çevresel maruziyete göre belirlenir; hiçbir kaplama düzenli gözlem ihtiyacını ortadan kaldırmaz.\n\nGüvenli kullanım\nOtomasyon varsa sıkışma riskleri, durdurma ve engel algılama gibi güvenlik önlemleri yetkin uygulayıcıyla değerlendirilir. Pencere korkulukları kaçış veya kurtarma ihtiyacını engellememelidir.\n\nTeklif ve teslim\nTasarım çizimi, ölçü, yüzey rengi, donanım, montaj ve nakliye kapsamı onaylanır. Hareketli elemanlar teslimde birlikte denenir; bakım talimatı ve varsa garanti koşulları yazılı olarak istenir.",
+    ],
+    [
+      "Wrought-Iron Gates and Steel Railings",
+      "Metalwork shaped around your architecture.",
+      "Made-to-measure design and protective finish options for garden gates, window guards and boundaries.",
+      "Start with the use\nSimple geometric designs and more traditional decorative details can be explored. Opening direction, pedestrian or vehicle access, boundaries and maintenance access shape the layout.\n\nDefine the specification\nSections, infill, hinges, locks, fixings and any automation preparation belong in the written scope. Price per square metre alone cannot explain differences in weight, hardware and surface protection.\n\nOutdoor protection\nSurface preparation, corrosion protection and topcoats must be compatible. Selection depends on exposure and location; regular inspection is still needed.\n\nSafe operation\nFor automated gates, qualified installers must assess trapping risks, stopping and obstacle detection. Window guards must not compromise required escape or rescue access.\n\nProposal and handover\nApprove drawings, dimensions, colour, hardware, transport and installation. Test moving elements at handover and request written care and warranty terms.",
+    ],
+    "Demir ve çelik",
+    "/images/metal-gate.svg",
+    [
+      {
+        label: "Kapsam",
+        value: "Bahçe kapısı, pencere korkuluğu ve sınır elemanları",
+      },
+      { label: "Tasarım", value: "Geometrik veya dekoratif metal detaylar" },
+      {
+        label: "Donanım",
+        value: "Kullanıma uygun menteşe, kilit ve bağlantılar",
+      },
+      {
+        label: "Yüzey koruma",
+        value: "Ortam koşullarına göre projelendirilir",
+      },
+      {
+        label: "Otomasyon",
+        value: "Uygunluk ve güvenlik değerlendirmesi sonrası",
+      },
+      {
+        label: "Teklif",
+        value: "Ölçü, metal ağırlığı, yüzey ve donanım kapsamıyla",
+      },
+    ],
+  );
 
-  add("product", "celik-konstruksiyon-imalati", [
-    "Çelik Konstrüksiyon", "Taşıyıcı fikri, doğru projeyle gerçeğe dönüştürün.",
-    "Sundurma, platform ve projeye özel taşıyıcı metal uygulamalarında çizim, bağlantı ve saha koşullarına dayalı planlama.",
-    "Önce proje ve güvenlik\nÇelik taşıyıcı uygulamalar, yalnızca ölçüye göre profil birleştirme işi değildir. Kullanım amacı, sabit ve hareketli yükler, deprem etkileri, rüzgâr ve kar yükleri ilgili uzmanların proje değerlendirmesiyle belirlenmelidir.\n\nTeknik kapsam\nÇelik sınıfı, profil kesitleri, kaynak ve cıvata bağlantıları, yüzey koruma sistemi ve montaj toleransları onaylı proje kapsamında tanımlanır. Mevcut yapıya bağlantı varsa yapı uygunluğu ayrıca doğrulanır.\n\nSaha koordinasyonu\nZemin ve temel durumu, kaldırma erişimi, montaj sırası, geçici stabilite ve iş güvenliği planı uygulama hazırlığının parçasıdır. İlgili izinler ve sorumluluk paylaşımı sözleşme öncesinde netleştirilmelidir.\n\nŞeffaf teklif\nMetraj veya tonaj, imalat çizimleri, bağlantı elemanları, koruma katmanları, nakliye ve montaj ayrı kapsamlarla belirtilir. Eksik proje üzerinden verilen ön değerlendirme kesin uygulama teklifi sayılmaz.\n\nTeslim dokümanları\nProje için gerekli kontrol kayıtları, malzeme belgeleri ve varsa bakım talimatları baştan talep edilmelidir. Gereken belge ve testler seçilen sistem ve sözleşme kapsamında teyit edilir."
-  ], [
-    "Structural Steelwork", "Turn a structural idea into a considered project.",
-    "Drawing-led planning for canopies, platforms and project-specific metal structures, with attention to connections and site conditions.",
-    "Design and safety first\nSteel structures need more than measured sections. Qualified specialists must establish intended use, permanent and imposed loads, earthquake actions, wind and snow loads.\n\nTechnical scope\nSteel grade, sections, welded and bolted connections, protective finishes and installation tolerances belong in the approved design. Connections to an existing building require separate verification.\n\nSite coordination\nGround and foundation conditions, lifting access, installation sequence, temporary stability and a safe work plan are part of preparation. Permissions and responsibilities must be agreed before contracting.\n\nTransparent proposal\nSeparate quantities or tonnage, fabrication drawings, fixings, protection, transport and erection in the scope. An initial assessment based on incomplete drawings is not a final construction proposal.\n\nHandover documents\nSpecify required inspection records, material documents and care instructions from the start. Documentation and testing depend on the project and contract."
-  ], "Demir ve çelik", "/images/metal-gate.svg", [
-    {label:"Proje",value:"Yetkin uzmanlarca doğrulanmış taşıyıcı tasarım"},
-    {label:"Uygulama",value:"Sundurma, platform ve özel metal taşıyıcılar"},
-    {label:"Bağlantı",value:"Projesine uygun kaynak / cıvata detayları"},
-    {label:"Yüzey",value:"Çevre ve kullanım şartına göre koruma"},
-    {label:"Saha",value:"Erişim, kaldırma ve montaj sırası planlaması"},
-    {label:"Teklif girdisi",value:"Çizimler, konum, metraj ve teknik şartname"},
-  ]);
+  add(
+    "product",
+    "celik-konstruksiyon-imalati",
+    [
+      "Çelik Konstrüksiyon",
+      "Taşıyıcı fikri, doğru projeyle gerçeğe dönüştürün.",
+      "Sundurma, platform ve projeye özel taşıyıcı metal uygulamalarında çizim, bağlantı ve saha koşullarına dayalı planlama.",
+      "Önce proje ve güvenlik\nÇelik taşıyıcı uygulamalar, yalnızca ölçüye göre profil birleştirme işi değildir. Kullanım amacı, sabit ve hareketli yükler, deprem etkileri, rüzgâr ve kar yükleri ilgili uzmanların proje değerlendirmesiyle belirlenmelidir.\n\nTeknik kapsam\nÇelik sınıfı, profil kesitleri, kaynak ve cıvata bağlantıları, yüzey koruma sistemi ve montaj toleransları onaylı proje kapsamında tanımlanır. Mevcut yapıya bağlantı varsa yapı uygunluğu ayrıca doğrulanır.\n\nSaha koordinasyonu\nZemin ve temel durumu, kaldırma erişimi, montaj sırası, geçici stabilite ve iş güvenliği planı uygulama hazırlığının parçasıdır. İlgili izinler ve sorumluluk paylaşımı sözleşme öncesinde netleştirilmelidir.\n\nŞeffaf teklif\nMetraj veya tonaj, imalat çizimleri, bağlantı elemanları, koruma katmanları, nakliye ve montaj ayrı kapsamlarla belirtilir. Eksik proje üzerinden verilen ön değerlendirme kesin uygulama teklifi sayılmaz.\n\nTeslim dokümanları\nProje için gerekli kontrol kayıtları, malzeme belgeleri ve varsa bakım talimatları baştan talep edilmelidir. Gereken belge ve testler seçilen sistem ve sözleşme kapsamında teyit edilir.",
+    ],
+    [
+      "Structural Steelwork",
+      "Turn a structural idea into a considered project.",
+      "Drawing-led planning for canopies, platforms and project-specific metal structures, with attention to connections and site conditions.",
+      "Design and safety first\nSteel structures need more than measured sections. Qualified specialists must establish intended use, permanent and imposed loads, earthquake actions, wind and snow loads.\n\nTechnical scope\nSteel grade, sections, welded and bolted connections, protective finishes and installation tolerances belong in the approved design. Connections to an existing building require separate verification.\n\nSite coordination\nGround and foundation conditions, lifting access, installation sequence, temporary stability and a safe work plan are part of preparation. Permissions and responsibilities must be agreed before contracting.\n\nTransparent proposal\nSeparate quantities or tonnage, fabrication drawings, fixings, protection, transport and erection in the scope. An initial assessment based on incomplete drawings is not a final construction proposal.\n\nHandover documents\nSpecify required inspection records, material documents and care instructions from the start. Documentation and testing depend on the project and contract.",
+    ],
+    "Demir ve çelik",
+    "/images/metal-gate.svg",
+    [
+      {
+        label: "Proje",
+        value: "Yetkin uzmanlarca doğrulanmış taşıyıcı tasarım",
+      },
+      {
+        label: "Uygulama",
+        value: "Sundurma, platform ve özel metal taşıyıcılar",
+      },
+      { label: "Bağlantı", value: "Projesine uygun kaynak / cıvata detayları" },
+      { label: "Yüzey", value: "Çevre ve kullanım şartına göre koruma" },
+      { label: "Saha", value: "Erişim, kaldırma ve montaj sırası planlaması" },
+      {
+        label: "Teklif girdisi",
+        value: "Çizimler, konum, metraj ve teknik şartname",
+      },
+    ],
+  );
 
-  add("product", "yangin-merdiveni-sistemleri", [
-    "Yangın Merdiveni Sistemleri", "Kaçış güvenliği, projeden başlar.",
-    "Yapının kullanımına ve ilgili gerekliliklere göre uzmanlarca değerlendirilmesi gereken çelik kaçış merdiveni projeleri.",
-    "Bina özelinde değerlendirme\nYangın merdiveni için tek bir standart ölçü her binaya uygulanamaz. Kullanıcı yükü, yapı yüksekliği, kaçış uzaklığı, kapılar, sahanlıklar ve güvenli boşaltım noktası ilgili mevzuat ve yetkin uzman değerlendirmesiyle ele alınır.\n\nGerekli proje girdileri\nMimari planlar, mevcut kaçış düzeni, yapı konumu, zemin ve bağlantı bilgileri ilk inceleme için gereklidir. İlgili izin, onay ve proje sorumlulukları işin başında netleştirilmelidir.\n\nTaşıyıcı ve detaylar\nTaşıyıcı çelik düzeni, bağlantılar, basamak yüzeyi, korkuluklar ve korozyon koruması onaylı projeyle tanımlanır. Merdivenin bir ürün olarak satın alınması tek başına binanın yangın uygunluğunu sağlamaz.\n\nUygulama koordinasyonu\nMontaj erişimi, bina cephesiyle birleşimler, kapı açılımları ve kullanım sürekliliği planlanır. Kaçış yolunu engelleyen sonradan eklemelerden kaçınılır.\n\nPeriyodik gözlem\nKaçış güzergâhı açık tutulmalı; bağlantı, yüzey ve hareketli kapıların durumu düzenli olarak kontrol edilmelidir. Bu metin yangın projesi veya mevzuat uygunluk belgesi yerine geçmez."
-  ], [
-    "External Escape Stair Systems", "Escape safety begins with the design.",
-    "Steel escape stair projects requiring building-specific assessment by qualified professionals under applicable requirements.",
-    "Building-specific assessment\nOne standard size cannot suit every building. Occupancy, height, escape distances, doors, landings and a safe discharge point must be assessed under applicable rules by qualified professionals.\n\nDesign information\nPlans, existing escape arrangements, location, foundations and connection details support the initial review. Permissions, approvals and design responsibilities must be established at the start.\n\nStructure and details\nThe approved design defines the steel structure, fixings, tread surface, guards and corrosion protection. Buying a staircase alone does not establish the building's fire compliance.\n\nCoordination\nPlan installation access, façade interfaces, door openings and continuity of use. Avoid later additions that obstruct escape routes.\n\nOngoing observation\nKeep routes clear and inspect connections, surfaces and doors regularly. This information is not a fire design or compliance certificate."
-  ], "Demir ve çelik", "/images/metal-gate.svg", [
-    {label:"Değerlendirme",value:"Bina kullanımı ve kaçış projesine göre"},
-    {label:"Ölçü",value:"İlgili mevzuat ve uzman proje değerlendirmesiyle"},
-    {label:"Kapsam",value:"Taşıyıcı, basamak, sahanlık ve korkuluk"},
-    {label:"Yüzey",value:"Kullanım şartlarına uygun koruma sistemi"},
-    {label:"Ön koşul",value:"Gerekli proje, izin ve onayların netleştirilmesi"},
-    {label:"Kullanım",value:"Kaçış yolunun sürekli açık tutulması"},
-  ]);
+  add(
+    "product",
+    "yangin-merdiveni-sistemleri",
+    [
+      "Yangın Merdiveni Sistemleri",
+      "Kaçış güvenliği, projeden başlar.",
+      "Yapının kullanımına ve ilgili gerekliliklere göre uzmanlarca değerlendirilmesi gereken çelik kaçış merdiveni projeleri.",
+      "Bina özelinde değerlendirme\nYangın merdiveni için tek bir standart ölçü her binaya uygulanamaz. Kullanıcı yükü, yapı yüksekliği, kaçış uzaklığı, kapılar, sahanlıklar ve güvenli boşaltım noktası ilgili mevzuat ve yetkin uzman değerlendirmesiyle ele alınır.\n\nGerekli proje girdileri\nMimari planlar, mevcut kaçış düzeni, yapı konumu, zemin ve bağlantı bilgileri ilk inceleme için gereklidir. İlgili izin, onay ve proje sorumlulukları işin başında netleştirilmelidir.\n\nTaşıyıcı ve detaylar\nTaşıyıcı çelik düzeni, bağlantılar, basamak yüzeyi, korkuluklar ve korozyon koruması onaylı projeyle tanımlanır. Merdivenin bir ürün olarak satın alınması tek başına binanın yangın uygunluğunu sağlamaz.\n\nUygulama koordinasyonu\nMontaj erişimi, bina cephesiyle birleşimler, kapı açılımları ve kullanım sürekliliği planlanır. Kaçış yolunu engelleyen sonradan eklemelerden kaçınılır.\n\nPeriyodik gözlem\nKaçış güzergâhı açık tutulmalı; bağlantı, yüzey ve hareketli kapıların durumu düzenli olarak kontrol edilmelidir. Bu metin yangın projesi veya mevzuat uygunluk belgesi yerine geçmez.",
+    ],
+    [
+      "External Escape Stair Systems",
+      "Escape safety begins with the design.",
+      "Steel escape stair projects requiring building-specific assessment by qualified professionals under applicable requirements.",
+      "Building-specific assessment\nOne standard size cannot suit every building. Occupancy, height, escape distances, doors, landings and a safe discharge point must be assessed under applicable rules by qualified professionals.\n\nDesign information\nPlans, existing escape arrangements, location, foundations and connection details support the initial review. Permissions, approvals and design responsibilities must be established at the start.\n\nStructure and details\nThe approved design defines the steel structure, fixings, tread surface, guards and corrosion protection. Buying a staircase alone does not establish the building's fire compliance.\n\nCoordination\nPlan installation access, façade interfaces, door openings and continuity of use. Avoid later additions that obstruct escape routes.\n\nOngoing observation\nKeep routes clear and inspect connections, surfaces and doors regularly. This information is not a fire design or compliance certificate.",
+    ],
+    "Demir ve çelik",
+    "/images/metal-gate.svg",
+    [
+      {
+        label: "Değerlendirme",
+        value: "Bina kullanımı ve kaçış projesine göre",
+      },
+      {
+        label: "Ölçü",
+        value: "İlgili mevzuat ve uzman proje değerlendirmesiyle",
+      },
+      { label: "Kapsam", value: "Taşıyıcı, basamak, sahanlık ve korkuluk" },
+      { label: "Yüzey", value: "Kullanım şartlarına uygun koruma sistemi" },
+      {
+        label: "Ön koşul",
+        value: "Gerekli proje, izin ve onayların netleştirilmesi",
+      },
+      { label: "Kullanım", value: "Kaçış yolunun sürekli açık tutulması" },
+    ],
+  );
 
-  const guides: [string, [string,string,string,string], [string,string,string,string], string][] = [
-    ["teklif-karsilastirma-rehberi", ["Doğru teklifi yalnızca fiyatla karşılaştırmayın", "Satın alma rehberi", "Cam, alüminyum ve metal uygulamalarında kapsamı görünür kılan bir teklif kontrol listesi.", "Aynı ölçü, farklı kapsam\nİki teklif aynı metrekareyi temel alsa bile cam bileşimi, profil serisi, donanım ve montaj kapsamı farklı olabilir. Her iki teklifin aynı ihtiyaç ve çizim üzerinden hazırlandığını kontrol edin.\n\nMalzeme listesini isteyin\nSistem adı, cam özellikleri, renk, kaplama, motor veya kilit gibi donanımlar açıkça yazılmalıdır. Marka belirtiliyorsa kullanılacak seri ve belgenin ilgili ürünle eşleşmesini isteyin.\n\nUygulama kalemlerini görün\nSöküm, moloz, nakliye, kaldırma ekipmanı, elektrik hazırlığı ve su yalıtımı gibi işler kimin kapsamında? Sonradan ek maliyet doğurabilecek işleri sözleşmeden önce ayırın.\n\nTakvim ve teslim\nÖlçü onayı, sipariş, imalat, montaj ve teslim adımlarını netleştirin. İş programını hava koşulları, saha erişimi ve diğer işlerin tamamlanmasıyla birlikte değerlendirin.\n\nÖdeme ve destek\nÖdeme planı, değişiklik talepleri, garanti kapsamı ve servis iletişimini yazılı olarak alın. Fotoğraf ve referansları inceleyin; yalnızca en düşük toplam tutarı seçmek yerine belgelenmiş kapsamı değerlendirin."], ["Compare proposals beyond the headline price", "Buying guide", "A practical checklist for comparing glass, aluminium and metalwork proposals.", "The same dimensions can hide different scopes\nGlass build-up, profiles, hardware and installation can differ even when measured area is identical. Check that proposals use the same brief and drawings.\n\nRequest a specification\nAsk for systems, glass, colours, finishes and hardware in writing. Named brands should identify the relevant product series and documentation.\n\nSee the site-work costs\nClarify demolition, waste, transport, lifting, electrical preparation and waterproofing. Identify exclusions before contracting.\n\nPlan the sequence\nAgree measurement approval, ordering, fabrication, installation and handover stages. Consider weather, access and dependencies on other trades.\n\nPayment and support\nRequest payment terms, change procedures, warranty scope and service contacts in writing. Compare documented scope rather than headline totals alone."], "Rehber"],
-    ["ankara-kis-kosullari-cam-secimi", ["Ankara'da cam sistemi planlarken kış koşulları", "İklim ve kullanım", "Soğuk, rüzgâr ve yoğuşma ihtiyacını birlikte değerlendirmek için pratik bir başlangıç.", "Kullanım hedefinizi belirleyin\nBalkonu yağıştan korumak, yılın daha uzun bölümünde kullanmak ve sürekli ısıtılan bir odaya dönüştürmek aynı ihtiyaç değildir. Hedefinizi açıkça paylaşmanız doğru sistem karşılaştırmasını sağlar.\n\nSistem bütünlüğüne bakın\nCam kadar profil, conta, birleşimler, zemin ve tavan da ısıl davranışı etkiler. Cam balkon uygulamasını tek başına binanın ısı yalıtımının yerine koymayın.\n\nRüzgâr ve kar yükü\nKat yüksekliği, çevredeki açıklık ve yapının konumu önemlidir. Özellikle çatı ve teras uygulamalarında rüzgâr, kar, su tahliyesi ve taşıyıcı uygunluğu uzmanlarca değerlendirilmelidir.\n\nYoğuşma ve havalandırma\nNemli iç hava soğuk yüzeylerde yoğuşabilir. Hava değişimi, kullanım alışkanlıkları ve ısıtma düzeni birlikte ele alınmalıdır. Havalandırmayı tamamen kesmek konforu artırmak yerine nem sorununa yol açabilir.\n\nKeşifte sorun\nTahliye noktaları, bakım erişimi, açılım yönleri ve mevcut yalıtımın korunması nasıl çözülecek? Kesin teknik performansı seçilen sisteme ait doğrulanabilir dokümanlardan öğrenin."], ["Planning glazing for Ankara's winter conditions", "Climate and use", "Consider cold weather, wind and condensation as part of one practical plan.", "Define the goal\nWeather protection, extended seasonal use and a continuously heated room are different requirements. Explain the intended use before comparing systems.\n\nLook at the whole assembly\nProfiles, seals, junctions, floors and roofs affect thermal behaviour as well as glass. Balcony glazing alone does not replace building insulation.\n\nWind and snow\nHeight, exposure and building location matter. Roof and terrace applications need professional assessment of loads, drainage and structural suitability.\n\nCondensation and ventilation\nMoist indoor air can condense on cold surfaces. Air change, daily habits and heating must be considered together. Completely stopping ventilation can create moisture problems.\n\nQuestions for the survey\nDiscuss drainage, maintenance access, opening direction and preservation of existing waterproofing. Request verified technical documents for the chosen system."], "Planlama"],
-    ["kurumsal-proje-teknik-sartname", ["Kurumsal projeler için teknik talep dosyası", "Mimar ve yükleniciler için", "Karşılaştırılabilir teklif ve düzenli saha koordinasyonu için hangi bilgileri paylaşmalısınız?", "Kapsamı ayırın\nCephe, doğrama, cam bölme, korkuluk ve çelik imalat kalemlerini ayrı pozlarla tanımlayın. Her pozun yeri, adedi, yaklaşık ölçüsü ve kullanım amacı anlaşılır olmalıdır.\n\nÇizim ve revizyon\nGüncel mimari çizimlerin revizyon tarihini belirtin. Statik hesap, uygulama çizimi ve detay onayının hangi tarafın sorumluluğunda olduğunu baştan yazın. Ön metraj ile kesin üretim ölçüsünü birbirinden ayırın.\n\nPerformans gereksinimleri\nIsıl, akustik, güvenlik, yangın ve yüzey gereksinimlerini proje uzmanınızla belirleyin. Talep edilen belge ve testleri ilgili ürün veya sistemle eşleştirin; doğrulanmamış genel sertifika ifadelerine dayanmayın.\n\nŞantiye koşulları\nTeslim adresi, çalışma saatleri, depolama alanı, vinç/iskele erişimi, elektrik ve saha güvenliği sorumluluklarını paylaşın. Diğer işlerle arayüzler uygulama takviminin önemli girdisidir.\n\nTeklifin kapanışı\nTeknik kapsam, miktarlar, fiyat, ödeme, revizyon süreci ve kabul ölçütleri aynı teklif dosyasında yer almalıdır. Değişikliklerin yazılı kaydı hem işvereni hem uygulayıcıyı korur."], ["Prepare a technical brief for corporate projects", "For architects and contractors", "The information needed for comparable proposals and coordinated site work.", "Separate the scope\nList façades, joinery, partitions, balustrades and steelwork as clear items with location, quantity, dimensions and intended use.\n\nDrawings and revisions\nIdentify the current drawing revision. Assign responsibility for structural calculations, shop drawings and approvals. Distinguish preliminary quantities from final fabrication measurements.\n\nPerformance requirements\nAgree thermal, acoustic, safety, fire and finish requirements with your specialists. Match requested documents and tests to the actual product or system.\n\nSite conditions\nShare location, working hours, storage, lifting access, utilities and safety responsibilities. Interfaces with other trades shape the programme.\n\nClose the proposal\nBring scope, quantities, price, payment, change process and acceptance criteria together. Written change records protect both client and installer."], "Kurumsal"],
-    ["aluminyum-demir-korkuluk-secimi", ["Alüminyum, cam veya demir korkuluk?", "Malzeme rehberi", "Görünüm kadar bağlantı, güvenlik, bakım ve kullanım koşulları da seçimin parçası.", "Önce güvenlik gereksinimi\nKorkuluk seçiminde ilk konu renk veya malzeme değil, yapıdaki işlevdir. Kullanım yeri, yük, yükseklik ve kullanıcı profili uzman değerlendirmesiyle birlikte ele alınmalıdır.\n\nAlüminyum sistemler\nFarklı yüzey ve kesit seçenekleri mimariyle uyum kurulmasına yardımcı olur. Bağlantılar, galvanik uyum ve çevresel koşullar değerlendirilmelidir; bakım gereksinimi seçilen yüzeye bağlıdır.\n\nCam dolgular\nŞeffaflık ve manzara isteyen projelerde cam düşünülebilir. Cam türü, bileşimi ve sabitleme şekli güvenlik gereksinimine göre seçilir; yalnızca kalınlık bilgisi yeterli değildir.\n\nDemir ve çelik\nGeometrik veya dekoratif tasarımlara uygundur. Dış ortamda yüzey hazırlığı ve korozyon koruması önem taşır. Ağırlık ve ankraj gereksinimleri gerçek taşıyıcıyla birlikte hesaplanır.\n\nKarar verirken\nNumune, detay çizimi, temizlik/bakım ihtiyacı ve yazılı kapsamı inceleyin. Farklı metallerin bir araya geldiği detaylarda uygun birleşim çözümünü uygulayıcınıza sorun."], ["Aluminium, glass or steel balustrades?", "Material guide", "Appearance, connections, safety, care and exposure all inform the decision.", "Start with safety\nThe building function comes before colour or material. Location, loads, height and users require qualified assessment.\n\nAluminium\nDifferent finishes and sections can suit varied architecture. Connections, material compatibility and exposure need consideration; care depends on the finish.\n\nGlass infill\nGlass can preserve views. Type, build-up and fixing must meet the project safety requirements; thickness alone is insufficient.\n\nIron and steel\nThese suit geometric and decorative designs. Outdoor surface preparation and corrosion protection matter. Weight and anchors must be considered with the actual structure.\n\nMake the decision\nReview samples, details, maintenance and written scope. Ask about suitable junctions where different metals meet."], "Rehber"],
-    ["montaj-oncesi-hazirlik", ["Montaj gününden önce hazırlanacaklar", "Uygulama rehberi", "Erişim, eşya koruması ve saha koordinasyonuyla daha düzenli bir uygulama günü planlayın.", "Ölçü ve tasarımı kesinleştirin\nRenk, açılım yönü, kapı konumu ve donanım seçimlerini yazılı olarak onaylayın. Mobilya, perde ve klima gibi elemanların hareket alanıyla çakışmadığını kontrol edin.\n\nErişim ve alan\nBina yönetimini bilgilendirin; yükleme, asansör ve çalışma saatlerini netleştirin. Çalışma alanındaki eşyaları kaldırın, korunması gereken yüzeyleri uygulayıcıyla birlikte belirleyin.\n\nHazırlık işleri\nElektrik, taşıyıcı onarımı, su yalıtımı veya yüzey tesviyesi gerekiyorsa sorumlu taraf ve tamamlanma tarihi belirlenmelidir. Mevcut kusurları uygulama öncesinde kayıt altına alın.\n\nGüvenli çalışma\nÇocuklar ve evcil hayvanlar uygulama alanından uzak tutulmalıdır. Kesim, kaldırma ve yüksekte çalışma faaliyetlerinin güvenlik planı yetkin ekiplerin sorumluluğundadır.\n\nTeslim kontrolü\nPanel ve kapıları birlikte deneyin. Bağlantı, tahliye, yüzey durumu ve temizlik kontrolünü yapın; kullanım talimatlarıyla servis ve garanti belgelerini teslim alın."], ["Prepare before installation day", "Installation guide", "Plan access, protection and site coordination for an orderly installation.", "Confirm the choices\nApprove colour, opening direction, door locations and hardware in writing. Check clearances around furniture, blinds and equipment.\n\nAccess and space\nInform building management and agree unloading, lift access and working hours. Remove belongings and identify surfaces requiring protection.\n\nPreparation work\nAssign electrical work, structural repairs, waterproofing and levelling to the responsible party with clear dates. Record existing defects before installation.\n\nSafe working\nKeep children and pets away. Qualified teams are responsible for safe cutting, lifting and working at height.\n\nHandover\nOperate panels and doors together. Review connections, drainage, surfaces and cleaning, then receive instructions and service or warranty documents."], "Uygulama"],
-    ["metal-yuzey-bakimi", ["Metal ve alüminyum yüzeylerin bakım rehberi", "Bakım", "Yüzey korumasını ve hareketli donanımı düzenli gözlemle destekleyin.", "Ürüne uygun temizleyin\nÜreticinin bakım talimatını temel alın. Yumuşak bez, uygun pH değerinde temizleyici ve temiz su çoğu rutin için başlangıçtır; güçlü asit, alkali ve aşındırıcı malzemeleri onaysız kullanmayın.\n\nBirikintileri uzaklaştırın\nRay, birleşim ve su tahliye noktalarında kir birikmesine izin vermeyin. Temizlikte basınçlı suyu conta ve elektrikli donanıma doğrudan yöneltmeyin.\n\nYüzeyi gözlemleyin\nBoya kabarması, pas başlangıcı, çatlak veya darbe hasarı varsa erken değerlendirme isteyin. Yanlış onarım malzemeleri mevcut yüzeyle uyumsuz olabilir.\n\nHareketli parçalar\nMenteşe ve rulmanlar için yalnızca üreticinin önerdiği bakım malzemelerini kullanın. Zorlanan bir kapı veya paneli kuvvet uygulayarak çalıştırmayın. Elektrikli sistemlerde koruyucu kapakları açmayın.\n\nKayıt tutun\nÜrün bilgisi, uygulama tarihi, garanti belgesi ve servis kayıtlarını bir arada saklayın. Bakım sıklığı kullanım ve çevre koşullarına göre değişir."], ["Care for metal and aluminium surfaces", "Care", "Support protective finishes and moving hardware with regular observation.", "Use suitable products\nFollow the manufacturer's instructions. Soft cloths, suitable cleaners and clean water are a starting point; avoid unapproved acids, alkalis and abrasives.\n\nRemove build-up\nKeep tracks, junctions and drains clear. Do not direct pressure washers at seals or electrical equipment.\n\nObserve the finish\nSeek early assessment of blistering paint, corrosion, cracks or impact damage. Incompatible repair products may worsen the finish.\n\nMoving parts\nUse only recommended maintenance products for hinges and rollers. Do not force doors or panels or open protective covers on powered systems.\n\nKeep records\nRetain product details, installation date, warranty and service records. Care intervals depend on use and exposure."], "Bakım"],
+  const guides: [
+    string,
+    [string, string, string, string],
+    [string, string, string, string],
+    string,
+  ][] = [
+    [
+      "teklif-karsilastirma-rehberi",
+      [
+        "Doğru teklifi yalnızca fiyatla karşılaştırmayın",
+        "Satın alma rehberi",
+        "Cam, alüminyum ve metal uygulamalarında kapsamı görünür kılan bir teklif kontrol listesi.",
+        "Aynı ölçü, farklı kapsam\nİki teklif aynı metrekareyi temel alsa bile cam bileşimi, profil serisi, donanım ve montaj kapsamı farklı olabilir. Her iki teklifin aynı ihtiyaç ve çizim üzerinden hazırlandığını kontrol edin.\n\nMalzeme listesini isteyin\nSistem adı, cam özellikleri, renk, kaplama, motor veya kilit gibi donanımlar açıkça yazılmalıdır. Marka belirtiliyorsa kullanılacak seri ve belgenin ilgili ürünle eşleşmesini isteyin.\n\nUygulama kalemlerini görün\nSöküm, moloz, nakliye, kaldırma ekipmanı, elektrik hazırlığı ve su yalıtımı gibi işler kimin kapsamında? Sonradan ek maliyet doğurabilecek işleri sözleşmeden önce ayırın.\n\nTakvim ve teslim\nÖlçü onayı, sipariş, imalat, montaj ve teslim adımlarını netleştirin. İş programını hava koşulları, saha erişimi ve diğer işlerin tamamlanmasıyla birlikte değerlendirin.\n\nÖdeme ve destek\nÖdeme planı, değişiklik talepleri, garanti kapsamı ve servis iletişimini yazılı olarak alın. Fotoğraf ve referansları inceleyin; yalnızca en düşük toplam tutarı seçmek yerine belgelenmiş kapsamı değerlendirin.",
+      ],
+      [
+        "Compare proposals beyond the headline price",
+        "Buying guide",
+        "A practical checklist for comparing glass, aluminium and metalwork proposals.",
+        "The same dimensions can hide different scopes\nGlass build-up, profiles, hardware and installation can differ even when measured area is identical. Check that proposals use the same brief and drawings.\n\nRequest a specification\nAsk for systems, glass, colours, finishes and hardware in writing. Named brands should identify the relevant product series and documentation.\n\nSee the site-work costs\nClarify demolition, waste, transport, lifting, electrical preparation and waterproofing. Identify exclusions before contracting.\n\nPlan the sequence\nAgree measurement approval, ordering, fabrication, installation and handover stages. Consider weather, access and dependencies on other trades.\n\nPayment and support\nRequest payment terms, change procedures, warranty scope and service contacts in writing. Compare documented scope rather than headline totals alone.",
+      ],
+      "Rehber",
+    ],
+    [
+      "ankara-kis-kosullari-cam-secimi",
+      [
+        "Ankara'da cam sistemi planlarken kış koşulları",
+        "İklim ve kullanım",
+        "Soğuk, rüzgâr ve yoğuşma ihtiyacını birlikte değerlendirmek için pratik bir başlangıç.",
+        "Kullanım hedefinizi belirleyin\nBalkonu yağıştan korumak, yılın daha uzun bölümünde kullanmak ve sürekli ısıtılan bir odaya dönüştürmek aynı ihtiyaç değildir. Hedefinizi açıkça paylaşmanız doğru sistem karşılaştırmasını sağlar.\n\nSistem bütünlüğüne bakın\nCam kadar profil, conta, birleşimler, zemin ve tavan da ısıl davranışı etkiler. Cam balkon uygulamasını tek başına binanın ısı yalıtımının yerine koymayın.\n\nRüzgâr ve kar yükü\nKat yüksekliği, çevredeki açıklık ve yapının konumu önemlidir. Özellikle çatı ve teras uygulamalarında rüzgâr, kar, su tahliyesi ve taşıyıcı uygunluğu uzmanlarca değerlendirilmelidir.\n\nYoğuşma ve havalandırma\nNemli iç hava soğuk yüzeylerde yoğuşabilir. Hava değişimi, kullanım alışkanlıkları ve ısıtma düzeni birlikte ele alınmalıdır. Havalandırmayı tamamen kesmek konforu artırmak yerine nem sorununa yol açabilir.\n\nKeşifte sorun\nTahliye noktaları, bakım erişimi, açılım yönleri ve mevcut yalıtımın korunması nasıl çözülecek? Kesin teknik performansı seçilen sisteme ait doğrulanabilir dokümanlardan öğrenin.",
+      ],
+      [
+        "Planning glazing for Ankara's winter conditions",
+        "Climate and use",
+        "Consider cold weather, wind and condensation as part of one practical plan.",
+        "Define the goal\nWeather protection, extended seasonal use and a continuously heated room are different requirements. Explain the intended use before comparing systems.\n\nLook at the whole assembly\nProfiles, seals, junctions, floors and roofs affect thermal behaviour as well as glass. Balcony glazing alone does not replace building insulation.\n\nWind and snow\nHeight, exposure and building location matter. Roof and terrace applications need professional assessment of loads, drainage and structural suitability.\n\nCondensation and ventilation\nMoist indoor air can condense on cold surfaces. Air change, daily habits and heating must be considered together. Completely stopping ventilation can create moisture problems.\n\nQuestions for the survey\nDiscuss drainage, maintenance access, opening direction and preservation of existing waterproofing. Request verified technical documents for the chosen system.",
+      ],
+      "Planlama",
+    ],
+    [
+      "kurumsal-proje-teknik-sartname",
+      [
+        "Kurumsal projeler için teknik talep dosyası",
+        "Mimar ve yükleniciler için",
+        "Karşılaştırılabilir teklif ve düzenli saha koordinasyonu için hangi bilgileri paylaşmalısınız?",
+        "Kapsamı ayırın\nCephe, doğrama, cam bölme, korkuluk ve çelik imalat kalemlerini ayrı pozlarla tanımlayın. Her pozun yeri, adedi, yaklaşık ölçüsü ve kullanım amacı anlaşılır olmalıdır.\n\nÇizim ve revizyon\nGüncel mimari çizimlerin revizyon tarihini belirtin. Statik hesap, uygulama çizimi ve detay onayının hangi tarafın sorumluluğunda olduğunu baştan yazın. Ön metraj ile kesin üretim ölçüsünü birbirinden ayırın.\n\nPerformans gereksinimleri\nIsıl, akustik, güvenlik, yangın ve yüzey gereksinimlerini proje uzmanınızla belirleyin. Talep edilen belge ve testleri ilgili ürün veya sistemle eşleştirin; doğrulanmamış genel sertifika ifadelerine dayanmayın.\n\nŞantiye koşulları\nTeslim adresi, çalışma saatleri, depolama alanı, vinç/iskele erişimi, elektrik ve saha güvenliği sorumluluklarını paylaşın. Diğer işlerle arayüzler uygulama takviminin önemli girdisidir.\n\nTeklifin kapanışı\nTeknik kapsam, miktarlar, fiyat, ödeme, revizyon süreci ve kabul ölçütleri aynı teklif dosyasında yer almalıdır. Değişikliklerin yazılı kaydı hem işvereni hem uygulayıcıyı korur.",
+      ],
+      [
+        "Prepare a technical brief for corporate projects",
+        "For architects and contractors",
+        "The information needed for comparable proposals and coordinated site work.",
+        "Separate the scope\nList façades, joinery, partitions, balustrades and steelwork as clear items with location, quantity, dimensions and intended use.\n\nDrawings and revisions\nIdentify the current drawing revision. Assign responsibility for structural calculations, shop drawings and approvals. Distinguish preliminary quantities from final fabrication measurements.\n\nPerformance requirements\nAgree thermal, acoustic, safety, fire and finish requirements with your specialists. Match requested documents and tests to the actual product or system.\n\nSite conditions\nShare location, working hours, storage, lifting access, utilities and safety responsibilities. Interfaces with other trades shape the programme.\n\nClose the proposal\nBring scope, quantities, price, payment, change process and acceptance criteria together. Written change records protect both client and installer.",
+      ],
+      "Uygulama notları",
+    ],
+    [
+      "aluminyum-demir-korkuluk-secimi",
+      [
+        "Alüminyum, cam veya demir korkuluk?",
+        "Malzeme rehberi",
+        "Görünüm kadar bağlantı, güvenlik, bakım ve kullanım koşulları da seçimin parçası.",
+        "Önce güvenlik gereksinimi\nKorkuluk seçiminde ilk konu renk veya malzeme değil, yapıdaki işlevdir. Kullanım yeri, yük, yükseklik ve kullanıcı profili uzman değerlendirmesiyle birlikte ele alınmalıdır.\n\nAlüminyum sistemler\nFarklı yüzey ve kesit seçenekleri mimariyle uyum kurulmasına yardımcı olur. Bağlantılar, galvanik uyum ve çevresel koşullar değerlendirilmelidir; bakım gereksinimi seçilen yüzeye bağlıdır.\n\nCam dolgular\nŞeffaflık ve manzara isteyen projelerde cam düşünülebilir. Cam türü, bileşimi ve sabitleme şekli güvenlik gereksinimine göre seçilir; yalnızca kalınlık bilgisi yeterli değildir.\n\nDemir ve çelik\nGeometrik veya dekoratif tasarımlara uygundur. Dış ortamda yüzey hazırlığı ve korozyon koruması önem taşır. Ağırlık ve ankraj gereksinimleri gerçek taşıyıcıyla birlikte hesaplanır.\n\nKarar verirken\nNumune, detay çizimi, temizlik/bakım ihtiyacı ve yazılı kapsamı inceleyin. Farklı metallerin bir araya geldiği detaylarda uygun birleşim çözümünü uygulayıcınıza sorun.",
+      ],
+      [
+        "Aluminium, glass or steel balustrades?",
+        "Material guide",
+        "Appearance, connections, safety, care and exposure all inform the decision.",
+        "Start with safety\nThe building function comes before colour or material. Location, loads, height and users require qualified assessment.\n\nAluminium\nDifferent finishes and sections can suit varied architecture. Connections, material compatibility and exposure need consideration; care depends on the finish.\n\nGlass infill\nGlass can preserve views. Type, build-up and fixing must meet the project safety requirements; thickness alone is insufficient.\n\nIron and steel\nThese suit geometric and decorative designs. Outdoor surface preparation and corrosion protection matter. Weight and anchors must be considered with the actual structure.\n\nMake the decision\nReview samples, details, maintenance and written scope. Ask about suitable junctions where different metals meet.",
+      ],
+      "Rehber",
+    ],
+    [
+      "montaj-oncesi-hazirlik",
+      [
+        "Montaj gününden önce hazırlanacaklar",
+        "Uygulama rehberi",
+        "Erişim, eşya koruması ve saha koordinasyonuyla daha düzenli bir uygulama günü planlayın.",
+        "Ölçü ve tasarımı kesinleştirin\nRenk, açılım yönü, kapı konumu ve donanım seçimlerini yazılı olarak onaylayın. Mobilya, perde ve klima gibi elemanların hareket alanıyla çakışmadığını kontrol edin.\n\nErişim ve alan\nBina yönetimini bilgilendirin; yükleme, asansör ve çalışma saatlerini netleştirin. Çalışma alanındaki eşyaları kaldırın, korunması gereken yüzeyleri uygulayıcıyla birlikte belirleyin.\n\nHazırlık işleri\nElektrik, taşıyıcı onarımı, su yalıtımı veya yüzey tesviyesi gerekiyorsa sorumlu taraf ve tamamlanma tarihi belirlenmelidir. Mevcut kusurları uygulama öncesinde kayıt altına alın.\n\nGüvenli çalışma\nÇocuklar ve evcil hayvanlar uygulama alanından uzak tutulmalıdır. Kesim, kaldırma ve yüksekte çalışma faaliyetlerinin güvenlik planı yetkin ekiplerin sorumluluğundadır.\n\nTeslim kontrolü\nPanel ve kapıları birlikte deneyin. Bağlantı, tahliye, yüzey durumu ve temizlik kontrolünü yapın; kullanım talimatlarıyla servis ve garanti belgelerini teslim alın.",
+      ],
+      [
+        "Prepare before installation day",
+        "Installation guide",
+        "Plan access, protection and site coordination for an orderly installation.",
+        "Confirm the choices\nApprove colour, opening direction, door locations and hardware in writing. Check clearances around furniture, blinds and equipment.\n\nAccess and space\nInform building management and agree unloading, lift access and working hours. Remove belongings and identify surfaces requiring protection.\n\nPreparation work\nAssign electrical work, structural repairs, waterproofing and levelling to the responsible party with clear dates. Record existing defects before installation.\n\nSafe working\nKeep children and pets away. Qualified teams are responsible for safe cutting, lifting and working at height.\n\nHandover\nOperate panels and doors together. Review connections, drainage, surfaces and cleaning, then receive instructions and service or warranty documents.",
+      ],
+      "Uygulama",
+    ],
+    [
+      "metal-yuzey-bakimi",
+      [
+        "Metal ve alüminyum yüzeylerin bakım rehberi",
+        "Bakım",
+        "Yüzey korumasını ve hareketli donanımı düzenli gözlemle destekleyin.",
+        "Ürüne uygun temizleyin\nÜreticinin bakım talimatını temel alın. Yumuşak bez, uygun pH değerinde temizleyici ve temiz su çoğu rutin için başlangıçtır; güçlü asit, alkali ve aşındırıcı malzemeleri onaysız kullanmayın.\n\nBirikintileri uzaklaştırın\nRay, birleşim ve su tahliye noktalarında kir birikmesine izin vermeyin. Temizlikte basınçlı suyu conta ve elektrikli donanıma doğrudan yöneltmeyin.\n\nYüzeyi gözlemleyin\nBoya kabarması, pas başlangıcı, çatlak veya darbe hasarı varsa erken değerlendirme isteyin. Yanlış onarım malzemeleri mevcut yüzeyle uyumsuz olabilir.\n\nHareketli parçalar\nMenteşe ve rulmanlar için yalnızca üreticinin önerdiği bakım malzemelerini kullanın. Zorlanan bir kapı veya paneli kuvvet uygulayarak çalıştırmayın. Elektrikli sistemlerde koruyucu kapakları açmayın.\n\nKayıt tutun\nÜrün bilgisi, uygulama tarihi, garanti belgesi ve servis kayıtlarını bir arada saklayın. Bakım sıklığı kullanım ve çevre koşullarına göre değişir.",
+      ],
+      [
+        "Care for metal and aluminium surfaces",
+        "Care",
+        "Support protective finishes and moving hardware with regular observation.",
+        "Use suitable products\nFollow the manufacturer's instructions. Soft cloths, suitable cleaners and clean water are a starting point; avoid unapproved acids, alkalis and abrasives.\n\nRemove build-up\nKeep tracks, junctions and drains clear. Do not direct pressure washers at seals or electrical equipment.\n\nObserve the finish\nSeek early assessment of blistering paint, corrosion, cracks or impact damage. Incompatible repair products may worsen the finish.\n\nMoving parts\nUse only recommended maintenance products for hinges and rollers. Do not force doors or panels or open protective covers on powered systems.\n\nKeep records\nRetain product details, installation date, warranty and service records. Care intervals depend on use and exposure.",
+      ],
+      "Bakım",
+    ],
   ];
-  guides.forEach(([slug,tr,en,category],i) => add("article",slug,tr,en,category,`/images/article-${i%4+1}.svg`));
+  guides.forEach(([slug, tr, en, category], i) =>
+    add(
+      "article",
+      slug,
+      tr,
+      en,
+      category,
+      `/images/article-${(i % 4) + 1}.svg`,
+    ),
+  );
 
-  add("page", "kurumsal-projeler-taahhut", ["Mimardan sahaya, aynı proje dili", "Kurumsal projeler", "Mimarlar, yükleniciler ve işletmeler için teknik kapsamı netleştiren cam, alüminyum ve metal çözüm yaklaşımı.", "Projenizi birlikte tanımlayalım\nKonut, ofis ve ticari yapılarda cam, alüminyum ve metal kalemlerinin aynı çerçevede değerlendirilmesi koordinasyonu kolaylaştırır. Yeni proje veya yenileme işinizde çizimleri, yaklaşık metrajı ve uygulama konumunu paylaşarak başlayabilirsiniz.\n\nİlk teknik değerlendirme\nİhtiyaç listesi, malzeme alternatifleri, sorumluluk sınırları ve gerekli proje belgeleri belirlenir. Statik, yangın, elektrik ve diğer uzmanlık alanları ilgili yetkin uzmanlarla koordine edilmelidir.\n\nTeklif ve revizyon\nPoz bazlı kapsam, teknik tanım, teslim koşulları ve takvim yazılı teklifte yer alır. Çizim revizyonları ve değişiklik talepleri uygulama öncesinde karşılıklı netleştirilir.\n\nSaha ve teslim\nErişim, depolama, montaj sırası ve diğer disiplinlerle arayüzler planlanır. Teslimde uygulama kapsamı, kullanım bilgileri ve sözleşmede talep edilen belgeler birlikte kontrol edilir.\n\nBaşvuru için\nİletişim formunda proje türü, ilçe veya şehir, yaklaşık miktar ve hedef takvim bilgilerini belirtin. Belgelerde kişisel veya gizli bilgileri paylaşmadan önce uygun aktarım kanalını birlikte belirleyin."], ["One project language, from design to site", "Corporate projects", "A clear technical scope for glass, aluminium and metalwork across architectural and contracting projects.", "Define the project\nConsider related glass, aluminium and metal packages together. Start with drawings, approximate quantities and the site location for new construction or refurbishment.\n\nTechnical review\nIdentify requirements, material options, responsibility boundaries and necessary documentation. Coordinate structural, fire, electrical and other specialist matters with qualified professionals.\n\nProposal and revision\nUse itemised technical scope, delivery terms and a written programme. Agree drawing revisions and change requests before execution.\n\nSite and handover\nPlan access, storage, installation sequence and trade interfaces. Check the agreed scope, instructions and requested documents at handover.\n\nGet in touch\nInclude project type, district or city, approximate quantity and target timing in the enquiry form. Agree an appropriate transfer channel before sharing confidential or personal information."], "Kurumsal", "/images/hero.svg");
+  add(
+    "page",
+    "teknik-dokumanlar",
+    [
+      "Doğru belgeyi, doğru sistem için isteyin",
+      "Teknik dokümanlar",
+      "Ürün seçimi, çizim onayı, belge ve teslim dosyası için bir dokümantasyon rehberi.",
+      "Ürün dokümanları\nTeknik föyler, kullanım talimatları ve uygunluk belgeleri seçilen sistem ve tedarikçiye göre değişir. İhtiyaç duyduğunuz performans değerlerini proje şartnamesiyle birlikte belirtin.\n\nÇizim ve numune onayı\nRenk numunesi, panel bölünmesi, kapı yönü, bağlantı ve birleşim çizimleri üretim öncesi kararların görünür olmasını sağlar. Onay tarihi ve revizyon numarasını kayıt altına alın.\n\nBelge doğrulama\nBelgenin üretici, ürün serisi, test koşulu ve geçerlilik kapsamını inceleyin. Başka bir ürüne ait sonuçları doğrudan kendi projenize uygulamayın. Bu sayfada bağımsız doğrulanmış sertifika veya test raporu sunulmamaktadır.\n\nTeslim dosyası\nSözleşmede tanımlanan teknik belgeler, bakım bilgileri, varsa garanti koşulları ve servis iletişimi teslimde talep edilmelidir. Genel PDF kataloğu, projenize ait teknik şartname yerine geçmez.",
+    ],
+    [
+      "Request the right document for the right system",
+      "Technical documents",
+      "A guide to product information, drawing approval and handover records.",
+      "Product information\nDatasheets, instructions and conformity documents depend on the chosen system and supplier. State required performance alongside the project specification.\n\nDrawing and sample approval\nColour samples, panel divisions, door directions and junction drawings make decisions visible. Record approval dates and revision numbers.\n\nVerify the scope\nCheck the manufacturer, product series, test conditions and applicability. Results for a different product cannot automatically be applied to your project. No independently verified certificates or test reports are presented here.\n\nHandover\nRequest agreed technical records, care instructions, warranty terms and service contacts. A general PDF catalogue is not a project specification.",
+    ],
+    "Uygulama notları",
+    "/images/product-10.svg",
+  );
 
-  add("page", "teknik-dokumanlar", ["Doğru belgeyi, doğru sistem için isteyin", "Teknik dokümanlar", "Ürün seçimi, çizim onayı, belge ve teslim dosyası için bir dokümantasyon rehberi.", "Ürün dokümanları\nTeknik föyler, kullanım talimatları ve uygunluk belgeleri seçilen sistem ve tedarikçiye göre değişir. İhtiyaç duyduğunuz performans değerlerini proje şartnamesiyle birlikte belirtin.\n\nÇizim ve numune onayı\nRenk numunesi, panel bölünmesi, kapı yönü, bağlantı ve birleşim çizimleri üretim öncesi kararların görünür olmasını sağlar. Onay tarihi ve revizyon numarasını kayıt altına alın.\n\nBelge doğrulama\nBelgenin üretici, ürün serisi, test koşulu ve geçerlilik kapsamını inceleyin. Başka bir ürüne ait sonuçları doğrudan kendi projenize uygulamayın. Bu sayfada bağımsız doğrulanmış sertifika veya test raporu sunulmamaktadır.\n\nTeslim dosyası\nSözleşmede tanımlanan teknik belgeler, bakım bilgileri, varsa garanti koşulları ve servis iletişimi teslimde talep edilmelidir. Genel PDF kataloğu, projenize ait teknik şartname yerine geçmez."], ["Request the right document for the right system", "Technical documents", "A guide to product information, drawing approval and handover records.", "Product information\nDatasheets, instructions and conformity documents depend on the chosen system and supplier. State required performance alongside the project specification.\n\nDrawing and sample approval\nColour samples, panel divisions, door directions and junction drawings make decisions visible. Record approval dates and revision numbers.\n\nVerify the scope\nCheck the manufacturer, product series, test conditions and applicability. Results for a different product cannot automatically be applied to your project. No independently verified certificates or test reports are presented here.\n\nHandover\nRequest agreed technical records, care instructions, warranty terms and service contacts. A general PDF catalogue is not a project specification."], "Kurumsal", "/images/product-10.svg");
-
-  add("page", "kesif-ve-teklif-rehberi", ["İlk fikirden net bir teklif dosyasına", "Keşif ve teklif rehberi", "İlk başvuruda hangi bilgileri paylaşacağınızı ve keşifte hangi konuları netleştireceğinizi öğrenin.", "1. İhtiyacı anlatın\nHangi alanı, hangi amaçla kullanmak istediğinizi açıklayın. Cam, alüminyum veya metal uygulaması için yaklaşık genişlik, yükseklik ve konum bilgileri ilk görüşmeyi kolaylaştırır.\n\n2. Yerinde koşulları değerlendirin\nÜretim ölçüsü yerinde alınır. Zemin, tavan, mevcut yapı, su tahliyesi, elektrik ve erişim koşulları birlikte incelenir. Gerekli izin veya uzman proje ihtiyacı bu aşamada gündeme alınır.\n\n3. Alternatifleri karşılaştırın\nMalzeme, açılım, renk, donanım ve bakım ihtiyacını bütçenizle birlikte değerlendirin. Kesin performans ve garanti koşullarını ilgili ürün belgelerinden öğrenin.\n\n4. Yazılı kapsamı onaylayın\nMetraj, teknik tanım, dahil ve hariç işler, ödeme ve teslim takvimi netleşmelidir. Üretimden önce çizim ve ölçü onayını verin.\n\n5. Teslimi birlikte kontrol edin\nKullanım deneyimi, yüzeyler, bağlantılar ve bakım bilgileri gözden geçirilir. Sonraki servis başvuruları için teklif ve ürün kayıtlarını saklayın."], ["From an initial idea to a clear proposal", "Survey and proposal guide", "What to share when enquiring and what to clarify during a survey.", "1. Explain the need\nDescribe the space and intended use. Approximate dimensions and location help the initial discussion.\n\n2. Review the site\nFinal fabrication dimensions are measured on site. Review structure, drainage, electricity and access, including any permissions or specialist design needs.\n\n3. Compare options\nConsider materials, openings, colours, hardware and care alongside budget. Refer to actual product documents for performance and warranty terms.\n\n4. Approve the scope\nAgree quantities, specifications, inclusions, exclusions, payment and timing. Approve drawings and measurements before fabrication.\n\n5. Check handover\nReview operation, surfaces, fixings and instructions together. Retain the proposal and product records for future service enquiries."], "Kurumsal", "/images/project-3.svg");
+  add(
+    "page",
+    "kesif-ve-teklif-rehberi",
+    [
+      "İlk fikirden net bir teklif dosyasına",
+      "Keşif ve teklif rehberi",
+      "İlk başvuruda hangi bilgileri paylaşacağınızı ve keşifte hangi konuları netleştireceğinizi öğrenin.",
+      "1. İhtiyacı anlatın\nHangi alanı, hangi amaçla kullanmak istediğinizi açıklayın. Cam, alüminyum veya metal uygulaması için yaklaşık genişlik, yükseklik ve konum bilgileri ilk görüşmeyi kolaylaştırır.\n\n2. Yerinde koşulları değerlendirin\nÜretim ölçüsü yerinde alınır. Zemin, tavan, mevcut yapı, su tahliyesi, elektrik ve erişim koşulları birlikte incelenir. Gerekli izin veya uzman proje ihtiyacı bu aşamada gündeme alınır.\n\n3. Alternatifleri karşılaştırın\nMalzeme, açılım, renk, donanım ve bakım ihtiyacını bütçenizle birlikte değerlendirin. Kesin performans ve garanti koşullarını ilgili ürün belgelerinden öğrenin.\n\n4. Yazılı kapsamı onaylayın\nMetraj, teknik tanım, dahil ve hariç işler, ödeme ve teslim takvimi netleşmelidir. Üretimden önce çizim ve ölçü onayını verin.\n\n5. Teslimi birlikte kontrol edin\nKullanım deneyimi, yüzeyler, bağlantılar ve bakım bilgileri gözden geçirilir. Sonraki servis başvuruları için teklif ve ürün kayıtlarını saklayın.",
+    ],
+    [
+      "From an initial idea to a clear proposal",
+      "Survey and proposal guide",
+      "What to share when enquiring and what to clarify during a survey.",
+      "1. Explain the need\nDescribe the space and intended use. Approximate dimensions and location help the initial discussion.\n\n2. Review the site\nFinal fabrication dimensions are measured on site. Review structure, drainage, electricity and access, including any permissions or specialist design needs.\n\n3. Compare options\nConsider materials, openings, colours, hardware and care alongside budget. Refer to actual product documents for performance and warranty terms.\n\n4. Approve the scope\nAgree quantities, specifications, inclusions, exclusions, payment and timing. Approve drawings and measurements before fabrication.\n\n5. Check handover\nReview operation, surfaces, fixings and instructions together. Retain the proposal and product records for future service enquiries.",
+    ],
+    "Uygulama notları",
+    "/images/project-3.svg",
+  );
 
   const regions = [
-    ["etimesgut", "Etimesgut", "Merkez ve çevre mahalleler", "Central and surrounding neighbourhoods", "Konut balkonları, giriş kapıları ve yenileme işlerinde bina yönetimi, mevcut yüzeyler ve montaj erişimi ilk değerlendirmede önem taşır.", "For residential balconies, entrance gates and refurbishment, building management, existing surfaces and installation access are key starting points."],
-    ["baglica", "Bağlıca", "Villa, bahçe ve teras planlaması", "Villas, gardens and terraces", "Bahçe ve teras projelerinde kot farkı, çatıya gelen yükler, gölgeleme yönü ve yağış tahliyesi birlikte ele alınmalıdır.", "Garden and terrace projects need coordinated assessment of levels, roof loads, sun orientation and drainage."],
-    ["eryaman", "Eryaman", "Balkon ve site yaşamına uygun çözümler", "Balconies and residential developments", "Site ve apartmanlarda cephe bütünlüğü, panel açılımı, temizlik erişimi ve ortak alan kullanımı planlamanın parçalarıdır.", "In residential developments, façade consistency, panel movement, cleaning access and shared-space use all inform planning."],
-    ["cayyolu", "Çayyolu", "Konut ve ticari mekân projeleri", "Residential and commercial spaces", "Kış bahçesi, ofis bölme ve açık alan düzenlemelerinde kullanım beklentisi, havalandırma ve mimariyle uyum birlikte değerlendirilir.", "Winter gardens, office partitions and outdoor spaces should be assessed for intended use, ventilation and architectural fit."],
-    ["batikent", "Batıkent", "Günlük kullanımı kolaylaştıran detaylar", "Details for everyday use", "Mevcut yapılardaki yenilemelerde taşıyıcı bağlantı, eşik seviyesi, su tahliyesi ve elektrik ihtiyacının önceden incelenmesi yararlıdır.", "Refurbishment in existing buildings benefits from early review of structural fixings, thresholds, drainage and electrical requirements."],
-    ["incek", "İncek", "Teras, korkuluk ve bahçe senaryoları", "Terrace, balustrade and garden concepts", "Açık alanlarda rüzgâr etkisi, kotlar, koruma gerektiren kenarlar ve bakım erişimi sistem seçiminden önce netleştirilmelidir.", "For exposed outdoor spaces, assess wind, changes in level, guarded edges and maintenance access before selecting systems."],
-    ["ostim-ivedik", "OSTİM ve İvedik", "Kurumsal ve endüstriyel proje talepleri", "Corporate and industrial enquiries", "Ticari ve endüstriyel işlerde teknik şartname, uygulama çizimi, şantiye erişimi, depolama ve teslim programı teklifin temel girdileridir.", "Commercial and industrial proposals need specifications, drawings, site access, storage arrangements and a delivery programme."],
+    [
+      "etimesgut",
+      "Etimesgut",
+      "Merkez ve çevre mahalleler",
+      "Central and surrounding neighbourhoods",
+      "Konut balkonları, giriş kapıları ve yenileme işlerinde bina yönetimi, mevcut yüzeyler ve montaj erişimi ilk değerlendirmede önem taşır.",
+      "For residential balconies, entrance gates and refurbishment, building management, existing surfaces and installation access are key starting points.",
+    ],
+    [
+      "baglica",
+      "Bağlıca",
+      "Villa, bahçe ve teras planlaması",
+      "Villas, gardens and terraces",
+      "Bahçe ve teras projelerinde kot farkı, çatıya gelen yükler, gölgeleme yönü ve yağış tahliyesi birlikte ele alınmalıdır.",
+      "Garden and terrace projects need coordinated assessment of levels, roof loads, sun orientation and drainage.",
+    ],
+    [
+      "eryaman",
+      "Eryaman",
+      "Balkon ve site yaşamına uygun çözümler",
+      "Balconies and residential developments",
+      "Site ve apartmanlarda cephe bütünlüğü, panel açılımı, temizlik erişimi ve ortak alan kullanımı planlamanın parçalarıdır.",
+      "In residential developments, façade consistency, panel movement, cleaning access and shared-space use all inform planning.",
+    ],
+    [
+      "cayyolu",
+      "Çayyolu",
+      "Konut ve ticari mekân projeleri",
+      "Residential and commercial spaces",
+      "Kış bahçesi, ofis bölme ve açık alan düzenlemelerinde kullanım beklentisi, havalandırma ve mimariyle uyum birlikte değerlendirilir.",
+      "Winter gardens, office partitions and outdoor spaces should be assessed for intended use, ventilation and architectural fit.",
+    ],
+    [
+      "batikent",
+      "Batıkent",
+      "Günlük kullanımı kolaylaştıran detaylar",
+      "Details for everyday use",
+      "Mevcut yapılardaki yenilemelerde taşıyıcı bağlantı, eşik seviyesi, su tahliyesi ve elektrik ihtiyacının önceden incelenmesi yararlıdır.",
+      "Refurbishment in existing buildings benefits from early review of structural fixings, thresholds, drainage and electrical requirements.",
+    ],
+    [
+      "incek",
+      "İncek",
+      "Teras, korkuluk ve bahçe senaryoları",
+      "Terrace, balustrade and garden concepts",
+      "Açık alanlarda rüzgâr etkisi, kotlar, koruma gerektiren kenarlar ve bakım erişimi sistem seçiminden önce netleştirilmelidir.",
+      "For exposed outdoor spaces, assess wind, changes in level, guarded edges and maintenance access before selecting systems.",
+    ],
+    [
+      "ostim-ivedik",
+      "OSTİM ve İvedik",
+      "İşyeri için cam ve metal işleri",
+      "Glazing and metalwork for business premises",
+      "Dükkân ve işyerlerindeki cam, kapı, bölme ve metal işleri için kullanım amacı, yaklaşık ölçüler, çalışma saatleri ve uygulama erişimi ilk görüşmede değerlendirilir.",
+      "For glazing, doors, partitions and metalwork at business premises, discuss intended use, approximate dimensions, working hours and installation access at the first enquiry.",
+    ],
   ];
-  regions.forEach(([slug,name,sub,subEn,detail,detailEn], i) => add("region",slug,[
-    `${name} için cam, alüminyum ve metal çözümleri`,sub,
-    `${name} bölgesindeki projeniz için cam balkon, alüminyum doğrama ve metal uygulama seçeneklerini birlikte değerlendirelim.`,
-    `${name} projenizi anlatarak başlayın\nBölgeye göre standart bir ürün seçmek yerine yapınızın koşullarını ve kullanım ihtiyacınızı öğreniyoruz. ${detail}\n\nDeğerlendirilebilecek çözümler\nKatlanır veya sürme cam balkon, giyotin cam, alüminyum kapı-pencere, cam bölme, korkuluk ve projeye özel metal uygulamalarını ihtiyacınıza göre konuşabilirsiniz. Kapsam ve uygulanabilirlik keşif ve teknik inceleme sonrasında netleştirilir.\n\nİlk başvuru bilgileri\nMahalle veya yaklaşık konum, uygulama alanı, yaklaşık ölçüler ve hedef takvim ilk değerlendirme için yeterlidir. Tam adres ve özel belgeleri yalnızca gereken aşamada paylaşın.\n\nKeşif ve planlama\nÜretim ölçüsü yerinde doğrulanır. Bağlantı zemini, rüzgâr veya kar etkileri, su tahliyesi, çalışma erişimi ve bina yönetimi koşulları dikkate alınır. Gerekli uzman proje veya izinler ayrıca belirlenir.\n\nTeklifin netleşmesi\nMalzeme, sistem, renk, donanım, montaj kapsamı ve teslim koşulları projenize özel yazılı teklifte yer alır. Bölgesel hizmet ve keşif takvimi başvurunuz değerlendirilirken teyit edilir.`
-  ],[
-    `Glass, aluminium and metalwork for ${name}`,subEn,
-    `Explore balcony glazing, aluminium joinery and metalwork options for your project in ${name}.`,
-    `Tell us about your ${name} project\nThe building and intended use matter more than a standard product for a district. ${detailEn}\n\nPossible solutions\nDiscuss folding or sliding balcony glazing, vertical glass, doors, windows, partitions, balustrades and project-specific metalwork. Scope and feasibility follow a survey and technical review.\n\nInitial information\nShare the neighbourhood or approximate location, space type, approximate dimensions and target timing. Provide exact addresses and private documents only when needed.\n\nSurvey and planning\nProduction measurements are verified on site. Review fixings, weather exposure, drainage, access and building management requirements, including any specialist design or permissions.\n\nWritten proposal\nMaterials, systems, colours, hardware, installation and delivery terms are project-specific. Service availability and survey scheduling are confirmed when your enquiry is reviewed.`
-  ],"Ankara",`/images/project-${i%6+1}.svg`,[{label:"Bölge",value:name},{label:"Başvuru",value:"Konut, ticari ve kurumsal proje"},{label:"Planlama",value:"Keşif ve teknik değerlendirmeyle"}]));
+  regions.forEach(([slug, name, sub, subEn, detail, detailEn], i) =>
+    add(
+      "region",
+      slug,
+      [
+        `${name} için cam, alüminyum ve metal çözümleri`,
+        sub,
+        `${name} konumundaki ihtiyacınızı Etimesgut’taki dükkânımıza doğrudan iletin. Keşif ve hizmet uygunluğunu birlikte değerlendirelim.`,
+        `${name} konumundaki ihtiyacınızı anlatın\nEtimesgut’taki dükkânımızdan sizinle doğrudan görüşüp yapınızın koşullarını ve kullanım ihtiyacınızı birlikte değerlendiriyoruz. ${detail}\n\nDeğerlendirilebilecek çözümler\nKatlanır veya sürme cam balkon, giyotin cam, alüminyum kapı-pencere, cam bölme, korkuluk ve projeye özel metal uygulamalarını ihtiyacınıza göre konuşabilirsiniz. Kapsam ve uygulanabilirlik keşif ve teknik inceleme sonrasında netleştirilir.\n\nİlk başvuru bilgileri\nMahalle veya yaklaşık konum, uygulama alanı, yaklaşık ölçüler ve hedef takvim ilk değerlendirme için yeterlidir. Tam adres ve özel belgeleri yalnızca gereken aşamada paylaşın.\n\nKeşif ve planlama\nÜretim ölçüsü yerinde doğrulanır. Bağlantı zemini, rüzgâr veya kar etkileri, su tahliyesi, çalışma erişimi ve bina yönetimi koşulları dikkate alınır. Gerekli uzman proje veya izinler ayrıca belirlenir.\n\nTeklifin netleşmesi\nMalzeme, sistem, renk, donanım, montaj kapsamı ve teslim koşulları projenize özel yazılı teklifte yer alır. Bölgesel hizmet ve keşif takvimi başvurunuz değerlendirilirken teyit edilir.`,
+      ],
+      [
+        `Glass, aluminium and metalwork for ${name}`,
+        subEn,
+        `Contact our Etimesgut shop directly about your needs in ${name}. Survey and service availability are assessed for each enquiry.`,
+        `Tell us what you need in ${name}\nYou speak directly with our Etimesgut shop to review the building and the way you want to use the space. ${detailEn}\n\nPossible solutions\nDiscuss folding or sliding balcony glazing, vertical glass, doors, windows, partitions, balustrades and project-specific metalwork. Scope and feasibility follow a survey and technical review.\n\nInitial information\nShare the neighbourhood or approximate location, space type, approximate dimensions and target timing. Provide exact addresses and private documents only when needed.\n\nSurvey and planning\nProduction measurements are verified on site. Review fixings, weather exposure, drainage, access and building management requirements, including any specialist design or permissions.\n\nWritten proposal\nMaterials, systems, colours, hardware, installation and delivery terms are project-specific. Service availability and survey scheduling are confirmed when your enquiry is reviewed.`,
+      ],
+      "Ankara",
+      `/images/project-${(i % 6) + 1}.svg`,
+      [
+        { label: "Bölge", value: name },
+        { label: "Başvuru", value: "Konut ve işyeri uygulaması" },
+        { label: "Planlama", value: "Keşif ve teknik değerlendirmeyle" },
+      ],
+    ),
+  );
 
-  const extraFaqs: [string,string,string,string,string,string][] = [
-    ["metal-fiyatlandirma", "Demir doğrama fiyatını hangi kalemler etkiler?", "Profil kesiti ve ağırlığı, tasarımın işçilik yoğunluğu, yüzey koruması, donanım, nakliye ve montaj birlikte değerlendirilir. Aynı metrekareye sahip iki ürünün kapsamı farklı olabilir; karşılaştırmayı yazılı teknik liste üzerinden yapın.", "How is metalwork priced?", "Section sizes, weight, fabrication complexity, protective finishes, hardware, transport and installation affect price. Identical areas can represent different scopes; compare written specifications.", "Demir ve çelik"],
-    ["motorlu-cam-guvenlik", "Motorlu cam sisteminde hangi güvenlik detayları sorulmalı?", "Hareketli panelin sıkışma riskleri, kumanda, enerji kesintisi durumu, durdurma ve bakım erişimi seçilen sistem kapsamında değerlendirilmelidir. Uygulayıcıdan ilgili kullanım ve güvenlik dokümanlarını isteyin; hareket alanını boş tutun.", "What safety details matter for powered glazing?", "Assess trapping risks, controls, power failure behaviour, stopping and maintenance access for the actual system. Request operating and safety documents and keep the movement zone clear.", "Cam sistemleri"],
-    ["ofis-akustik", "Cam bölme ses yalıtımını tek başına sağlar mı?", "Hayır. Cam ve profil kadar kapı, contalar, zemin, tavan ve çevre birleşimleri de ses geçişini etkiler. Akustik hedefinizi projenin bütünü için tanımlayın; doğrulanabilir sistem verilerini talep edin.", "Does glass alone provide acoustic privacy?", "No. Doors, seals, floors, ceilings and junctions also influence sound transmission. Define an acoustic target for the complete assembly and request verified system information.", "Alüminyum sistemler"],
-    ["cam-korkuluk-secimi", "Korkuluk camının kalınlığını kendim seçebilir miyim?", "Camın türü, bileşimi, ölçüsü ve sabitleme şekli birlikte değerlendirilmelidir. Güvenli seçim yalnızca kalınlığa göre yapılmaz; kullanım yükü ve yapı koşullarına göre uzman proje değerlendirmesi gerekir.", "Can I choose balustrade glass by thickness alone?", "No. Glass type, build-up, size and fixing work together. Loads and structural conditions need qualified assessment rather than a thickness-only choice.", "Güvenlik"],
-    ["yangin-merdiveni-proje", "Yangın merdiveni siparişi için hangi bilgiler gerekir?", "Güncel mimari plan, yapı kullanımı, mevcut kaçış düzeni, bağlantı ve zemin koşulları gereklidir. Ölçüler ve onaylar ilgili uzmanlarca belirlenir; bir merdiven satın almak tek başına bina yangın uygunluğunu sağlamaz.", "What information is needed for an escape stair?", "Current plans, building use, escape arrangements, connections and ground conditions are needed. Qualified professionals establish dimensions and approvals; purchasing a staircase alone does not establish building compliance.", "Demir ve çelik"],
-    ["santiye-teklif", "Kurumsal teklif için çizim göndermek zorunlu mu?", "İlk görüşme yaklaşık kapsamla başlayabilir. Karşılaştırılabilir ve kesin teklif için güncel çizimler, metraj, teknik şartname, saha konumu ve takvim gerekir. Gizli proje belgeleri için uygun aktarım kanalını önceden belirleyin.", "Are drawings required for a corporate quotation?", "An initial discussion can use an approximate scope. A firm comparable proposal requires current drawings, quantities, specification, location and timing. Agree a suitable channel before sharing confidential documents.", "Kurumsal"],
-    ["tahliye-yogusma", "Camda oluşan her su izi sızıntı mıdır?", "Yoğuşma ile dışarıdan su girişi farklı sorunlardır. Nem, yüzey sıcaklığı ve havalandırma yoğuşmayı etkiler; tahliye ve birleşimler ise su girişinde incelenir. Sorunun zamanı ve konumunu fotoğraflayarak servis değerlendirmesi isteyin.", "Does water on glass always mean a leak?", "Condensation and external water ingress are different. Humidity, surface temperature and ventilation affect condensation; drains and junctions are inspected for ingress. Record when and where it happens and request assessment.", "Bakım"],
-    ["bolge-kesif", "Ankara'da hangi ilçeler için talep bırakabilirim?", "Etimesgut, Bağlıca, Eryaman, Çayyolu, Batıkent, İncek ve diğer Ankara bölgeleri için konum belirterek başvurabilirsiniz. Hizmet kapsamı, saha uygunluğu ve keşif takvimi talebiniz değerlendirilirken teyit edilir.", "Which Ankara areas can I enquire about?", "Enquire for Etimesgut, Bağlıca, Eryaman, Çayyolu, Batıkent, İncek or other Ankara areas with your location. Scope, site suitability and survey availability are confirmed during review.", "Bölgeler"],
-    ["sehir-disi-proje", "Şehir dışı bir kurumsal proje için başvuru yapılabilir mi?", "Konum, yaklaşık kapsam, teknik şartname ve hedef takvimle kurumsal talep oluşturabilirsiniz. Nakliye, konaklama, saha erişimi ve montaj organizasyonu değerlendirilmeden hizmet taahhüdü veya kesin takvim verilmez.", "Can I enquire about a corporate project outside Ankara?", "Submit location, scope, specifications and timing. Transport, accommodation, access and installation arrangements must be assessed before confirming service or dates.", "Kurumsal"],
-    ["elektrik-hazirlik", "Motorlu sistemin elektrik hazırlığını kim yapar?", "Enerji hattı, koruma ve bağlantı işleri yetkin elektrik uzmanı tarafından planlanmalıdır. Teklifte elektrik hazırlığı ve bağlantının kimin sorumluluğunda olduğunu netleştirin; ürünün koruyucu parçalarını açmayın.", "Who prepares the power supply for motorised systems?", "Qualified electrical professionals should plan the supply, protection and connection. Clarify responsibility in the proposal and do not open protective covers.", "Güvenlik"],
-    ["renk-numune", "Renkleri ekrandan seçmek yeterli mi?", "Ekran, ışık ve malzeme yüzeyi algılanan rengi değiştirebilir. Mümkünse fiziksel numune üzerinden renk ve yüzey onayı verin; siparişte renk kodunu ve kaplama türünü yazılı belirtin.", "Is selecting colour on screen enough?", "Screens, lighting and material surfaces can change perceived colour. Approve a physical sample where possible and specify the colour code and finish in writing.", "Planlama"],
-    ["servis-bilgileri", "Servis talebimi daha hızlı değerlendirmek için ne paylaşmalıyım?", "Uygulama veya sipariş kaydı, ürün türü, sorunun kısa açıklaması ve güvenli mesafeden çekilmiş fotoğraflar yardımcı olur. Kırık cam, gevşek korkuluk veya elektrik sorunu varsa sistemi kullanmayı durdurup uzman desteği isteyin.", "What should I include in a service enquiry?", "Include the installation or order reference, product type, a short description and photographs taken safely. Stop use and seek professional help for broken glass, loose guards or electrical issues.", "Bakım"],
+  const extraFaqs: [string, string, string, string, string, string][] = [
+    [
+      "metal-fiyatlandirma",
+      "Demir doğrama fiyatını hangi kalemler etkiler?",
+      "Profil kesiti ve ağırlığı, tasarımın işçilik yoğunluğu, yüzey koruması, donanım, nakliye ve montaj birlikte değerlendirilir. Aynı metrekareye sahip iki ürünün kapsamı farklı olabilir; karşılaştırmayı yazılı teknik liste üzerinden yapın.",
+      "How is metalwork priced?",
+      "Section sizes, weight, fabrication complexity, protective finishes, hardware, transport and installation affect price. Identical areas can represent different scopes; compare written specifications.",
+      "Demir ve çelik",
+    ],
+    [
+      "motorlu-cam-guvenlik",
+      "Motorlu cam sisteminde hangi güvenlik detayları sorulmalı?",
+      "Hareketli panelin sıkışma riskleri, kumanda, enerji kesintisi durumu, durdurma ve bakım erişimi seçilen sistem kapsamında değerlendirilmelidir. Uygulayıcıdan ilgili kullanım ve güvenlik dokümanlarını isteyin; hareket alanını boş tutun.",
+      "What safety details matter for powered glazing?",
+      "Assess trapping risks, controls, power failure behaviour, stopping and maintenance access for the actual system. Request operating and safety documents and keep the movement zone clear.",
+      "Cam sistemleri",
+    ],
+    [
+      "ofis-akustik",
+      "Cam bölme ses yalıtımını tek başına sağlar mı?",
+      "Hayır. Cam ve profil kadar kapı, contalar, zemin, tavan ve çevre birleşimleri de ses geçişini etkiler. Akustik hedefinizi projenin bütünü için tanımlayın; doğrulanabilir sistem verilerini talep edin.",
+      "Does glass alone provide acoustic privacy?",
+      "No. Doors, seals, floors, ceilings and junctions also influence sound transmission. Define an acoustic target for the complete assembly and request verified system information.",
+      "Alüminyum sistemler",
+    ],
+    [
+      "cam-korkuluk-secimi",
+      "Korkuluk camının kalınlığını kendim seçebilir miyim?",
+      "Camın türü, bileşimi, ölçüsü ve sabitleme şekli birlikte değerlendirilmelidir. Güvenli seçim yalnızca kalınlığa göre yapılmaz; kullanım yükü ve yapı koşullarına göre uzman proje değerlendirmesi gerekir.",
+      "Can I choose balustrade glass by thickness alone?",
+      "No. Glass type, build-up, size and fixing work together. Loads and structural conditions need qualified assessment rather than a thickness-only choice.",
+      "Güvenlik",
+    ],
+    [
+      "yangin-merdiveni-proje",
+      "Yangın merdiveni siparişi için hangi bilgiler gerekir?",
+      "Güncel mimari plan, yapı kullanımı, mevcut kaçış düzeni, bağlantı ve zemin koşulları gereklidir. Ölçüler ve onaylar ilgili uzmanlarca belirlenir; bir merdiven satın almak tek başına bina yangın uygunluğunu sağlamaz.",
+      "What information is needed for an escape stair?",
+      "Current plans, building use, escape arrangements, connections and ground conditions are needed. Qualified professionals establish dimensions and approvals; purchasing a staircase alone does not establish building compliance.",
+      "Demir ve çelik",
+    ],
+    [
+      "santiye-teklif",
+      "Keşif öncesinde çizim paylaşmalı mıyım?",
+      "İlk görüşme yaklaşık kapsamla başlayabilir. Karşılaştırılabilir ve kesin teklif için güncel çizimler, metraj, teknik şartname, saha konumu ve takvim gerekir. Gizli proje belgeleri için uygun aktarım kanalını önceden belirleyin.",
+      "Should I share drawings before a survey?",
+      "An initial discussion can use an approximate scope. A firm comparable proposal requires current drawings, quantities, specification, location and timing. Agree a suitable channel before sharing confidential documents.",
+      "Uygulama notları",
+    ],
+    [
+      "tahliye-yogusma",
+      "Camda oluşan her su izi sızıntı mıdır?",
+      "Yoğuşma ile dışarıdan su girişi farklı sorunlardır. Nem, yüzey sıcaklığı ve havalandırma yoğuşmayı etkiler; tahliye ve birleşimler ise su girişinde incelenir. Sorunun zamanı ve konumunu fotoğraflayarak servis değerlendirmesi isteyin.",
+      "Does water on glass always mean a leak?",
+      "Condensation and external water ingress are different. Humidity, surface temperature and ventilation affect condensation; drains and junctions are inspected for ingress. Record when and where it happens and request assessment.",
+      "Bakım",
+    ],
+    [
+      "bolge-kesif",
+      "Ankara'da hangi ilçeler için talep bırakabilirim?",
+      "Etimesgut, Bağlıca, Eryaman, Çayyolu, Batıkent, İncek ve diğer Ankara bölgeleri için konum belirterek başvurabilirsiniz. Hizmet kapsamı, saha uygunluğu ve keşif takvimi talebiniz değerlendirilirken teyit edilir.",
+      "Which Ankara areas can I enquire about?",
+      "Enquire for Etimesgut, Bağlıca, Eryaman, Çayyolu, Batıkent, İncek or other Ankara areas with your location. Scope, site suitability and survey availability are confirmed during review.",
+      "Bölgeler",
+    ],
+    [
+      "sehir-disi-proje",
+      "Ankara dışından talep bırakabilir miyim?",
+      "Konum, yaklaşık kapsam ve hedef takvimle talep bırakabilirsiniz. Nakliye, konaklama, saha erişimi ve montaj organizasyonu değerlendirilmeden hizmet taahhüdü veya kesin takvim verilmez.",
+      "Can I enquire from outside Ankara?",
+      "Submit location, scope, specifications and timing. Transport, accommodation, access and installation arrangements must be assessed before confirming service or dates.",
+      "Uygulama notları",
+    ],
+    [
+      "elektrik-hazirlik",
+      "Motorlu sistemin elektrik hazırlığını kim yapar?",
+      "Enerji hattı, koruma ve bağlantı işleri yetkin elektrik uzmanı tarafından planlanmalıdır. Teklifte elektrik hazırlığı ve bağlantının kimin sorumluluğunda olduğunu netleştirin; ürünün koruyucu parçalarını açmayın.",
+      "Who prepares the power supply for motorised systems?",
+      "Qualified electrical professionals should plan the supply, protection and connection. Clarify responsibility in the proposal and do not open protective covers.",
+      "Güvenlik",
+    ],
+    [
+      "renk-numune",
+      "Renkleri ekrandan seçmek yeterli mi?",
+      "Ekran, ışık ve malzeme yüzeyi algılanan rengi değiştirebilir. Mümkünse fiziksel numune üzerinden renk ve yüzey onayı verin; siparişte renk kodunu ve kaplama türünü yazılı belirtin.",
+      "Is selecting colour on screen enough?",
+      "Screens, lighting and material surfaces can change perceived colour. Approve a physical sample where possible and specify the colour code and finish in writing.",
+      "Planlama",
+    ],
+    [
+      "servis-bilgileri",
+      "Servis talebimi daha hızlı değerlendirmek için ne paylaşmalıyım?",
+      "Uygulama veya sipariş kaydı, ürün türü, sorunun kısa açıklaması ve güvenli mesafeden çekilmiş fotoğraflar yardımcı olur. Kırık cam, gevşek korkuluk veya elektrik sorunu varsa sistemi kullanmayı durdurup uzman desteği isteyin.",
+      "What should I include in a service enquiry?",
+      "Include the installation or order reference, product type, a short description and photographs taken safely. Stop use and seek professional help for broken glass, loose guards or electrical issues.",
+      "Bakım",
+    ],
   ];
-  extraFaqs.forEach(([slug,q,a,qEn,aEn,category])=>add("faq",slug,[q,"",a,a],[qEn,"",aEn,aEn],category,""));
+  extraFaqs.forEach(([slug, q, a, qEn, aEn, category]) =>
+    add("faq", slug, [q, "", a, a], [qEn, "", aEn, aEn], category, ""),
+  );
   return rows;
 }

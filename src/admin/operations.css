@@ -675,52 +675,52 @@
 .op-detail-block > .op-form {
   padding: 0;
 }
-.op-dealer-editor {
+.op-team-editor {
   margin-bottom: 25px;
 }
-.op-dealer-grid {
+.op-team-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
   background: var(--ka-border);
 }
-.op-dealer-grid > article {
+.op-team-grid > article {
   background: white;
   padding: 25px;
   min-width: 0;
 }
-.op-dealer-grid article > div:first-child {
+.op-team-grid article > div:first-child {
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #a4b792;
   margin-bottom: 20px;
 }
-.op-dealer-grid h3 {
+.op-team-grid h3 {
   font-size: 17px;
   font-weight: 500;
   color: #607e4d;
   margin: 0 0 13px;
 }
-.op-dealer-grid p {
+.op-team-grid p {
   font-size: 11px;
   line-height: 1.7;
   color: #9bad8c;
   margin-bottom: 8px;
 }
-.op-dealer-grid article > a {
+.op-team-grid article > a {
   display: block;
   font-size: 11px;
   color: #7f9c69;
   margin: 10px 0;
 }
-.op-dealer-grid article > small {
+.op-team-grid article > small {
   display: block;
   font-size: 10px;
   color: #a3b493;
   margin: 15px 0;
 }
-.op-dealer-grid .op-button-row {
+.op-team-grid .op-button-row {
   margin-top: 20px;
   justify-content: space-between;
 }
@@ -853,7 +853,7 @@
   .op-master-detail {
     grid-template-columns: minmax(0, 1fr);
   }
-  .op-dealer-grid {
+  .op-team-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .op-kanban {
@@ -963,10 +963,10 @@
   .op-message-list article.customer {
     margin-right: 10px;
   }
-  .op-dealer-grid {
+  .op-team-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .op-dealer-grid > article {
+  .op-team-grid > article {
     padding: 23px;
   }
   .op-provider-panel {

@@ -69,14 +69,27 @@ async function selectSection(label) {
   const nav = page.getByRole("navigation", { name: "Yönetim menüsü" });
   const menu = page.getByRole("button", { name: "Menüyü aç", exact: true });
   if (await menu.isVisible()) {
-    if (!(await page.locator(".ka-sidebar").getAttribute("class"))?.includes("is-open")) await menu.click();
-    await page.waitForFunction(() => document.querySelector(".ka-sidebar").getBoundingClientRect().left >= 0);
+    if (
+      !(await page.locator(".ka-sidebar").getAttribute("class"))?.includes(
+        "is-open",
+      )
+    )
+      await menu.click();
+    await page.waitForFunction(
+      () =>
+        document.querySelector(".ka-sidebar").getBoundingClientRect().left >= 0,
+    );
   }
   await nav.getByRole("button", { name: label, exact: true }).click();
   await page
     .getByRole("heading", { name: label, level: 1, exact: true })
     .waitFor();
-  if (await menu.isVisible()) await page.waitForFunction(() => document.querySelector(".ka-sidebar").getBoundingClientRect().right <= 0);
+  if (await menu.isVisible())
+    await page.waitForFunction(
+      () =>
+        document.querySelector(".ka-sidebar").getBoundingClientRect().right <=
+        0,
+    );
 }
 async function login(target, username, password, staff = false) {
   await target.goto(base + "/yonetim", { waitUntil: "networkidle" });
@@ -161,55 +174,66 @@ try {
     "existing administrator login opens the integrated operations navigation",
   );
 
-  await selectSection("Bayi & teknik ekip");
+  await selectSection("Teknik ekip");
   await page
-    .getByRole("button", { name: "Bayi / ekip ekle", exact: true })
+    .getByRole("button", { name: "Teknik ekip ekle", exact: true })
     .click();
-  const dealerForm = page.locator(".op-dealer-editor form");
-  await dealerForm
-    .getByLabel("Bayi / ekip adı", { exact: false })
+  const teamForm = page.locator(".op-team-editor form");
+  await teamForm
+    .getByLabel("Ekip adı", { exact: false })
     .fill("Sentetik Etimesgut Ekibi");
-  await dealerForm
-    .getByLabel("Yetkili kişi", { exact: true })
+  await teamForm
+    .getByLabel("Sorumlu çalışan", { exact: true })
     .fill("Sentetik Ekip Sorumlusu");
-  await dealerForm.getByLabel("Telefon", { exact: true }).fill("05000000011");
-  await dealerForm
+  await teamForm.getByLabel("Telefon", { exact: true }).fill("05000000011");
+  await teamForm
     .getByLabel("E-posta", { exact: true })
     .fill("operations-team@example.com");
-  await dealerForm.getByLabel("Şehir", { exact: true }).fill("Ankara");
-  await dealerForm.getByLabel("Merkez ilçe", { exact: true }).fill("Etimesgut");
-  await dealerForm
-    .getByLabel("Adres", { exact: true })
-    .fill("Sentetik test adresi");
-  await dealerForm
-    .getByLabel("Sorumlu bölgeler", { exact: false })
-    .fill("Etimesgut, Eryaman");
-  const dealer = (
+  for (const removedField of [
+    "Şehir",
+    "Merkez ilçe",
+    "Adres",
+    "Sorumlu bölgeler",
+  ])
+    assert.equal(
+      await teamForm.getByLabel(removedField, { exact: true }).count(),
+      0,
+    );
+  const team = (
     await json(
       await saveWithResponse(
-        dealerForm.getByRole("button", {
-          name: "Bayi / ekibi kaydet",
+        teamForm.getByRole("button", {
+          name: "Teknik ekibi kaydet",
           exact: true,
         }),
-        "/api/admin/dealers",
+        "/api/admin/teams",
       ),
       201,
     )
-  ).dealer;
+  ).team;
   await page
-    .locator(".op-dealer-grid article")
-    .filter({ hasText: dealer.name })
+    .locator(".op-team-grid article")
+    .filter({ hasText: team.name })
     .waitFor();
-  assert.deepEqual(dealer.regions, ["Etimesgut", "Eryaman"]);
+  assert.equal(team.contactName, "Sentetik Ekip Sorumlusu");
+  assert.equal(
+    (await context.request.get(base + "/api/admin/dealers")).status(),
+    410,
+  );
+  assert.equal(
+    (await outsiderContext.request.get(base + "/api/dealers")).status(),
+    410,
+  );
   const routed = await json(
     await outsiderContext.request.post(base + "/api/inquiries", {
       data: {
-        name: "Sentetik Otomatik Atama",
+        name: "Sentetik Atanmamış Talep",
         email: "routed@example.com",
         phone: "05000000012",
         district: "Eryaman",
         product: "Cam Balkon",
-        message: "Bayi bölgelerine göre gerçek otomatik yönlendirme kontrolü.",
+        message:
+          "Yeni talebin keşif planlamasını yönetimin yapması için sentetik kayıt.",
         consent: true,
       },
     }),
@@ -219,11 +243,11 @@ try {
     await context.request.get(base + "/api/admin/pipeline"),
   );
   assert.equal(
-    pipelineBefore.inquiries.find((i) => i.id === routed.id).dealerId,
-    dealer.id,
+    pipelineBefore.inquiries.find((i) => i.id === routed.id).teamId,
+    "",
   );
   pass(
-    "dealer form persists both comma-separated regions and routes a real matching inquiry",
+    "internal team contact persists, old directory APIs are retired and new inquiries await manual planning",
   );
 
   await selectSection("Personel ve roller");
@@ -231,14 +255,14 @@ try {
     await page
       .getByRole("button", { name: "Personel ekle", exact: true })
       .click();
-    const form = page.locator(".op-dealer-editor form");
+    const form = page.locator(".op-team-editor form");
     await form.getByLabel("Kullanıcı adı", { exact: true }).fill(username);
     await form.getByLabel("İlk parola", { exact: false }).fill(staffPassword);
     await form.locator("select[name=role]").selectOption(role);
-    if (role === "dealer")
+    if (role === "technician")
       await form
-        .getByLabel("Bayi / ekip", { exact: false })
-        .selectOption(dealer.id);
+        .getByLabel("Teknik ekip", { exact: false })
+        .selectOption(team.id);
     const staff = (
       await json(
         await saveWithResponse(
@@ -254,10 +278,10 @@ try {
     await page.getByRole("row").filter({ hasText: username }).waitFor();
     return staff;
   }
-  await createStaff("operations.dealer", "dealer");
+  await createStaff("operations.technician", "technician");
   await createStaff("operations.editor", "editor");
   pass(
-    "staff UI saves independent dealer and content-editor accounts with actual roles",
+    "staff UI saves internal technician and content-editor accounts with actual roles",
   );
 
   await selectSection("Talep süreçleri");
@@ -276,8 +300,8 @@ try {
     .getByLabel("Süreç aşaması", { exact: false })
     .selectOption("surveyed");
   await drawer
-    .getByLabel("Atanan bayi / ekip", { exact: false })
-    .selectOption(dealer.id);
+    .getByLabel("Sorumlu teknik ekip", { exact: false })
+    .selectOption(team.id);
   await drawer
     .getByLabel("Teknisyen / sorumlu", { exact: true })
     .fill("Sentetik Teknisyen");
@@ -306,7 +330,10 @@ try {
   );
   const updated = updatedPipeline.inquiries.find((i) => i.id === inquiry.id);
   assert.equal(updated.stage, "surveyed");
-  assert.equal(updated.dealerId, dealer.id);
+  assert.equal(updated.teamId, team.id);
+  assert.equal(updated.assignedTeam.id, team.id);
+  assert.equal("dealer" in updated, false);
+  assert.equal("dealerId" in updated, false);
   assert.equal(updated.technician, "Sentetik Teknisyen");
   assert.equal(updated.priority, "high");
   assert.ok(updated.appointmentAt.startsWith("2030-01-15"));
@@ -317,6 +344,12 @@ try {
   );
   assert.ok(!JSON.stringify(customerView).includes("SADECE-EKIP-ICIN"));
   assert.ok(JSON.stringify(customerView).includes("Keşif tamamlandı"));
+  assert.equal(customerView.inquiry.assignedTeam.id, team.id);
+  for (const key of ["address", "city", "district", "regions"])
+    assert.equal(key in customerView.inquiry.assignedTeam, false);
+  assert.equal("dealer" in customerView.inquiry, false);
+  assert.equal("dealerId" in customerView.inquiry, false);
+  assert.doesNotMatch(await drawer.innerText(), /bayi|bayilik|dealership/i);
   pass(
     "pipeline editor saves assignment, stage, appointment and priority while keeping private notes private",
   );
@@ -331,13 +364,11 @@ try {
         "/api/admin/pipeline/" + inquiry.id + "/documents" &&
       r.request().method() === "POST",
   );
-  await drawer
-    .locator("input[type=file]")
-    .setInputFiles({
-      name: "operations-quote.pdf",
-      mimeType: "application/pdf",
-      buffer: await guide.body(),
-    });
+  await drawer.locator("input[type=file]").setInputFiles({
+    name: "operations-quote.pdf",
+    mimeType: "application/pdf",
+    buffer: await guide.body(),
+  });
   const document = (await json(await uploadResponse, 201)).document;
   await drawer
     .getByRole("link", { name: document.name + " indir", exact: true })
@@ -587,98 +618,96 @@ try {
     "notifications show real unconfigured delivery, persist read state and retry without claiming delivery",
   );
 
-  const dealerContext = await browser.newContext({
+  const teamContext = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
   });
-  const dealerPage = await dealerContext.newPage();
-  dealerPage.on("pageerror", (e) => errors.push(e.message));
-  await login(dealerPage, "operations.dealer", staffPassword, true);
-  const dealerNav = dealerPage.getByRole("navigation", {
+  const teamPage = await teamContext.newPage();
+  teamPage.on("pageerror", (e) => errors.push(e.message));
+  await login(teamPage, "operations.technician", staffPassword, true);
+  const teamNav = teamPage.getByRole("navigation", {
     name: "Yönetim menüsü",
   });
   assert.equal(
-    await dealerNav
+    await teamNav
       .getByRole("button", { name: "Müşteriler", exact: true })
       .count(),
     0,
   );
   assert.equal(
-    await dealerNav
+    await teamNav
       .getByRole("button", { name: "Personel ve roller", exact: true })
       .count(),
     0,
   );
   assert.equal(
-    await dealerNav
+    await teamNav
       .getByRole("button", { name: "Ürün kataloğu", exact: true })
       .count(),
     0,
   );
-  const dealerPipeline = await json(
-    await dealerContext.request.get(base + "/api/admin/pipeline"),
+  const teamPipeline = await json(
+    await teamContext.request.get(base + "/api/admin/pipeline"),
   );
-  assert.ok(dealerPipeline.inquiries.some((i) => i.id === inquiry.id));
-  assert.ok(!dealerPipeline.inquiries.some((i) => i.id === otherInquiry.id));
+  assert.ok(teamPipeline.inquiries.some((i) => i.id === inquiry.id));
+  assert.ok(!teamPipeline.inquiries.some((i) => i.id === otherInquiry.id));
   assert.equal(
-    (await dealerContext.request.get(base + "/api/admin/content")).status(),
+    (await teamContext.request.get(base + "/api/admin/content")).status(),
     403,
   );
-  const dealerCustomers = await json(
-    await dealerContext.request.get(base + "/api/admin/customers"),
+  const teamCustomers = await json(
+    await teamContext.request.get(base + "/api/admin/customers"),
   );
   const allowedCustomerIds = new Set(
-    dealerPipeline.inquiries.map((i) => i.customerId).filter(Boolean),
+    teamPipeline.inquiries.map((i) => i.customerId).filter(Boolean),
   );
-  assert.ok(
-    dealerCustomers.customers.every((c) => allowedCustomerIds.has(c.id)),
-  );
+  assert.ok(teamCustomers.customers.every((c) => allowedCustomerIds.has(c.id)));
   assert.equal(
     (
-      await dealerContext.request.patch(
+      await teamContext.request.patch(
         base + "/api/admin/customers/" + customerId,
         { data: { name: "Forbidden" } },
       )
     ).status(),
     403,
   );
-  await dealerPage
+  await teamPage
     .getByRole("textbox", { name: "Süreç ara", exact: true })
     .fill("Sentetik Operasyon");
-  await dealerPage
+  await teamPage
     .locator(".op-card-open")
     .filter({ hasText: "Sentetik Operasyon Müşterisi" })
     .click();
-  const dealerDrawer = dealerPage.getByRole("dialog", {
+  const teamDrawer = teamPage.getByRole("dialog", {
     name: "Süreç detayları",
     exact: true,
   });
   assert.equal(
-    await dealerDrawer
-      .getByLabel("Atanan bayi / ekip", { exact: false })
+    await teamDrawer
+      .getByLabel("Sorumlu teknik ekip", { exact: false })
       .isDisabled(),
     true,
   );
-  await dealerDrawer
+  await teamDrawer
     .getByLabel("Süreç aşaması", { exact: false })
     .selectOption("installation");
-  const dealerSave = dealerPage.waitForResponse(
+  const teamSave = teamPage.waitForResponse(
     (r) =>
       new URL(r.url()).pathname === "/api/admin/pipeline/" + inquiry.id &&
       r.request().method() === "PATCH",
   );
-  await dealerDrawer
+  await teamDrawer
     .getByRole("button", { name: "Süreci ve atamayı kaydet", exact: true })
     .click();
-  await json(await dealerSave);
-  await dealerDrawer
+  await json(await teamSave);
+  await teamDrawer
     .getByRole("button", { name: "Süreç detayını kapat", exact: true })
     .click();
-  await dealerPage.screenshot({
-    path: join(artifactDir, "dealer-scoped-pipeline.png"),
+  await teamPage.screenshot({
+    path: join(artifactDir, "team-scoped-pipeline.png"),
     fullPage: false,
   });
   pass(
-    "staff account-type login gives dealer only assigned inquiries and denies legacy CMS and customer mutation while saving allowed stage updates",
+    "staff account-type login gives technician only assigned inquiries and denies legacy CMS and customer mutation while saving allowed stage updates",
   );
   const editorContext = await browser.newContext();
   const editorPage = await editorContext.newPage();

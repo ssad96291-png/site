@@ -15,6 +15,7 @@ import {
   Routes,
   useLocation,
   useSearchParams,
+  Navigate,
 } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -57,18 +58,17 @@ import {
   type SiteContextValue as Context,
 } from "./site-context";
 import {
-  RecordedHeader as Header,
-  RecordedHome as Home,
-  RecordedFooter as Footer,
-  RecordedProducts as Products,
-  RecordedCorporate as Corporate,
-  RecordedCatalog as Catalog,
-  RecordedGallery,
-  RecordedServiceAreas,
-  RecordedProjectOffice,
-  RecordedInformation,
-  RecordedPageHead,
-} from "./RecordedSite";
+  LocalHeader as Header,
+  LocalHome as Home,
+  LocalFooter as Footer,
+  LocalProducts as Products,
+  LocalCorporate as Corporate,
+  LocalCatalog as Catalog,
+  LocalGallery,
+  LocalServiceAreas,
+  LocalInformation,
+  LocalPageHead,
+} from "./LocalStudio";
 const pathFor = (c: Content) =>
   `/${({ product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler", faq: "sikca-sorulan-sorular" } as Record<string, string>)[c.type] || "kurumsal"}/${c.slug}`;
 function ScrollTop() {
@@ -388,7 +388,7 @@ function PageHead({
   subtitle?: string;
   tag?: string;
 }) {
-  return <RecordedPageHead title={title} subtitle={subtitle} />;
+  return <LocalPageHead title={title} subtitle={subtitle} />;
 }
 function ProductComparison() {
   const { content, t, local } = useSite();
@@ -1020,15 +1020,7 @@ function FAQ() {
     </>
   );
 }
-function InquiryForm({
-  dealer = false,
-  service = false,
-  project = false,
-}: {
-  dealer?: boolean;
-  service?: boolean;
-  project?: boolean;
-}) {
+function InquiryForm({ service = false }: { service?: boolean }) {
   const { content, t } = useSite();
   const [params] = useSearchParams();
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle"),
@@ -1049,13 +1041,7 @@ function InquiryForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
-          subject: service
-            ? "Servis talebi"
-            : project
-              ? "Kurumsal proje talebi"
-              : dealer
-                ? "İş ortaklığı başvurusu"
-                : data.subject || "Teklif talebi",
+          subject: service ? "Servis talebi" : "Teklif talebi",
           consent: data.consent === "on",
         }),
       });
@@ -1100,8 +1086,8 @@ function InquiryForm({
         <h2>{t("Talebiniz bize ulaştı.", "We received your request.")}</h2>
         <p>
           {t(
-            "Bilgileriniz kaydedildi. Ekibimiz talebinizi yönetim panelinden inceleyebilir.",
-            "Your information has been saved for our team to review.",
+            "Notunuz kaydedildi. İhtiyacınızı değerlendirip belirttiğiniz kanaldan size ulaşacağız.",
+            "Your information has been saved for us to review.",
           )}
         </p>
         {trackingReady && (
@@ -1159,29 +1145,23 @@ function InquiryForm({
           />
         </label>
         <label>
-          {dealer
-            ? t("Firma / başvuru konusu", "Company / enquiry subject")
-            : t("İlgilendiğiniz sistem", "System of interest")}
-          {dealer ? (
-            <input name="subject" maxLength={200} />
-          ) : (
-            <select name="product" defaultValue={params.get("urun") || ""}>
-              <option value="">
-                {t("Birlikte karar verelim", "Let’s decide together")}
-              </option>
-              {content
-                .filter((c) => c.type === "product")
-                .map((c) => (
-                  <option key={c.id} value={c.title}>
-                    {c.title}
-                  </option>
-                ))}
-              {params.get("urun") &&
-                !content.some((c) => c.title === params.get("urun")) && (
-                  <option>{params.get("urun")}</option>
-                )}
-            </select>
-          )}
+          {t("İlgilendiğiniz hizmet", "Service of interest")}
+          <select name="product" defaultValue={params.get("urun") || ""}>
+            <option value="">
+              {t("Birlikte karar verelim", "Let’s decide together")}
+            </option>
+            {content
+              .filter((c) => c.type === "product")
+              .map((c) => (
+                <option key={c.id} value={c.title}>
+                  {c.title}
+                </option>
+              ))}
+            {params.get("urun") &&
+              !content.some((c) => c.title === params.get("urun")) && (
+                <option>{params.get("urun")}</option>
+              )}
+          </select>
         </label>
         <label>
           {t("Uygulama bölgesi / ilçe", "Project district / area")}
@@ -1204,7 +1184,7 @@ function InquiryForm({
             <option>Cam sistemleri</option>
             <option>Alüminyum sistemler</option>
             <option>Demir & çelik imalat</option>
-            <option>Kurumsal proje</option>
+            <option>Bakım ve servis</option>
           </select>
         </label>
         <label>
@@ -1249,26 +1229,20 @@ function InquiryForm({
         {t("Projenizi biraz anlatın", "Tell us about your project")} *
         <textarea
           defaultValue={
-            params.get("renk")
+            params.get("mesaj") ||
+            (params.get("renk")
               ? `${t("Renk tercihim", "Colour preference")}: ${params.get("renk")}`
-              : ""
+              : "")
           }
           name="message"
           required
           minLength={10}
           maxLength={5000}
           rows={4}
-          placeholder={
-            dealer
-              ? t(
-                  "Firmanız, bölgeniz ve iş birliği beklentileriniz…",
-                  "Your company, region and partnership expectations…",
-                )
-              : t(
-                  "Uygulama yapılacak alan, yaklaşık ölçüler, bulunduğunuz il/ilçe…",
-                  "Your location, approximate measurements and what you have in mind…",
-                )
-          }
+          placeholder={t(
+            "Nerede uygulama yapılacak? Yaklaşık ölçüleri ve ihtiyacınızı yazabilirsiniz.",
+            "Where is the work needed? Share approximate dimensions and what you need.",
+          )}
         />
       </label>
       <label className="honeypot" aria-hidden="true">
@@ -1298,9 +1272,7 @@ function InquiryForm({
         ) : null}
         {status === "loading"
           ? t("Gönderiliyor…", "Sending…")
-          : dealer
-            ? t("Başvuruyu gönder", "Submit application")
-            : t("Talebimi gönder", "Send my enquiry")}
+          : t("Talebimi gönder", "Send my enquiry")}
         <ArrowUpRight size={18} />
       </button>
       <small className="form-note">
@@ -1312,13 +1284,7 @@ function InquiryForm({
     </form>
   );
 }
-function Contact({
-  quote = false,
-  dealer = false,
-}: {
-  quote?: boolean;
-  dealer?: boolean;
-}) {
+function Contact({ quote = false }: { quote?: boolean }) {
   const { settings, t } = useSite();
   const phone = settings.phone,
     email = settings.email,
@@ -1328,32 +1294,24 @@ function Contact({
     <>
       <PageHead
         title={
-          dealer
+          quote
             ? t(
-                "Birlikte daha fazlası mümkün.",
-                "Let’s build something together.",
-              )
-            : quote
-              ? t("Hayalinizdeki alanı konuşalım.", "Tell us about your space.")
-              : t("Tanışmak için ilk adım.", "A conversation starts here.")
-        }
-        subtitle={
-          dealer
-            ? t(
-                "İş ortaklığı ve uygulama iş birliği için başvurunuzu paylaşın.",
-                "Share your application for installation and business partnerships.",
+                "Ölçüyü konuşalım, ihtiyacı netleştirelim.",
+                "Let’s discuss the space and what you need.",
               )
             : t(
-                "Bize projenizi anlatın. Size uygun sistemi ve uygulama seçeneklerini birlikte değerlendirelim.",
-                "Tell us about your project. Let’s explore the systems and options that work for you.",
+                "Dükkâna uğrayın. Ya da buradan yazın.",
+                "Visit our shop. Or write to us here.",
               )
         }
+        subtitle={t(
+          "Etimesgut'taki tek dükkânımızdan sizinle doğrudan görüşüyoruz. Uygulama alanını ve beklentinizi paylaşmanız yeterli.",
+          "We speak with you directly from our single shop in Etimesgut. Tell us about the space and what you need.",
+        )}
         tag={
-          dealer
-            ? t("İŞ ORTAKLIĞI", "PARTNERSHIPS")
-            : quote
-              ? t("TEKLİF & KEŞİF TALEBİ", "QUOTE & SITE ASSESSMENT")
-              : t("İLETİŞİM", "CONTACT")
+          quote
+            ? t("KEŞİF NOTU", "SITE VISIT NOTE")
+            : t("DOĞRUDAN İLETİŞİM", "DIRECT CONTACT")
         }
       />
       <section className="container section contact-layout">
@@ -1455,18 +1413,14 @@ function Contact({
           )}
         </div>
         <div className="form-panel">
-          <h3>
-            {dealer
-              ? t("İş ortaklığı başvuru formu", "Partnership application")
-              : t("Sizi dinliyoruz.", "We’re listening.")}
-          </h3>
+          <h3>{t("Bize bir not bırakın.", "Leave us a note.")}</h3>
           <p>
             {t(
               "* ile işaretli alanlar zorunludur.",
               "Fields marked * are required.",
             )}
           </p>
-          <InquiryForm dealer={dealer} />
+          <InquiryForm />
         </div>
       </section>
     </>
@@ -1563,7 +1517,10 @@ export default function App() {
         "Glass, Aluminium & Metal Systems",
       ],
       "/galeri": ["Galeri ve Tasarım Konseptleri", "Gallery & Design Concepts"],
-      "/proje-birimi": ["Proje Birimi", "Project Office"],
+      "/hizmetler": ["Hizmetlerimiz", "Our Services"],
+      "/fikir-defteri": ["Fikir Defteri", "Ideas Notebook"],
+      "/dukkanimiz": ["Etimesgut’taki Dükkânımız", "Our Etimesgut Shop"],
+      "/hizmet-alani": ["Hizmet Alanımız", "Our Service Area"],
       "/servis-talebi": ["Servis Talebi", "Service Request"],
       "/urun-karsilastir": ["Ürün Karşılaştırma", "Compare Systems"],
       "/projeler": [
@@ -1590,10 +1547,6 @@ export default function App() {
       "/iletisim": ["İletişim", "Contact"],
       "/teklif-al": ["Teklif ve Keşif Talebi", "Quote & Site Assessment"],
       "/katalog": ["Dijital Sistem Kataloğu", "Digital System Catalogue"],
-      "/is-ortakligi": [
-        "Kurumsal Projeler ve İş Ortaklığı",
-        "Commercial Projects & Partnerships",
-      ],
     };
     const brand = String(data.settings.companyName || "Kılınç Dekorasyon");
     const title = found
@@ -1749,7 +1702,7 @@ export default function App() {
   };
   return (
     <SiteContext.Provider value={ctx}>
-      <div className="recorded-site">
+      <div className="local-studio">
         <ScrollTop />
         <a className="skip-link" href="#main">
           {en ? "Skip to content" : "İçeriğe geç"}
@@ -1774,25 +1727,29 @@ export default function App() {
                 </Suspense>
               }
             />
-            <Route path="/urunler" element={<Products />} />
+            <Route path="/hizmetler" element={<Products />} />
+            <Route
+              path="/urunler"
+              element={<Navigate to="/hizmetler" replace />}
+            />
             <Route path="/urun-karsilastir" element={<ProductComparison />} />
-            <Route path="/galeri" element={<RecordedGallery />} />
+            <Route path="/fikir-defteri" element={<LocalGallery />} />
+            <Route
+              path="/galeri"
+              element={<Navigate to="/fikir-defteri" replace />}
+            />
             <Route
               path="/proje-birimi"
-              element={
-                <RecordedProjectOffice>
-                  <InquiryForm dealer project />
-                </RecordedProjectOffice>
-              }
+              element={<Navigate to="/teklif-al" replace />}
             />
             <Route
               path="/servis-talebi"
               element={
                 <>
-                  <RecordedPageHead
+                  <LocalPageHead
                     title={en ? "Service request" : "Servis Talebi"}
                   />
-                  <section className="rs-container rs-service-form">
+                  <section className="ls-container ls-service-form">
                     <div>
                       <h2>
                         {en
@@ -1812,38 +1769,49 @@ export default function App() {
             />
             <Route
               path="/kurumsal/terimler-sozlugu"
-              element={<RecordedInformation kind="glossary" />}
+              element={<LocalInformation kind="glossary" />}
             />
             <Route
               path="/kurumsal/renk-kartelasi"
-              element={<RecordedInformation kind="colours" />}
+              element={<LocalInformation kind="colours" />}
             />
             <Route
               path="/kurumsal/olcu-rehberi"
-              element={<RecordedInformation kind="measuring" />}
+              element={<LocalInformation kind="measuring" />}
             />
             <Route
               path="/kurumsal/uygulama-sureci"
-              element={<RecordedInformation kind="process" />}
+              element={<LocalInformation kind="process" />}
             />
             <Route
               path="/kurumsal/garanti-servis"
-              element={<RecordedInformation kind="warranty" />}
+              element={<LocalInformation kind="warranty" />}
             />
             <Route path="/sistem-secici" element={<SystemFinder />} />
-            <Route path="/bolgeler" element={<RecordedServiceAreas />} />
+            <Route path="/hizmet-alani" element={<LocalServiceAreas />} />
+            <Route
+              path="/bolgeler"
+              element={<Navigate to="/hizmet-alani" replace />}
+            />
             <Route path="/bolgeler/:slug" element={<Detail type="region" />} />
             <Route path="/urunler/:slug" element={<Detail type="product" />} />
-            <Route path="/projeler" element={<Listing type="project" />} />
+            <Route
+              path="/projeler"
+              element={<Navigate to="/fikir-defteri" replace />}
+            />
             <Route path="/projeler/:slug" element={<Detail type="project" />} />
             <Route path="/blog" element={<Listing type="article" />} />
             <Route path="/blog/:slug" element={<Detail type="article" />} />
-            <Route path="/kurumsal" element={<Corporate />} />
+            <Route path="/dukkanimiz" element={<Corporate />} />
+            <Route
+              path="/kurumsal"
+              element={<Navigate to="/dukkanimiz" replace />}
+            />
             <Route path="/kurumsal/:slug" element={<Detail type="page" />} />
             <Route path="/sikca-sorulan-sorular" element={<FAQ />} />
             <Route path="/iletisim" element={<Contact />} />
             <Route path="/teklif-al" element={<Contact quote />} />
-            <Route path="/is-ortakligi" element={<Contact dealer />} />
+            <Route path="/is-ortakligi" element={<NotFound />} />
             <Route path="/katalog" element={<Catalog />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

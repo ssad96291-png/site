@@ -101,7 +101,7 @@ test("Optional live analytics retains only safe consented public events", async 
         assert.equal(response.status, 202);
         const row = db.prepare("SELECT * FROM telemetry_events").get() as any;
         assert.equal(row.path, "/urunler");
-        assert.equal(row.title, "Ürünler");
+        assert.equal(row.title, "Hizmetler");
         assert.equal(row.maskedIp, "127.0.x.x");
         assert.notEqual(row.sessionId, sid);
         const stored = JSON.stringify(row);

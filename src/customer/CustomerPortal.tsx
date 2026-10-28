@@ -24,7 +24,6 @@ import {
   LockKeyhole,
   LogOut,
   Mail,
-  MapPin,
   MessageSquare,
   Phone,
   RefreshCw,
@@ -54,15 +53,12 @@ type Customer = {
   lastLoginAt?: string;
 };
 type Session = { customer: Customer; scoped?: boolean };
-type Dealer = {
+type AssignedTeam = {
   id: string;
   name: string;
   contactName?: string;
   phone?: string;
   email?: string;
-  address?: string;
-  city?: string;
-  district?: string;
   active?: boolean;
 };
 type Document = {
@@ -98,7 +94,7 @@ type Inquiry = {
   appointmentAt?: string;
   technician?: string;
   customerMessage?: string;
-  dealer?: Dealer | null;
+  assignedTeam?: AssignedTeam | null;
   timeline: Timeline[];
   documents: Document[];
   messages: Message[];
@@ -115,7 +111,7 @@ type Notification = {
 };
 const stages: { id: Stage; label: string; short: string }[] = [
   { id: "received", label: "Talebiniz alındı", short: "Talep" },
-  { id: "assigned", label: "Bayi / ekip atandı", short: "Atama" },
+  { id: "assigned", label: "Keşif planlanıyor", short: "Planlama" },
   { id: "surveyed", label: "Keşif tamamlandı", short: "Keşif" },
   { id: "production", label: "Üretim aşamasında", short: "Üretim" },
   { id: "installation", label: "Montaj bekliyor", short: "Montaj" },
@@ -1166,50 +1162,38 @@ function RequestDetail({
               <div className="cp-team-card">
                 <div className="cp-card-title">
                   <UserRound size={19} />
-                  <h3>Atanan bayi / teknik ekip</h3>
+                  <h3>Teknik irtibat</h3>
                 </div>
-                {inquiry.dealer ? (
+                {inquiry.assignedTeam ? (
                   <>
-                    <strong>{inquiry.dealer.name}</strong>
-                    {inquiry.dealer.contactName && (
-                      <p>{inquiry.dealer.contactName}</p>
+                    <strong>{inquiry.assignedTeam.name}</strong>
+                    {inquiry.assignedTeam.contactName && (
+                      <p>{inquiry.assignedTeam.contactName}</p>
                     )}
-                    {inquiry.dealer.phone && (
+                    {inquiry.assignedTeam.phone && (
                       <a
-                        href={`tel:${inquiry.dealer.phone.replace(/[^+\d]/g, "")}`}
+                        href={`tel:${inquiry.assignedTeam.phone.replace(/[^+\d]/g, "")}`}
                       >
                         <Phone size={14} />
-                        {inquiry.dealer.phone}
+                        {inquiry.assignedTeam.phone}
                       </a>
                     )}
-                    {inquiry.dealer.email && (
-                      <a href={`mailto:${inquiry.dealer.email}`}>
+                    {inquiry.assignedTeam.email && (
+                      <a href={`mailto:${inquiry.assignedTeam.email}`}>
                         <Mail size={14} />
-                        {inquiry.dealer.email}
+                        {inquiry.assignedTeam.email}
                       </a>
-                    )}
-                    {(inquiry.dealer.address || inquiry.dealer.city) && (
-                      <p className="cp-team-address">
-                        <MapPin size={14} />
-                        {[
-                          inquiry.dealer.address,
-                          inquiry.dealer.district,
-                          inquiry.dealer.city,
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </p>
                     )}
                   </>
                 ) : (
                   <p className="cp-muted">
-                    Henüz bir bayi veya ekip atanmadı. Atama yapıldığında
-                    iletişim bilgileri burada görünecek.
+                    Talebiniz değerlendiriliyor. İşinizle ilgilenecek kişinin
+                    iletişim bilgileri planlama sırasında burada paylaşılacak.
                   </p>
                 )}
                 {inquiry.technician && (
                   <div className="cp-technician">
-                    <span>Teknisyen / ekip</span>
+                    <span>Uygulama sorumlusu</span>
                     <strong>{inquiry.technician}</strong>
                   </div>
                 )}
