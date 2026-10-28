@@ -1,4 +1,7 @@
 import express from "express";
+import { installPortal } from "./portal.js";
+import { installTelemetry } from "./telemetry.js";
+import { deliverNotification, deliveryConfigured } from "./messaging.js";
 import { referencePages, referencePagesVersion } from "./reference-content.js";
 import multer from "multer";
 import PDFDocument from "pdfkit";
@@ -20,7 +23,12 @@ import {
   statSync,
 } from "node:fs";
 import { resolve, join } from "node:path";
-import { defaultSettings, seedContent, expansionContent, contentExpansionVersion } from "./seed.js";
+import {
+  defaultSettings,
+  seedContent,
+  expansionContent,
+  contentExpansionVersion,
+} from "./seed.js";
 
 export interface AppOptions {
   dataDir?: string;
@@ -45,7 +53,11 @@ const str = (v: unknown, max = 5000) =>
   typeof v === "string" ? v.trim().slice(0, max) : "";
 const validImage = (v: unknown) => {
   const s = str(v, 500);
-  return /^\/(?:images|uploads)\/[A-Za-z0-9_-]+\.(?:svg|png|jpe?g|webp)$/i.test(s) ? s : "";
+  return /^\/(?:images|uploads)\/[A-Za-z0-9_-]+\.(?:svg|png|jpe?g|webp)$/i.test(
+    s,
+  )
+    ? s
+    : "";
 };
 const safeUrl = (v: unknown) => {
   const s = str(v, 500);
@@ -59,23 +71,52 @@ const safeUrl = (v: unknown) => {
 };
 const contentTypes = ["product", "project", "article", "page", "faq", "region"];
 const extraSettings: Record<string, unknown> = {
-  websiteUrl: "", siteUrl: "", contactIntro: "", quoteTitle: "", quoteIntro: "", contactTitle: "Projenizi birlikte planlayalım.", contactText: "İhtiyacınızı anlatın, size uygun çözümü birlikte değerlendirelim.",
-  footerText: "Cam, alüminyum ve metal sistemleri.", primaryColor: "#213f34", accentColor: "#f0f0e6",
-  showProjects: true, showArticles: true, showRegions: true, showFaq: true,
-  servicesTitle: "Camdan metale, projenize uygun çözümler.", processTitle: "İyi bir sonuç, doğru bir süreçle başlar.", regionTitle: "Ankara'da size yakın çözümler.",
-  processStep1Title: "İhtiyacınızı dinliyoruz", processStep1Text: "Kullanım amacınızı, beklentilerinizi ve uygulama alanını birlikte değerlendiriyoruz.",
-  processStep2Title: "Yerinde keşif", processStep2Text: "Ölçü, zemin, cephe ve erişim koşullarını inceleyerek teknik kapsamı belirliyoruz.",
-  processStep3Title: "Size özel planlama", processStep3Text: "Malzeme, tasarım ve uygulama detaylarını yazılı teklifinizde netleştiriyoruz.",
-  processStep4Title: "Uygulama ve teslim", processStep4Text: "Montaj sonrası kullanım, temizlik ve bakım bilgilerini sizinle paylaşıyoruz.",
+  websiteUrl: "",
+  siteUrl: "",
+  contactIntro: "",
+  quoteTitle: "",
+  quoteIntro: "",
+  contactTitle: "Projenizi birlikte planlayalım.",
+  contactText:
+    "İhtiyacınızı anlatın, size uygun çözümü birlikte değerlendirelim.",
+  footerText: "Cam, alüminyum ve metal sistemleri.",
+  primaryColor: "#213f34",
+  accentColor: "#f0f0e6",
+  showProjects: true,
+  showArticles: true,
+  showRegions: true,
+  showFaq: true,
+  servicesTitle: "Camdan metale, projenize uygun çözümler.",
+  processTitle: "İyi bir sonuç, doğru bir süreçle başlar.",
+  regionTitle: "Ankara'da size yakın çözümler.",
+  processStep1Title: "İhtiyacınızı dinliyoruz",
+  processStep1Text:
+    "Kullanım amacınızı, beklentilerinizi ve uygulama alanını birlikte değerlendiriyoruz.",
+  processStep2Title: "Yerinde keşif",
+  processStep2Text:
+    "Ölçü, zemin, cephe ve erişim koşullarını inceleyerek teknik kapsamı belirliyoruz.",
+  processStep3Title: "Size özel planlama",
+  processStep3Text:
+    "Malzeme, tasarım ve uygulama detaylarını yazılı teklifinizde netleştiriyoruz.",
+  processStep4Title: "Uygulama ve teslim",
+  processStep4Text:
+    "Montaj sonrası kullanım, temizlik ve bakım bilgilerini sizinle paylaşıyoruz.",
 };
-const plainObject = (v: unknown): v is Record<string, any> => !!v && typeof v === "object" && !Array.isArray(v);
-const passwordValue = (v: unknown) => typeof v === "string" && v.length <= 256 ? v : "";
+const plainObject = (v: unknown): v is Record<string, any> =>
+  !!v && typeof v === "object" && !Array.isArray(v);
+const passwordValue = (v: unknown) =>
+  typeof v === "string" && v.length <= 256 ? v : "";
 const csvCell = (value: unknown) => {
   let s = String(value ?? "");
   if (/^[\s\u0000-\u001f]*[=+\-@]/.test(s) || /^[\t\r\n]/.test(s)) s = "'" + s;
   return '"' + s.replaceAll('"', '""') + '"';
 };
-const xmlText = (value: string) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+const xmlText = (value: string) =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
 function cleanContent(input: any, previous?: any) {
   if (!plainObject(input)) throw fail(400, "Geçerli bir içerik gönderin.");
   const source = { ...previous, ...input };
@@ -111,12 +152,10 @@ function cleanContent(input: any, previous?: any) {
       ? Number(source.sortOrder)
       : 0,
     specs: Array.isArray(source.specs)
-      ? source.specs
-          .slice(0, 30)
-          .map((s: any) => ({
-            label: str(s?.label, 100),
-            value: str(s?.value, 1000),
-          }))
+      ? source.specs.slice(0, 30).map((s: any) => ({
+          label: str(s?.label, 100),
+          value: str(s?.value, 1000),
+        }))
       : [],
     gallery: Array.isArray(source.gallery)
       ? source.gallery.slice(0, 20).map(validImage).filter(Boolean)
@@ -163,15 +202,23 @@ export function createApp(options: AppOptions = {}) {
     }
   }
   // Add the expanded catalogue only once. Existing edits and future deletions stay intact.
-  if (!db.prepare("SELECT version FROM schema_migrations WHERE version=?").get(contentExpansionVersion)) {
+  if (
+    !db
+      .prepare("SELECT version FROM schema_migrations WHERE version=?")
+      .get(contentExpansionVersion)
+  ) {
     db.exec("BEGIN IMMEDIATE");
     try {
-      const insert = db.prepare("INSERT OR IGNORE INTO content(id,type,slug,data) VALUES(?,?,?,?)");
+      const insert = db.prepare(
+        "INSERT OR IGNORE INTO content(id,type,slug,data) VALUES(?,?,?,?)",
+      );
       for (const seed of expansionContent()) {
         const item = cleanContent(seed);
         insert.run(item.id, item.type, item.slug, JSON.stringify(item));
       }
-      db.prepare("INSERT INTO schema_migrations(version,appliedAt) VALUES(?,?)").run(contentExpansionVersion, new Date().toISOString());
+      db.prepare(
+        "INSERT INTO schema_migrations(version,appliedAt) VALUES(?,?)",
+      ).run(contentExpansionVersion, new Date().toISOString());
       db.exec("COMMIT");
     } catch (error) {
       db.exec("ROLLBACK");
@@ -179,17 +226,29 @@ export function createApp(options: AppOptions = {}) {
       throw error;
     }
   }
-  if (!db.prepare("SELECT version FROM schema_migrations WHERE version=?").get(referencePagesVersion)) {
+  if (
+    !db
+      .prepare("SELECT version FROM schema_migrations WHERE version=?")
+      .get(referencePagesVersion)
+  ) {
     db.exec("BEGIN IMMEDIATE");
     try {
-      const insert = db.prepare("INSERT OR IGNORE INTO content(id,type,slug,data) VALUES(?,?,?,?)");
+      const insert = db.prepare(
+        "INSERT OR IGNORE INTO content(id,type,slug,data) VALUES(?,?,?,?)",
+      );
       for (const seed of referencePages()) {
         const item = cleanContent(seed);
         insert.run(item.id, item.type, item.slug, JSON.stringify(item));
       }
-      db.prepare("INSERT INTO schema_migrations(version,appliedAt) VALUES(?,?)").run(referencePagesVersion, new Date().toISOString());
+      db.prepare(
+        "INSERT INTO schema_migrations(version,appliedAt) VALUES(?,?)",
+      ).run(referencePagesVersion, new Date().toISOString());
       db.exec("COMMIT");
-    } catch (error) { db.exec("ROLLBACK"); db.close(); throw error; }
+    } catch (error) {
+      db.exec("ROLLBACK");
+      db.close();
+      throw error;
+    }
   }
   if (!(db.prepare("SELECT COUNT(*) AS count FROM users").get() as any).count) {
     const provided = process.env.ADMIN_PASSWORD;
@@ -210,18 +269,31 @@ export function createApp(options: AppOptions = {}) {
   const app = express();
   app.disable("x-powered-by");
   const proxyHops = process.env.TRUST_PROXY || "0";
-  if (!["0", "1"].includes(proxyHops)) throw new Error("TRUST_PROXY yalnızca 0 veya 1 olabilir.");
+  if (!["0", "1"].includes(proxyHops))
+    throw new Error("TRUST_PROXY yalnızca 0 veya 1 olabilir.");
   if (proxyHops === "1") app.set("trust proxy", 1);
   app.locals.db = db;
   app.locals.close = () => db.close();
   const recordAudit = (actor: string, action: string, target: string) => {
-    db.prepare("INSERT INTO audit(id,actor,action,target,createdAt) VALUES(?,?,?,?,?)").run(randomUUID(), actor, action, target, new Date().toISOString());
-    db.exec("DELETE FROM audit WHERE rowid NOT IN (SELECT rowid FROM audit ORDER BY rowid DESC LIMIT 2000)");
+    db.prepare(
+      "INSERT INTO audit(id,actor,action,target,createdAt) VALUES(?,?,?,?,?)",
+    ).run(randomUUID(), actor, action, target, new Date().toISOString());
+    db.exec(
+      "DELETE FROM audit WHERE rowid NOT IN (SELECT rowid FROM audit ORDER BY rowid DESC LIMIT 2000)",
+    );
   };
   app.use((req: any, res, next) => {
     res.on("finish", () => {
-      if (res.statusCode < 400 && req.admin && !["GET", "HEAD", "OPTIONS"].includes(req.method)) {
-        recordAudit(req.admin, req.method, req.path.replace(/^\/api\/admin/, ""));
+      if (
+        res.statusCode < 400 &&
+        req.admin &&
+        !["GET", "HEAD", "OPTIONS"].includes(req.method)
+      ) {
+        recordAudit(
+          req.admin,
+          req.method,
+          req.path.replace(/^\/api\/admin/, ""),
+        );
       }
     });
     next();
@@ -235,7 +307,10 @@ export function createApp(options: AppOptions = {}) {
       "camera=(), microphone=(), geolocation=()",
     );
     if (production) {
-      res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+      res.setHeader(
+        "Strict-Transport-Security",
+        "max-age=31536000; includeSubDomains",
+      );
       res.setHeader(
         "Content-Security-Policy",
         "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
@@ -247,7 +322,12 @@ export function createApp(options: AppOptions = {}) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
     if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
-      if (["POST", "PUT", "PATCH"].includes(req.method) && req.path !== "/admin/upload" && !req.is("application/json")) {
+      if (
+        ["POST", "PUT", "PATCH"].includes(req.method) &&
+        req.path !== "/admin/upload" &&
+        !/^\/admin\/pipeline\/[^/]+\/documents$/.test(req.path) &&
+        !req.is("application/json")
+      ) {
         return next(fail(415, "Bu işlem JSON biçiminde gönderilmelidir."));
       }
       const origin = req.get("origin");
@@ -279,9 +359,13 @@ export function createApp(options: AppOptions = {}) {
       },
     }),
   );
-  const settings = () => ({ ...extraSettings, ...defaultSettings, ...JSON.parse(
+  const settings = () => ({
+    ...extraSettings,
+    ...defaultSettings,
+    ...JSON.parse(
       (db.prepare("SELECT data FROM settings WHERE id=1").get() as any).data,
-    ) });
+    ),
+  });
   const allContent = () =>
     db
       .prepare("SELECT data FROM content")
@@ -314,10 +398,19 @@ export function createApp(options: AppOptions = {}) {
       .get(hash(token), Date.now()) as any;
     return row?.username;
   };
-  const requireAuth = (req: any, res: any, next: any) => {
-    const username = readUser(req);
-    if (!username) return next(fail(401, "Devam etmek için oturum açın."));
-    req.admin = username;
+  const requireAuth = (req: any, _res: any, next: any) => {
+    const actor = portal.adminContext(req);
+    if (!actor) return next(fail(401, "Devam etmek için oturum açın."));
+    const safeEditor =
+      actor.role === "editor" &&
+      (/^\/(?:content(?:\/[^/]+)?|media(?:\/[^/]+)?|upload)$/.test(req.path) ||
+        (req.path === "/settings" && req.method === "GET"));
+    const identity = ["/me", "/logout"].includes(req.path);
+    if (actor.role !== "admin" && !safeEditor && !identity)
+      return next(fail(403, "Bu işlem için yetkiniz yok."));
+    req.admin = actor.username;
+    req.operatorRole = actor.role;
+    req.operatorKind = readUser(req) ? "admin" : "staff";
     next();
   };
   const loginAttempts = "login";
@@ -331,12 +424,42 @@ export function createApp(options: AppOptions = {}) {
     const now = Date.now();
     db.prepare("DELETE FROM rate_limits WHERE reset<?").run(now);
     const rateKey = scope + ":" + hash(key);
-    const old = db.prepare("SELECT count,reset FROM rate_limits WHERE key=?").get(rateKey) as {count: number; reset: number} | undefined;
+    const old = db
+      .prepare("SELECT count,reset FROM rate_limits WHERE key=?")
+      .get(rateKey) as { count: number; reset: number } | undefined;
     const entry =
       old && old.reset > now ? old : { count: 0, reset: now + minutes * 60000 };
     entry.count++;
-    db.prepare("INSERT OR REPLACE INTO rate_limits(key,count,reset) VALUES(?,?,?)").run(rateKey, entry.count, entry.reset);
+    db.prepare(
+      "INSERT OR REPLACE INTO rate_limits(key,count,reset) VALUES(?,?,?)",
+    ).run(rateKey, entry.count, entry.reset);
     return entry.count <= max;
+  };
+  const portal = installPortal({
+    app,
+    db,
+    dataDir,
+    production,
+    readAdmin: readUser,
+    audit: recordAudit,
+    deliver: deliverNotification,
+    deliveryConfigured,
+  });
+  const telemetry = installTelemetry({
+    app,
+    db,
+    production,
+    readAdmin: (req) => {
+      const actor = portal.adminContext(req);
+      return actor && ["admin", "manager"].includes(actor.role)
+        ? actor
+        : undefined;
+    },
+  });
+  app.locals.close = () => {
+    portal.close();
+    telemetry.cleanup();
+    db.close();
   };
   app.get("/api/health", (_req, res) => res.json({ ok: true }));
   app.get("/api/site", (_req, res) =>
@@ -381,7 +504,10 @@ export function createApp(options: AppOptions = {}) {
       );
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return next(fail(400, "Geçerli bir e-posta adresi girin."));
-    if (phone && (!/^[+()\d\s.-]+$/.test(phone) || phone.replace(/\D/g, "").length < 7))
+    if (
+      phone &&
+      (!/^[+()\d\s.-]+$/.test(phone) || phone.replace(/\D/g, "").length < 7)
+    )
       return next(fail(400, "Geçerli bir telefon numarası girin."));
     const inquiry = {
       id: randomUUID(),
@@ -393,7 +519,9 @@ export function createApp(options: AppOptions = {}) {
       dimensions: str(input.dimensions, 200),
       budget: str(input.budget, 100),
       preferredContact: str(input.preferredContact, 50),
-      notes: "", priority: "normal", followUpDate: "",
+      notes: "",
+      priority: "normal",
+      followUpDate: "",
       message,
       subject: str(input.subject, 200) || "Teklif talebi",
       product: str(input.product, 200),
@@ -401,38 +529,98 @@ export function createApp(options: AppOptions = {}) {
       status: "new",
       createdAt: new Date().toISOString(),
     };
-    db.prepare("INSERT INTO inquiries(id,data) VALUES(?,?)").run(
-      inquiry.id,
-      JSON.stringify(inquiry),
-    );
-    res.status(201).json({ id: inquiry.id });
+    let tracking: { trackingToken?: string; trackingUrl?: string };
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      db.prepare("INSERT INTO inquiries(id,data) VALUES(?,?)").run(
+        inquiry.id,
+        JSON.stringify(inquiry),
+      );
+      tracking = portal.onInquiryCreated(req, res, inquiry);
+      db.exec("COMMIT");
+    } catch (error) {
+      db.exec("ROLLBACK");
+      return next(error);
+    }
+    res.status(201).json({ id: inquiry.id, ...tracking });
   });
-  const pdfFont = () => [process.env.PDF_FONT_PATH, "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "C:/Windows/Fonts/arial.ttf"].find((file): file is string => !!file && existsSync(file));
+  const pdfFont = () =>
+    [
+      process.env.PDF_FONT_PATH,
+      "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+      "C:/Windows/Fonts/arial.ttf",
+    ].find((file): file is string => !!file && existsSync(file));
   app.get("/api/measurement-guide.pdf", (req, res, next) => {
-    if (!consume("catalog", req.ip || "", 12, 15)) { res.setHeader("Retry-After", "900"); return next(fail(429, "Çok fazla belge isteği. Daha sonra tekrar deneyin.")); }
-    const item = allContent().find(c => c.type === "page" && c.slug === "olcu-rehberi" && c.published);
+    if (!consume("catalog", req.ip || "", 12, 15)) {
+      res.setHeader("Retry-After", "900");
+      return next(
+        fail(429, "Çok fazla belge isteği. Daha sonra tekrar deneyin."),
+      );
+    }
+    const item = allContent().find(
+      (c) => c.type === "page" && c.slug === "olcu-rehberi" && c.published,
+    );
     if (!item) return next(fail(404, "Bu rehber henüz yayında değil."));
     try {
       const doc = new PDFDocument({ size: "A4", margin: 48 });
       res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", 'attachment; filename="kilinc-on-olcu-rehberi.pdf"');
-      doc.pipe(res); const font = pdfFont(); if (font) doc.font(font);
-      doc.fontSize(22).text(settings().companyName).moveDown().fontSize(18).text(item.title).moveDown().fontSize(10).text(item.body).moveDown();
-      for (const step of item.specs) { if (doc.y > 650) doc.addPage(); doc.fontSize(13).text(step.label).moveDown(.4).fontSize(10).text(step.value).moveDown(); }
+      res.setHeader(
+        "Content-Disposition",
+        'attachment; filename="kilinc-on-olcu-rehberi.pdf"',
+      );
+      doc.pipe(res);
+      const font = pdfFont();
+      if (font) doc.font(font);
+      doc
+        .fontSize(22)
+        .text(settings().companyName)
+        .moveDown()
+        .fontSize(18)
+        .text(item.title)
+        .moveDown()
+        .fontSize(10)
+        .text(item.body)
+        .moveDown();
+      for (const step of item.specs) {
+        if (doc.y > 650) doc.addPage();
+        doc
+          .fontSize(13)
+          .text(step.label)
+          .moveDown(0.4)
+          .fontSize(10)
+          .text(step.value)
+          .moveDown();
+      }
       doc.end();
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   });
   app.get("/api/catalog.pdf", (req, res, next) => {
     if (!consume("catalog", req.ip || "", 12, 15)) {
       res.setHeader("Retry-After", "900");
-      return next(fail(429, "Çok fazla katalog isteği. Lütfen daha sonra tekrar deneyin."));
+      return next(
+        fail(
+          429,
+          "Çok fazla katalog isteği. Lütfen daha sonra tekrar deneyin.",
+        ),
+      );
     }
     try {
       const s = settings();
       const english = req.query.lang === "en";
-      const family = typeof req.query.family === "string" ? req.query.family : "all";
-      if (!["all", "outdoor", "aluminium", "metal"].includes(family)) return next(fail(400, "Geçerli bir katalog seçin."));
-      const matchesFamily = (title: string) => family === "all" || (family === "metal" ? /demir|çelik|ferforje|yangın|metal|korkuluk/i.test(title) : family === "aluminium" ? /alüminyum|cephe|ofis|doğrama/i.test(title) && !/çelik|ferforje|yangın/i.test(title) : /pergola|bahçe|gölge/i.test(title));
+      const family =
+        typeof req.query.family === "string" ? req.query.family : "all";
+      if (!["all", "outdoor", "aluminium", "metal"].includes(family))
+        return next(fail(400, "Geçerli bir katalog seçin."));
+      const matchesFamily = (title: string) =>
+        family === "all" ||
+        (family === "metal"
+          ? /demir|çelik|ferforje|yangın|metal|korkuluk/i.test(title)
+          : family === "aluminium"
+            ? /alüminyum|cephe|ofis|doğrama/i.test(title) &&
+              !/çelik|ferforje|yangın/i.test(title)
+            : /pergola|bahçe|gölge/i.test(title));
       const doc = new PDFDocument({
         size: "A4",
         margin: 48,
@@ -507,7 +695,9 @@ export function createApp(options: AppOptions = {}) {
     const username = str(req.body?.username, 100),
       password = passwordValue(req.body?.password);
     if (!consume("account", username.toLocaleLowerCase("en"), 30, 15))
-      return next(fail(429, "Çok fazla giriş denemesi. 15 dakika sonra tekrar deneyin."));
+      return next(
+        fail(429, "Çok fazla giriş denemesi. 15 dakika sonra tekrar deneyin."),
+      );
     const user = db
       .prepare("SELECT password FROM users WHERE username=?")
       .get(username) as any;
@@ -520,20 +710,40 @@ export function createApp(options: AppOptions = {}) {
       recordAudit("anonymous", "LOGIN_FAILED", "/login");
       return next(fail(401, "Kullanıcı adı veya şifre hatalı."));
     }
-    db.prepare("DELETE FROM rate_limits WHERE key=?").run("login:" + hash(req.ip || ""));
-    db.prepare("DELETE FROM rate_limits WHERE key=?").run("account:" + hash(username.toLocaleLowerCase("en")));
+    db.prepare("DELETE FROM rate_limits WHERE key=?").run(
+      "login:" + hash(req.ip || ""),
+    );
+    db.prepare("DELETE FROM rate_limits WHERE key=?").run(
+      "account:" + hash(username.toLocaleLowerCase("en")),
+    );
     db.prepare("DELETE FROM sessions WHERE expires<?").run(Date.now());
     const token = randomBytes(32).toString("hex");
     db.prepare(
       "INSERT INTO sessions(token,username,expires) VALUES(?,?,?)",
     ).run(hash(token), username, Date.now() + cookieOptions.maxAge);
     recordAudit(username, "LOGIN", "/login");
+    const staffCookieName = production ? "__Host-kilinc_staff" : "kilinc_staff";
+    const priorStaffCookie = (req.headers.cookie || "")
+      .split(";")
+      .map((v) => v.trim())
+      .find((v) => v.startsWith(staffCookieName + "="));
+    if (priorStaffCookie)
+      db.prepare("DELETE FROM portal_staff_sessions WHERE token=?").run(
+        hash(priorStaffCookie.slice(staffCookieName.length + 1)),
+      );
     res.cookie(cookieName, token, cookieOptions);
-    res.json({ user: { username } });
+    res.clearCookie(staffCookieName, { ...cookieOptions, maxAge: undefined });
+    res.json({ user: { username, role: "admin", authKind: "admin" } });
   });
   app.use("/api/admin", requireAuth);
   app.get("/api/admin/me", (req: any, res) =>
-    res.json({ user: { username: req.admin } }),
+    res.json({
+      user: {
+        username: req.admin,
+        role: req.operatorRole,
+        authKind: req.operatorKind,
+      },
+    }),
   );
   app.post("/api/admin/logout", (req, res) => {
     const cookie = (req.headers.cookie || "")
@@ -544,6 +754,16 @@ export function createApp(options: AppOptions = {}) {
       db.prepare("DELETE FROM sessions WHERE token=?").run(
         hash(cookie.slice(cookieName.length + 1)),
       );
+    const staffCookieName = production ? "__Host-kilinc_staff" : "kilinc_staff";
+    const staffCookie = (req.headers.cookie || "")
+      .split(";")
+      .map((v) => v.trim())
+      .find((v) => v.startsWith(staffCookieName + "="));
+    if (staffCookie)
+      db.prepare("DELETE FROM portal_staff_sessions WHERE token=?").run(
+        hash(staffCookie.slice(staffCookieName.length + 1)),
+      );
+    res.clearCookie(staffCookieName, { ...cookieOptions, maxAge: undefined });
     res.clearCookie(cookieName, { ...cookieOptions, maxAge: undefined });
     res.json({ ok: true });
   });
@@ -598,18 +818,25 @@ export function createApp(options: AppOptions = {}) {
       if (!plainObject(incoming)) throw fail(400, "Geçerli ayarlar gönderin.");
       for (const key of Object.keys({ ...extraSettings, ...defaultSettings })) {
         if (!(key in incoming)) continue;
-        if (["showProjects", "showArticles", "showRegions", "showFaq"].includes(key)) {
-          if (typeof incoming[key] !== "boolean") throw fail(400, "Görünürlük ayarları doğru/yanlış olmalıdır.");
+        if (
+          ["showProjects", "showArticles", "showRegions", "showFaq"].includes(
+            key,
+          )
+        ) {
+          if (typeof incoming[key] !== "boolean")
+            throw fail(400, "Görünürlük ayarları doğru/yanlış olmalıdır.");
           updated[key] = incoming[key];
         } else if (["primaryColor", "accentColor"].includes(key)) {
-          if (!/^#[0-9a-f]{6}$/i.test(incoming[key])) throw fail(400, "Renkleri #RRGGBB biçiminde girin.");
+          if (!/^#[0-9a-f]{6}$/i.test(incoming[key]))
+            throw fail(400, "Renkleri #RRGGBB biçiminde girin.");
           updated[key] = incoming[key];
         } else if (["websiteUrl", "siteUrl"].includes(key)) {
           // The editor sends all settings; the legacy alias must not override
           // the canonical field with its previous value.
           if (key === "siteUrl" && "websiteUrl" in incoming) continue;
           const value = str(incoming[key], 500);
-          if (value && !safeUrl(value)) throw fail(400, "Site adresi https:// ile başlamalıdır.");
+          if (value && !safeUrl(value))
+            throw fail(400, "Site adresi https:// ile başlamalıdır.");
           updated[key] = value ? new URL(value).origin : "";
           updated.websiteUrl = updated[key];
           updated.siteUrl = updated[key];
@@ -667,23 +894,46 @@ export function createApp(options: AppOptions = {}) {
       .prepare("SELECT data FROM inquiries WHERE id=?")
       .get(String(req.params.id)) as any;
     if (!row) return next(fail(404, "Talep bulunamadı."));
-    if (!plainObject(req.body)) return next(fail(400, "Geçerli bir talep güncellemesi gönderin."));
+    if (!plainObject(req.body))
+      return next(fail(400, "Geçerli bir talep güncellemesi gönderin."));
     const input = req.body;
-    if (input.status !== undefined && !["new", "contacted", "closed"].includes(input.status))
+    if (
+      input.status !== undefined &&
+      !["new", "contacted", "closed"].includes(input.status)
+    )
       return next(fail(400, "Geçerli bir durum seçin."));
-    if (input.priority !== undefined && !["normal", "high"].includes(input.priority))
+    if (
+      input.priority !== undefined &&
+      !["normal", "high"].includes(input.priority)
+    )
       return next(fail(400, "Geçerli bir öncelik seçin."));
-    if (input.followUpDate !== undefined && typeof input.followUpDate !== "string") return next(fail(400, "Takip tarihi metin olmalıdır."));
-    if (input.followUpDate && (!/^\d{4}-\d{2}-\d{2}$/.test(input.followUpDate) || (!Number.isFinite(Date.parse(input.followUpDate)) || new Date(input.followUpDate).toISOString().slice(0, 10) !== input.followUpDate)))
+    if (
+      input.followUpDate !== undefined &&
+      typeof input.followUpDate !== "string"
+    )
+      return next(fail(400, "Takip tarihi metin olmalıdır."));
+    if (
+      input.followUpDate &&
+      (!/^\d{4}-\d{2}-\d{2}$/.test(input.followUpDate) ||
+        !Number.isFinite(Date.parse(input.followUpDate)) ||
+        new Date(input.followUpDate).toISOString().slice(0, 10) !==
+          input.followUpDate)
+    )
       return next(fail(400, "Geçerli bir takip tarihi girin."));
-    const inquiry = { ...JSON.parse(row.data), updatedAt: new Date().toISOString() };
-    for (const field of ["status", "priority"]) if (input[field] !== undefined) inquiry[field] = input[field];
+    const inquiry = {
+      ...JSON.parse(row.data),
+      updatedAt: new Date().toISOString(),
+    };
+    for (const field of ["status", "priority"])
+      if (input[field] !== undefined) inquiry[field] = input[field];
     if (input.notes !== undefined) inquiry.notes = str(input.notes, 10000);
-    if (input.followUpDate !== undefined) inquiry.followUpDate = str(input.followUpDate, 10);
+    if (input.followUpDate !== undefined)
+      inquiry.followUpDate = str(input.followUpDate, 10);
     db.prepare("UPDATE inquiries SET data=? WHERE id=?").run(
       JSON.stringify(inquiry),
       inquiry.id,
     );
+    portal.onLegacyInquiryUpdated(req, inquiry);
     res.json({ inquiry });
   });
   app.delete("/api/admin/inquiries/:id", (req, res, next) => {
@@ -691,6 +941,7 @@ export function createApp(options: AppOptions = {}) {
       .prepare("DELETE FROM inquiries WHERE id=?")
       .run(String(req.params.id));
     if (!r.changes) return next(fail(404, "Talep bulunamadı."));
+    portal.onInquiryDeleted(String(req.params.id));
     res.json({ ok: true });
   });
   const upload = multer({
@@ -728,16 +979,34 @@ export function createApp(options: AppOptions = {}) {
         fail(400, "Yalnızca geçerli JPG, PNG veya WebP görsel yükleyin."),
       );
     if (extension === "png") {
-      const width = b.readUInt32BE(16), height = b.readUInt32BE(20);
-      if (!width || !height || width > 16000 || height > 16000 || width * height > 64_000_000)
-        return next(fail(400, "Görsel boyutları en fazla 16000 piksel ve 64 megapiksel olabilir."));
+      const width = b.readUInt32BE(16),
+        height = b.readUInt32BE(20);
+      if (
+        !width ||
+        !height ||
+        width > 16000 ||
+        height > 16000 ||
+        width * height > 64_000_000
+      )
+        return next(
+          fail(
+            400,
+            "Görsel boyutları en fazla 16000 piksel ve 64 megapiksel olabilir.",
+          ),
+        );
     }
     const filename = randomUUID() + "." + extension;
     writeFileSync(join(uploadDir, filename), b, { mode: 0o600, flag: "wx" });
     res.status(201).json({ url: "/uploads/" + filename });
   });
   app.put("/api/admin/password", (req: any, res, next) => {
-    if (!consume("password", req.ip || "", 8, 15)) return next(fail(429, "Çok fazla şifre değiştirme denemesi. Daha sonra tekrar deneyin."));
+    if (!consume("password", req.ip || "", 8, 15))
+      return next(
+        fail(
+          429,
+          "Çok fazla şifre değiştirme denemesi. Daha sonra tekrar deneyin.",
+        ),
+      );
     const current = passwordValue(req.body?.currentPassword),
       newPassword = passwordValue(req.body?.newPassword);
     if (newPassword.length < 12)
@@ -758,65 +1027,202 @@ export function createApp(options: AppOptions = {}) {
     res.json({ ok: true });
   });
   app.get("/api/admin/audit", (_req, res) => {
-    res.json({ events: db.prepare("SELECT id,actor,action,target,createdAt FROM audit ORDER BY rowid DESC LIMIT 100").all() });
+    res.json({
+      events: db
+        .prepare(
+          "SELECT id,actor,action,target,createdAt FROM audit ORDER BY rowid DESC LIMIT 100",
+        )
+        .all(),
+    });
   });
-  const allInquiries = () => db.prepare("SELECT data FROM inquiries ORDER BY rowid DESC").all().map((row: any) => JSON.parse(row.data));
+  const allInquiries = () =>
+    db
+      .prepare("SELECT data FROM inquiries ORDER BY rowid DESC")
+      .all()
+      .map((row: any) => JSON.parse(row.data));
   app.get("/api/admin/export", (req: any, res) => {
     recordAudit(req.admin, "EXPORT", "/export");
-    res.setHeader("Content-Disposition", 'attachment; filename="kilinc-icerik-yedegi.json"');
-    res.json({ version: 1, exportedAt: new Date().toISOString(), settings: settings(), content: allContent(), inquiries: allInquiries() });
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="kilinc-icerik-yedegi.json"',
+    );
+    res.json({
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      settings: settings(),
+      content: allContent(),
+      inquiries: allInquiries(),
+    });
   });
   app.get("/api/admin/inquiries.csv", (req: any, res) => {
     recordAudit(req.admin, "EXPORT", "/inquiries.csv");
-    const keys = ["name", "email", "phone", "district", "service", "subject", "message", "status", "priority", "notes", "followUpDate", "createdAt"];
-    res.setHeader("Content-Disposition", 'attachment; filename="kilinc-talepler.csv"');
-    res.type("text/csv").send("\uFEFF" + [keys.map(csvCell).join(";"), ...allInquiries().map(i => keys.map(k => csvCell(i[k])).join(";"))].join("\r\n"));
+    const keys = [
+      "name",
+      "email",
+      "phone",
+      "district",
+      "service",
+      "subject",
+      "message",
+      "status",
+      "priority",
+      "notes",
+      "followUpDate",
+      "createdAt",
+    ];
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="kilinc-talepler.csv"',
+    );
+    res
+      .type("text/csv")
+      .send(
+        "\uFEFF" +
+          [
+            keys.map(csvCell).join(";"),
+            ...allInquiries().map((i) =>
+              keys.map((k) => csvCell(i[k])).join(";"),
+            ),
+          ].join("\r\n"),
+      );
   });
-  app.get("/api/admin/security", (_req, res) => res.json({
-    bootstrapPasswordPending: existsSync(join(dataDir, "initial-admin-password")),
-    activeSessions: (db.prepare("SELECT count(*) AS count FROM sessions WHERE expires>?").get(Date.now()) as any).count,
-    production, database: "sqlite",
-  }));
+  app.get("/api/admin/security", (_req, res) =>
+    res.json({
+      bootstrapPasswordPending: existsSync(
+        join(dataDir, "initial-admin-password"),
+      ),
+      activeSessions: (
+        db
+          .prepare("SELECT count(*) AS count FROM sessions WHERE expires>?")
+          .get(Date.now()) as any
+      ).count,
+      production,
+      database: "sqlite",
+    }),
+  );
   app.post("/api/admin/sessions/revoke", (req: any, res) => {
-    const raw = (req.headers.cookie || "").split(";").map((s: string) => s.trim()).find((s: string) => s.startsWith(cookieName + "="));
+    const raw = (req.headers.cookie || "")
+      .split(";")
+      .map((s: string) => s.trim())
+      .find((s: string) => s.startsWith(cookieName + "="));
     const currentHash = hash(raw?.slice(cookieName.length + 1) || "");
-    db.prepare("DELETE FROM sessions WHERE username=? AND token<>?").run(req.admin, currentHash);
+    db.prepare("DELETE FROM sessions WHERE username=? AND token<>?").run(
+      req.admin,
+      currentHash,
+    );
     res.json({ ok: true });
   });
   app.get("/api/admin/media", (_req, res) => {
-    res.json({ media: readdirSync(uploadDir).filter(name => /^[a-f0-9-]+\.(png|jpg|webp)$/.test(name)).map(name => ({
-      url: "/uploads/" + name, size: statSync(join(uploadDir, name)).size, createdAt: statSync(join(uploadDir, name)).mtime.toISOString(),
-    })).sort((a, b) => b.createdAt.localeCompare(a.createdAt)) });
+    res.json({
+      media: readdirSync(uploadDir)
+        .filter((name) => /^[a-f0-9-]+\.(png|jpg|webp)$/.test(name))
+        .map((name) => ({
+          url: "/uploads/" + name,
+          size: statSync(join(uploadDir, name)).size,
+          createdAt: statSync(join(uploadDir, name)).mtime.toISOString(),
+        }))
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    });
   });
   app.delete("/api/admin/media/:filename", (req, res, next) => {
     const name = String(req.params.filename);
-    if (!/^[a-f0-9-]+\.(png|jpg|webp)$/.test(name)) return next(fail(400, "Geçersiz dosya adı."));
+    if (!/^[a-f0-9-]+\.(png|jpg|webp)$/.test(name))
+      return next(fail(400, "Geçersiz dosya adı."));
     const url = "/uploads/" + name;
-    if (JSON.stringify(settings()).includes(url) || allContent().some(c => JSON.stringify(c).includes(url))) return next(fail(409, "Bu görsel bir içerikte kullanılıyor. Önce içeriği güncelleyin."));
-    if (!existsSync(join(uploadDir, name))) return next(fail(404, "Görsel bulunamadı."));
-    unlinkSync(join(uploadDir, name)); res.json({ ok: true });
+    if (
+      JSON.stringify(settings()).includes(url) ||
+      allContent().some((c) => JSON.stringify(c).includes(url))
+    )
+      return next(
+        fail(
+          409,
+          "Bu görsel bir içerikte kullanılıyor. Önce içeriği güncelleyin.",
+        ),
+      );
+    if (!existsSync(join(uploadDir, name)))
+      return next(fail(404, "Görsel bulunamadı."));
+    unlinkSync(join(uploadDir, name));
+    res.json({ ok: true });
   });
   app.get("/robots.txt", (_req, res) => {
     const origin = settings().websiteUrl;
-    res.type("text/plain").send("User-agent: *\nDisallow: /api/\nDisallow: /yonetim\nDisallow: /admin\n" + (origin ? "Sitemap: " + origin + "/sitemap.xml\n" : ""));
+    res
+      .type("text/plain")
+      .send(
+        "User-agent: *\nDisallow: /api/\nDisallow: /yonetim\nDisallow: /admin\n" +
+          (origin ? "Sitemap: " + origin + "/sitemap.xml\n" : ""),
+      );
   });
   app.get("/llms.txt", (_req, res) => {
     const s = settings();
     const origin = s.websiteUrl || "";
-    const routes: Record<string, string> = { product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler" };
-    const links = allContent().filter(c => c.published && routes[c.type]).map(c =>
-      `- [${str(c.title, 200).replace(/[\[\]\r\n]/g, " ")}](${origin}/${routes[c.type]}/${c.slug}): ${str(c.summary, 500).replace(/[\r\n]/g, " ")}`,
-    );
-    res.type("text/plain").send(`# ${s.companyName}\n\n> Cam, alüminyum ve metal sistemleri hakkında yayınlanmış ürün ve hizmet rehberleri.\n\nTeknik özellikler, uygulama kapsamı, fiyat ve garanti koşulları projeye özel yazılı teklif ile doğrulanmalıdır. Konsept görseller tamamlanmış müşteri referansı değildir.\n\n## Yayındaki içerikler\n\n${links.join("\n")}\n\n## İletişim\n\n- [İletişim ve keşif talebi](${origin}/iletisim)\n`);
+    const routes: Record<string, string> = {
+      product: "urunler",
+      project: "projeler",
+      article: "blog",
+      page: "kurumsal",
+      region: "bolgeler",
+    };
+    const links = allContent()
+      .filter((c) => c.published && routes[c.type])
+      .map(
+        (c) =>
+          `- [${str(c.title, 200).replace(/[\[\]\r\n]/g, " ")}](${origin}/${routes[c.type]}/${c.slug}): ${str(c.summary, 500).replace(/[\r\n]/g, " ")}`,
+      );
+    res
+      .type("text/plain")
+      .send(
+        `# ${s.companyName}\n\n> Cam, alüminyum ve metal sistemleri hakkında yayınlanmış ürün ve hizmet rehberleri.\n\nTeknik özellikler, uygulama kapsamı, fiyat ve garanti koşulları projeye özel yazılı teklif ile doğrulanmalıdır. Konsept görseller tamamlanmış müşteri referansı değildir.\n\n## Yayındaki içerikler\n\n${links.join("\n")}\n\n## İletişim\n\n- [İletişim ve keşif talebi](${origin}/iletisim)\n`,
+      );
   });
   app.get("/sitemap.xml", (_req, res) => {
     const origin = settings().websiteUrl;
-    if (!origin) return res.status(503).type("text/plain").send("Site adresini yönetim panelinden yapılandırın.");
-    const routes: Record<string, string> = { product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler" };
-    const paths = ["", "/urunler", "/projeler", "/blog", "/iletisim", "/bolgeler", "/galeri", "/proje-birimi", "/katalog", "/kurumsal", "/sistem-secici", ...allContent().filter(c => c.published && routes[c.type]).map(c => "/" + routes[c.type] + "/" + c.slug)];
-    res.type("application/xml").send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + [...new Set(paths)].map(path => "<url><loc>" + xmlText(origin + path) + "</loc></url>").join("") + "</urlset>");
+    if (!origin)
+      return res
+        .status(503)
+        .type("text/plain")
+        .send("Site adresini yönetim panelinden yapılandırın.");
+    const routes: Record<string, string> = {
+      product: "urunler",
+      project: "projeler",
+      article: "blog",
+      page: "kurumsal",
+      region: "bolgeler",
+    };
+    const paths = [
+      "",
+      "/urunler",
+      "/projeler",
+      "/blog",
+      "/iletisim",
+      "/bolgeler",
+      "/galeri",
+      "/proje-birimi",
+      "/katalog",
+      "/kurumsal",
+      "/sistem-secici",
+      ...allContent()
+        .filter((c) => c.published && routes[c.type])
+        .map((c) => "/" + routes[c.type] + "/" + c.slug),
+    ];
+    res
+      .type("application/xml")
+      .send(
+        '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
+          [...new Set(paths)]
+            .map(
+              (path) => "<url><loc>" + xmlText(origin + path) + "</loc></url>",
+            )
+            .join("") +
+          "</urlset>",
+      );
   });
   app.use("/api", (_req, _res, next) => next(fail(404, "İşlem bulunamadı.")));
+  app.use(["/hesabim", "/yonetim", "/admin"], (_req, res, next) => {
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    res.setHeader("Cache-Control", "private, no-store");
+    next();
+  });
   if (options.staticDir) {
     const dir = resolve(options.staticDir);
     app.use(express.static(dir));
@@ -824,8 +1230,10 @@ export function createApp(options: AppOptions = {}) {
   }
   app.use((err: any, _req: any, res: any, _next: any) => {
     if (res.headersSent) return;
-    if (err.type === "entity.parse.failed") return res.status(400).json({ error: "Geçersiz JSON verisi." });
-    if (err.type === "entity.too.large") return res.status(413).json({ error: "İstek verisi çok büyük." });
+    if (err.type === "entity.parse.failed")
+      return res.status(400).json({ error: "Geçersiz JSON verisi." });
+    if (err.type === "entity.too.large")
+      return res.status(413).json({ error: "İstek verisi çok büyük." });
     if (
       err.code === "SQLITE_CONSTRAINT_UNIQUE" ||
       String(err.message).includes("UNIQUE constraint")
@@ -835,16 +1243,20 @@ export function createApp(options: AppOptions = {}) {
         .json({ error: "Bu bağlantı adı zaten kullanılıyor." });
     if (err.code === "LIMIT_FILE_SIZE")
       return res.status(413).json({ error: "Görsel en fazla 8 MB olabilir." });
-    const status = Math.min(599, Math.max(400, Number(err.status) || (err instanceof multer.MulterError ? 400 : 500)));
+    const status = Math.min(
+      599,
+      Math.max(
+        400,
+        Number(err.status) || (err instanceof multer.MulterError ? 400 : 500),
+      ),
+    );
     if (status >= 500) console.error("Server request failed:", err.name);
-    res
-      .status(status)
-      .json({
-        error:
-          status >= 500
-            ? "İşlem tamamlanamadı. Lütfen tekrar deneyin."
-            : err.message || "Geçersiz istek.",
-      });
+    res.status(status).json({
+      error:
+        status >= 500
+          ? "İşlem tamamlanamadı. Lütfen tekrar deneyin."
+          : err.message || "Geçersiz istek.",
+    });
   });
   return app;
 }

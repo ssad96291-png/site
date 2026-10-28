@@ -42,6 +42,7 @@ try {
     headless: true, args: ['--no-sandbox'],
   });
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
+  await context.addInitScript(() => { try { localStorage.setItem("kilinc-analytics-consent-v1", "off"); } catch {} });
   const page = await context.newPage();
   page.setDefaultTimeout(10000);
   const initialSite = await (await context.request.get(`${base}/api/site`)).json();

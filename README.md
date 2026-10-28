@@ -1,5 +1,7 @@
 # Kılınç Dekorasyon
 
+**Müşteri ve yönetim sürümü:** [Hesaplar, talep süreçleri, bayi/personel, analitik ve bildirim kurulumu](docs/MUSTERI-VE-YONETIM.md).
+
 **Yeni sürüm:** [Videolardan uyarlanan tasarım, önizlemeler ve Windows başlatma rehberi](docs/YENI-TASARIM.md). Windows için `BASLAT-WINDOWS.cmd` dosyasını kullanabilirsiniz (Node.js 24+ gerekir).
 
 Özgün tasarım, metinler ve yerel mimari SVG görselleştirmeler içeren Türkçe/İngilizce cam, alüminyum, metal ve açık alan sitesi. React + TypeScript + Vite, Express ve SQLite.
@@ -40,7 +42,7 @@ Panelde ürünler, yaşam alanları, yazılar, kurumsal sayfalar, hizmet bölgel
 - Yayındaki içeriklere göre genel site araması.
 - Proje/konsept ve blog listeleri/detayları, SSS akordeonları.
 - Teklif, iletişim ve iş ortaklığı formları; sunucu doğrulaması ve SQLite'a kayıt.
-- Yönetim panelinde talep takibi. **Otomatik e-posta/SMS gönderimi kurulmuş değildir**; talepleri panelden takip edin.
+- Yönetim panelinde talep takibi. Panel içi bildirimler ve dış mesaj kuyruğu hazırdır; gerçek e-posta/SMS/WhatsApp gönderimi için bildirim adaptörü ve güvenli sunucu değişkenleri gerekir.
 - Ürünlerin güncel verisinden üretilen gerçek PDF katalog (`/api/catalog.pdf`, İngilizce için `?lang=en`). Türkçe font için DejaVuSans sistem fontu kullanılır.
 - Telefon, WhatsApp, e-posta, sosyal medya ve harita yönlendirmeleri gerçek bilgiler girildiğinde görünür. Uydurma telefon veya sosyal hesap eklenmez.
 

@@ -1,5 +1,7 @@
 # Önceki sürümün doğrulama kaydı
 
+Güncel müşteri/CRM sürümü sonuçları için [MUSTERI-VE-YONETIM.md](MUSTERI-VE-YONETIM.md) dosyasına bakın.
+
 Yeni sürümün 28 Ekim 2026 sonuçları için [YENI-TASARIM.md](YENI-TASARIM.md) dosyasına bakın.
 
 27 Ekim 2026 tarihinde bu çalışma ortamında:

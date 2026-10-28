@@ -8,6 +8,9 @@ services:
       DATA_DIR: /data
       PORT: 3000
       TRUST_PROXY: "1"
+      NOTIFY_WEBHOOK_URL: ${NOTIFY_WEBHOOK_URL:-}
+      NOTIFY_ALLOWED_HOSTS: ${NOTIFY_ALLOWED_HOSTS:-}
+      NOTIFY_WEBHOOK_TOKEN: ${NOTIFY_WEBHOOK_TOKEN:-}
       PUBLIC_ORIGIN: https://${SITE_DOMAIN:?Set SITE_DOMAIN to your real domain}
     volumes:
       - site_data:/data

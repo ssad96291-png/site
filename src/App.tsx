@@ -48,6 +48,8 @@ import {
 } from "lucide-react";
 import type { Content, Settings } from "./types";
 const AdminApp = lazy(() => import("./admin/AdminApp"));
+const CustomerPortal = lazy(() => import("./customer/CustomerPortal"));
+import VisitorConsent from "./VisitorConsent";
 import {
   SiteContext,
   useSite,
@@ -1032,6 +1034,8 @@ function InquiryForm({
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle"),
     [error, setError] = useState(""),
     [receipt, setReceipt] = useState("");
+  const [trackingReady, setTrackingReady] = useState(false);
+  const [trackingHref, setTrackingHref] = useState("/hesabim");
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -1061,7 +1065,23 @@ function InquiryForm({
           body.error ||
             t("Talep gönderilemedi.", "Could not submit your request."),
         );
+      window.dispatchEvent(new Event("kilinc-inquiry-submitted"));
       setReceipt(body.id || "");
+      if (body.trackingToken) {
+        try {
+          sessionStorage.setItem("kilinc-portal-claim", body.trackingToken);
+          setTrackingHref("/hesabim");
+        } catch {
+          setTrackingHref(
+            `/hesabim#claim=${encodeURIComponent(body.trackingToken)}`,
+          );
+        }
+        setTrackingReady(true);
+      } else {
+        setTrackingHref("/hesabim");
+        setTrackingReady(!!body.trackingUrl);
+      }
+
       setStatus("success");
       form.reset();
     } catch (err) {
@@ -1084,6 +1104,12 @@ function InquiryForm({
             "Your information has been saved for our team to review.",
           )}
         </p>
+        {trackingReady && (
+          <Link className="button" to={trackingHref}>
+            {t("Talebimi takip et", "Track my request")}
+            <ArrowRight size={17} />
+          </Link>
+        )}
         {receipt && (
           <small>
             {t("Başvuru numarası", "Reference")}:{" "}
@@ -1519,8 +1545,13 @@ export default function App() {
       }
       element.content = value;
     };
-    setMeta("robots", admin ? "noindex, nofollow" : "index, follow");
-    if (admin) {
+    setMeta(
+      "robots",
+      admin || location.pathname.startsWith("/hesabim")
+        ? "noindex, nofollow"
+        : "index, follow",
+    );
+    if (admin || location.pathname.startsWith("/hesabim")) {
       document.querySelector("link[rel=canonical]")?.remove();
       document.getElementById("site-structured-data")?.remove();
       return;
@@ -1727,6 +1758,22 @@ export default function App() {
         <main id="main">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route
+              path="/hesabim/*"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="loading-screen">
+                      Müşteri paneli yükleniyor…
+                    </div>
+                  }
+                >
+                  <CustomerPortal
+                    key={location.pathname + location.search + location.hash}
+                  />
+                </Suspense>
+              }
+            />
             <Route path="/urunler" element={<Products />} />
             <Route path="/urun-karsilastir" element={<ProductComparison />} />
             <Route path="/galeri" element={<RecordedGallery />} />
@@ -1802,6 +1849,7 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
+        <VisitorConsent />
         {data.settings.whatsapp && (
           <a
             className="whatsapp-float"

@@ -31,10 +31,12 @@ import {
   SlidersHorizontal,
   Sprout,
   Users,
+  UserRound,
   X,
   ZoomIn,
 } from "lucide-react";
 import type { Content } from "./types";
+import DealerDirectory from "./DealerDirectory";
 import { contentImage, contentPath, useSite } from "./site-context";
 
 export function RecordedBrand({ light = false }: { light?: boolean }) {
@@ -171,6 +173,14 @@ export function RecordedHeader() {
         <div className="rs-masthead">
           <RecordedBrand />
           <div className="rs-language">
+            <Link
+              to="/hesabim"
+              className="rs-account-link"
+              aria-label={t("Müşteri paneli", "Customer account")}
+              title={t("Müşteri paneli", "Customer account")}
+            >
+              <UserRound size={17} />
+            </Link>
             {(!Array.isArray(settings.languages) ||
               settings.languages.includes("en")) && (
               <button
@@ -1280,6 +1290,7 @@ export function RecordedServiceAreas() {
             </article>
           ))}
         </div>
+        <DealerDirectory />
         {settings.serviceAreas && (
           <p className="rs-muted">{String(settings.serviceAreas)}</p>
         )}
@@ -1621,6 +1632,9 @@ export function RecordedFooter() {
               </Link>
               <Link to="/is-ortakligi">
                 {t("İş ortaklığı", "Partnerships")}
+              </Link>
+              <Link to="/hesabim">
+                {t("Müşteri paneli", "Customer account")}
               </Link>
               <Link to="/yonetim">{t("Yönetim paneli", "Administration")}</Link>
               {settings.phone && (

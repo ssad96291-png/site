@@ -68,6 +68,6 @@ Kaynak güncellemeleri mevcut içerikleri sıfırlamaz. Yeni içerik paketi sür
 
 ## Bilinen sınırlar
 
-E-posta/SMS bildirimi, çok kullanıcılı rol/yetki sistemi, MFA ve çevrimiçi ödeme entegrasyonu yoktur. Talepler panelden takip edilir. Tek yönetici hesabı için tasarlanmıştır. İlk kurulum içerikleri, hukuki metinler ve teknik bilgiler firma tarafından doğrulanmalıdır. Belgesiz sertifika, müşteri sayısı, kesin fiyat/teslim süresi veya garanti iddiası yayımlamayın. Görseller özgün konsept çizimleridir; gerçek uygulama gibi sunmayın. Ticari fotoğraflarınızı kullanım izinleriyle ekleyin.
+Müşteri üyeliği, bayi/personel rolleri, özel PDF arşivi, talep süreçleri ve bildirim kuyruğu eklendi; [yeni yönetim rehberine](MUSTERI-VE-YONETIM.md) bakın. Gerçek e-posta/SMS/WhatsApp gönderimi için sağlayıcı bağlantısı gerekir. MFA ve çevrimiçi ödeme entegrasyonu yoktur. İlk kurulum içerikleri, hukuki metinler ve teknik bilgiler firma tarafından doğrulanmalıdır. Belgesiz sertifika, müşteri sayısı, kesin fiyat/teslim süresi veya garanti iddiası yayımlamayın. Görseller özgün konsept çizimleridir; gerçek uygulama gibi sunmayın. Ticari fotoğraflarınızı kullanım izinleriyle ekleyin.
 
 Giriş/form/PDF hız sınırları SQLite'da kalıcıdır; tek sunucu kullanımı hedeflenir. Yatay ölçekleme için ortak veri, dosya ve oturum mimarisi gerekir. Güvenlik testleri riski azaltır; sürekli güncelleme ve sunucu güvenliğinin yerini almaz.

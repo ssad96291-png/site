@@ -2183,3 +2183,5 @@
     scroll-behavior: auto !important;
   }
 }
+
+.rs-dealer-directory{margin-top:45px;padding-top:30px;border-top:1px solid #e1e6dc}.rs-dealer-directory .rs-section-title{align-items:center;flex-wrap:wrap}.rs-dealer-directory .rs-section-title>.rs-search{max-width:280px}.rs-dealer-directory .rs-region-grid a{gap:10px}

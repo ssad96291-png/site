@@ -1,7 +1,7 @@
 {$SITE_DOMAIN} {
     encode zstd gzip
     request_body {
-        max_size 9MB
+        max_size 11MB
     }
     reverse_proxy app:3000
 }
