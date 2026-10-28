@@ -1,0 +1,3 @@
+# Preserve upstream licence notices, including their original whitespace.
+public/licenses/THIRD-PARTY-NOTICES.txt -whitespace
+server/assets/DejaVuSans-COPYRIGHT.txt -whitespace

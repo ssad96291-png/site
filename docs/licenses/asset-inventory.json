@@ -1,0 +1,68 @@
+{
+  "scope": "Bundled public visual assets and PDF font only; excludes private customer uploads and database content.",
+  "assets": [
+    {
+      "path": "public/favicon.svg",
+      "bytes": 299,
+      "sha256": "dc5570b92e04d1c35c8f35fa9db70e93233ca7120a7e316c91553fd5cca641c9",
+      "provenanceRecordMatches": true,
+      "origin": "Procedural vector mark created for this project during the originality redesign.",
+      "review": "Original geometric drawing; a trademark clearance search for the company name and logo has not been completed.",
+      "record": "Original geometric K / room-plan SVG constructed in the documented redesign, 2026-10-28"
+    },
+    {
+      "path": "public/images/aluminium-facade.svg",
+      "bytes": 5446,
+      "sha256": "d62cf88060de8405ec87cb6ebd0a68db3c62498ec0bd0ca3908a976baf4d706f",
+      "provenanceRecordMatches": true,
+      "origin": "Procedural SVG illustration created for this project in the recorded development session.",
+      "review": "Concept illustration; no supplier endorsement, technical certification or completed-project claim.",
+      "record": "recorded project implementation, 2026-10-28"
+    },
+    {
+      "path": "public/images/metal-gate.svg",
+      "bytes": 4857,
+      "sha256": "3e1667b41fddb72b8db4747f0ba6ec55fe79532679d53cbfa8b9999eea2c33fd",
+      "provenanceRecordMatches": true,
+      "origin": "Procedural SVG illustration created for this project in the recorded development session.",
+      "review": "Concept illustration; no supplier endorsement, technical certification or completed-project claim.",
+      "record": "recorded project implementation, 2026-10-28"
+    },
+    {
+      "path": "public/images/original-balcony.png",
+      "bytes": 2586429,
+      "sha256": "015c1fc6c32105e9d04b6957932b1a3e6bb2a1fda081979b8270d14aac49bbcc",
+      "provenanceRecordMatches": true,
+      "origin": "AI-generated for this project in the recorded development session; bytes matched the recorded original generation output on 2026-10-28.",
+      "review": "Concept image, not a photograph of completed work. Generation does not establish third-party clearance or exclusivity.",
+      "record": "exec-4e125003-ff18-43f2-8ec3-aff08f5895a6"
+    },
+    {
+      "path": "public/images/original-pergola.png",
+      "bytes": 3198545,
+      "sha256": "ad500cebfa7ca7418b6fb5cb896911ccc7f986009ff49b137c9159cca9f0f69e",
+      "provenanceRecordMatches": true,
+      "origin": "AI-generated for this project in the recorded development session; bytes matched the recorded original generation output on 2026-10-28.",
+      "review": "Concept image, not a photograph of completed work. Generation does not establish third-party clearance or exclusivity.",
+      "record": "exec-9575512f-b16b-443b-902b-6e2fdbbaa338"
+    },
+    {
+      "path": "public/images/original-terrace.png",
+      "bytes": 3149992,
+      "sha256": "88a36467716d974f20f427faa8e59ec66b4065fd58df0d05f15d64422f1cab85",
+      "provenanceRecordMatches": true,
+      "origin": "AI-generated for this project in the recorded development session; bytes matched the recorded original generation output on 2026-10-28.",
+      "review": "Concept image, not a photograph of completed work. Generation does not establish third-party clearance or exclusivity.",
+      "record": "exec-da6a552c-64f9-430e-a693-879216d4b22a"
+    },
+    {
+      "path": "server/assets/DejaVuSans.ttf",
+      "bytes": 759720,
+      "sha256": "57f73e11f51999432bf7ab22ce55b6f945d5eca1bf824404cfa9ec2e3718c84e",
+      "provenanceRecordMatches": true,
+      "origin": "Unmodified font from the installed Debian fonts-dejavu-core package.",
+      "review": "Licensed third-party font; preserve server/assets/DejaVuSans-COPYRIGHT.txt and the public notices.",
+      "record": "Debian fonts-dejavu-core; adjacent exact copyright record"
+    }
+  ]
+}

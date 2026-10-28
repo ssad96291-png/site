@@ -97,38 +97,43 @@ export function RecordedHeader() {
         .filter((c) => c.type === "product")
         .map((c) => ({ label: local(c, "title"), href: contentPath(c) })),
     },
-    ...(settings.showRegions !== false
-      ? [
-          {
-            label: t("Hizmet Bölgeleri", "Service areas"),
-            href: "/bolgeler",
-            links: content
-              .filter((c) => c.type === "region")
-              .map((c) => ({
-                label: local(c, "title").split(" için")[0],
-                href: contentPath(c),
-              })),
-          },
-        ]
-      : []),
-    { label: t("Galeri", "Gallery"), href: "/galeri", links: [] },
-    ...(settings.showProjects !== false
-      ? [
-          {
-            label: t("Mekân Çözümleri", "Spaces"),
-            href: "/projeler",
-            links: content
-              .filter((c) => c.type === "project")
-              .map((c) => ({ label: local(c, "title"), href: contentPath(c) })),
-          },
-        ]
-      : []),
     {
-      label: t("Proje Birimi", "Project office"),
-      href: "/proje-birimi",
-      links: [],
+      label: t("Galeri", "Gallery"),
+      href: "/galeri",
+      links:
+        settings.showProjects !== false
+          ? [
+              { label: t("Mekân çözümleri", "Space ideas"), href: "/projeler" },
+              ...content
+                .filter((c) => c.type === "project")
+                .map((c) => ({
+                  label: local(c, "title"),
+                  href: contentPath(c),
+                })),
+            ]
+          : [],
     },
-    { label: t("Kataloglar", "Catalogues"), href: "/katalog", links: [] },
+    {
+      label: t("Projeniz", "Your project"),
+      href: "/proje-birimi",
+      links: [
+        { label: t("Proje birimi", "Project office"), href: "/proje-birimi" },
+        { label: t("Sistem seçici", "System finder"), href: "/sistem-secici" },
+        {
+          label: t("Sistemleri karşılaştırın", "Compare systems"),
+          href: "/urun-karsilastir",
+        },
+        { label: t("Kataloglar", "Catalogues"), href: "/katalog" },
+        {
+          label: t("Ön ölçü rehberi", "Measuring guide"),
+          href: "/kurumsal/olcu-rehberi",
+        },
+        {
+          label: t("Talebinizi takip edin", "Track your request"),
+          href: "/hesabim",
+        },
+      ],
+    },
     {
       label: t("Kurumsal", "Company"),
       href: "/kurumsal",
@@ -147,107 +152,123 @@ export function RecordedHeader() {
           label: t("Renk kartelası", "Colours"),
           href: "/kurumsal/renk-kartelasi",
         },
+        {
+          label: t("İş ortağımız olun", "Partner with us"),
+          href: "/is-ortakligi",
+        },
       ],
     },
     {
-      label: t("İş Ortağımız Olun", "Partner with us"),
-      href: "/is-ortakligi",
-      links: [],
-    },
-    {
-      label: t("Bize Ulaşın", "Contact"),
+      label: t("İletişim", "Contact"),
       href: "/iletisim",
       links: [
-        { label: t("İletişim", "Contact"), href: "/iletisim" },
         { label: t("Keşif ve teklif", "Quote & survey"), href: "/teklif-al" },
         {
           label: t("Servis talebi", "Service request"),
           href: "/servis-talebi",
         },
+        ...(settings.showRegions !== false
+          ? [
+              {
+                label: t("Hizmet bölgeleri", "Service areas"),
+                href: "/bolgeler",
+              },
+              ...content
+                .filter((c) => c.type === "region")
+                .map((c) => ({
+                  label: local(c, "title").split(" için")[0],
+                  href: contentPath(c),
+                })),
+            ]
+          : []),
       ],
     },
   ];
   return (
     <>
       <header className={`rs-header ${compact ? "is-compact" : ""}`}>
-        <div className="rs-masthead">
-          <RecordedBrand />
-          <div className="rs-language">
-            <Link
-              to="/hesabim"
-              className="rs-account-link"
-              aria-label={t("Müşteri paneli", "Customer account")}
-              title={t("Müşteri paneli", "Customer account")}
-            >
-              <UserRound size={17} />
-            </Link>
-            {(!Array.isArray(settings.languages) ||
-              settings.languages.includes("en")) && (
-              <button
-                onClick={() => setEn(!en)}
-                aria-label={en ? "Türkçeye geç" : "Switch to English"}
+        <div className="rs-header-shell">
+          <div className="rs-masthead">
+            <RecordedBrand />
+            <div className="rs-language">
+              <Link
+                to="/hesabim"
+                className="rs-account-link"
+                aria-label={t("Müşteri paneli", "Customer account")}
+                title={t("Müşteri paneli", "Customer account")}
               >
-                <span className={!en ? "active" : ""}>TR</span>
-                <span className={en ? "active" : ""}>EN</span>
+                <UserRound size={17} />
+              </Link>
+              {(!Array.isArray(settings.languages) ||
+                settings.languages.includes("en")) && (
+                <button
+                  onClick={() => setEn(!en)}
+                  aria-label={en ? "Türkçeye geç" : "Switch to English"}
+                >
+                  <span className={!en ? "active" : ""}>TR</span>
+                  <span className={en ? "active" : ""}>EN</span>
+                </button>
+              )}
+              <button
+                aria-label={t("Sitede ara", "Search")}
+                onClick={() => setSearch(true)}
+              >
+                <Search size={16} />
               </button>
-            )}
+            </div>
             <button
-              aria-label={t("Sitede ara", "Search")}
-              onClick={() => setSearch(true)}
+              className="rs-menu-toggle"
+              aria-label={t("Menüyü aç/kapat", "Toggle menu")}
+              aria-expanded={mobile}
+              onClick={() => setMobile(!mobile)}
             >
-              <Search size={16} />
+              {mobile ? <X /> : <Menu />}
             </button>
           </div>
-          <button
-            className="rs-menu-toggle"
-            aria-label={t("Menüyü aç/kapat", "Toggle menu")}
-            aria-expanded={mobile}
-            onClick={() => setMobile(!mobile)}
+          <nav
+            className={`rs-nav ${mobile ? "is-open" : ""}`}
+            aria-label={t("Ana menü", "Main navigation")}
           >
-            {mobile ? <X /> : <Menu />}
-          </button>
-        </div>
-        <nav
-          className={`rs-nav ${mobile ? "is-open" : ""}`}
-          aria-label={t("Ana menü", "Main navigation")}
-        >
-          <Link
-            className="rs-home-link"
-            to="/"
-            aria-label={t("Ana sayfa", "Home")}
-          >
-            <Home size={21} />
-          </Link>
-          {items.map((item) => (
-            <div
-              key={item.href}
-              className={`rs-nav-item ${open === item.href ? "is-open" : ""} ${location.pathname.startsWith(item.href) ? "is-current" : ""}`}
+            <Link
+              className="rs-home-link"
+              to="/"
+              aria-label={t("Ana sayfa", "Home")}
             >
-              <div>
-                <Link to={item.href}>{item.label}</Link>
+              <Home size={21} />
+            </Link>
+            {items.map((item) => (
+              <div
+                key={item.href}
+                className={`rs-nav-item ${open === item.href ? "is-open" : ""} ${location.pathname.startsWith(item.href) ? "is-current" : ""}`}
+              >
+                <div>
+                  <Link to={item.href}>{item.label}</Link>
+                  {item.links.length > 0 && (
+                    <button
+                      aria-label={`${item.label} ${t("alt menüsü", "submenu")}`}
+                      aria-expanded={open === item.href}
+                      onClick={() =>
+                        setOpen(open === item.href ? "" : item.href)
+                      }
+                    >
+                      <ChevronDown size={10} />
+                    </button>
+                  )}
+                </div>
                 {item.links.length > 0 && (
-                  <button
-                    aria-label={`${item.label} ${t("alt menüsü", "submenu")}`}
-                    aria-expanded={open === item.href}
-                    onClick={() => setOpen(open === item.href ? "" : item.href)}
-                  >
-                    <ChevronDown size={10} />
-                  </button>
+                  <div className="rs-dropdown">
+                    {item.links.map((link) => (
+                      <Link to={link.href} key={link.href}>
+                        {link.label}
+                        <ChevronRight size={11} />
+                      </Link>
+                    ))}
+                  </div>
                 )}
               </div>
-              {item.links.length > 0 && (
-                <div className="rs-dropdown">
-                  {item.links.map((link) => (
-                    <Link to={link.href} key={link.href}>
-                      {link.label}
-                      <ChevronRight size={11} />
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
+            ))}
+          </nav>
+        </div>
       </header>
       {search && (
         <AccessibleDialog
@@ -477,61 +498,138 @@ export function RecordedHome() {
         aria-roledescription="carousel"
         aria-label={t("Öne çıkan çözümler", "Featured solutions")}
       >
-        <img
-          key={current.image}
-          src={current.image}
-          alt={t(
-            "Mimari tasarım görselleştirmesi",
-            "Architectural design visualization",
-          )}
-          fetchPriority="high"
-        />
-        <div className="rs-hero-shade" />
-        <div className="rs-container rs-hero-copy">
-          <small>{current.tag}</small>
-          <h1>{current.title}</h1>
-          <p>{current.subtitle}</p>
-          <Link className="rs-button white" to={current.href}>
-            {t("Sistemlerimizi keşfedin", "Explore our systems")}
-            <ArrowRight size={17} />
-          </Link>
+        <div className="rs-container rs-hero-layout">
+          <div className="rs-hero-copy">
+            <small>
+              <span aria-hidden="true" />
+              {current.tag}
+            </small>
+            <h1>{current.title}</h1>
+            <p>{current.subtitle}</p>
+            <div className="rs-hero-actions">
+              <Link className="rs-button" to={current.href}>
+                {t("Sistemlerimizi keşfedin", "Explore our systems")}
+                <ArrowUpRight size={18} />
+              </Link>
+              <Link className="rs-text-link" to="/teklif-al">
+                {t("Projenizi anlatın", "Tell us about your project")}
+                <ArrowRight size={17} />
+              </Link>
+            </div>
+            <div className="rs-hero-note">
+              <Ruler size={20} strokeWidth={1.4} />
+              <p>
+                {t(
+                  "Seçim, yerinde ölçü ve uygulama koşullarıyla netleşir.",
+                  "The final choice takes shape through site measurements and project conditions.",
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="rs-hero-visual">
+            <div className="rs-frame-motif" aria-hidden="true">
+              <span />
+              <span />
+            </div>
+            <img
+              key={current.image}
+              src={current.image}
+              alt={t(
+                "Mimari tasarım görselleştirmesi",
+                "Architectural design visualization",
+              )}
+              fetchPriority="high"
+            />
+            <div className="rs-hero-controls">
+              <button
+                onClick={() => setSlide((slide + 2) % 3)}
+                aria-label="Önceki slayt"
+              >
+                <ChevronLeft size={17} />
+              </button>
+              {slides.map((s, i) => (
+                <button
+                  className={slide === i ? "active" : ""}
+                  aria-label={`${i + 1}. slayt`}
+                  aria-current={slide === i ? "true" : undefined}
+                  onClick={() => setSlide(i)}
+                  key={s.href}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </button>
+              ))}
+              <button
+                onClick={() => setSlide((slide + 1) % 3)}
+                aria-label="Sonraki slayt"
+              >
+                <ChevronRight size={17} />
+              </button>
+              <button
+                onClick={() => setPaused(!paused)}
+                aria-label={paused ? "Slaytları oynat" : "Slaytları duraklat"}
+              >
+                {paused ? <Play size={13} /> : <Pause size={13} />}
+              </button>
+            </div>
+            <span className="rs-concept-label">
+              {t("Tasarım görselleştirmesi", "Design visualization")}
+            </span>
+          </div>
         </div>
-        <div className="rs-hero-controls">
-          <button
-            onClick={() => setSlide((slide + 2) % 3)}
-            aria-label="Önceki slayt"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          {slides.map((s, i) => (
-            <button
-              className={slide === i ? "active" : ""}
-              aria-label={`${i + 1}. slayt`}
-              aria-current={slide === i ? "true" : undefined}
-              onClick={() => setSlide(i)}
-              key={s.href}
-            >
-              {String(i + 1).padStart(2, "0")}
-            </button>
-          ))}
-          <button
-            onClick={() => setSlide((slide + 1) % 3)}
-            aria-label="Sonraki slayt"
-          >
-            <ChevronRight size={20} />
-          </button>
-          <button
-            onClick={() => setPaused(!paused)}
-            aria-label={paused ? "Slaytları oynat" : "Slaytları duraklat"}
-          >
-            {paused ? <Play size={14} /> : <Pause size={14} />}
-          </button>
-        </div>
-        <span className="rs-concept-label">
-          {t("Özgün tasarım görselleştirmesi", "Original design visualization")}
-        </span>
       </section>
-      <section className="rs-container rs-section">
+      <section
+        className="rs-container rs-start-strip"
+        aria-label={t("Projeniz için kısa yollar", "Project shortcuts")}
+      >
+        <Link to="/sistem-secici">
+          <span className="rs-start-number" aria-hidden="true">
+            01
+          </span>
+          <span>
+            <strong>
+              {t("İhtiyacınızı belirleyin", "Find your starting point")}
+            </strong>
+            <small>
+              {t(
+                "Sistem seçici ile seçenekleri daraltın",
+                "Explore options with the system finder",
+              )}
+            </small>
+          </span>
+          <ArrowUpRight size={20} />
+        </Link>
+        <Link to="/teklif-al">
+          <span className="rs-start-number" aria-hidden="true">
+            02
+          </span>
+          <span>
+            <strong>{t("Detayları paylaşın", "Share the details")}</strong>
+            <small>
+              {t(
+                "Ölçü ve kullanım amacınızı iletin",
+                "Tell us the dimensions and intended use",
+              )}
+            </small>
+          </span>
+          <ArrowUpRight size={20} />
+        </Link>
+        <Link to="/hesabim">
+          <span className="rs-start-number" aria-hidden="true">
+            03
+          </span>
+          <span>
+            <strong>{t("Talebinizi izleyin", "Follow your request")}</strong>
+            <small>
+              {t(
+                "Süreç ve belgeler müşteri panelinizde",
+                "View progress and documents in your account",
+              )}
+            </small>
+          </span>
+          <ArrowUpRight size={20} />
+        </Link>
+      </section>
+      <section className="rs-container rs-section rs-home-systems">
         <div className="rs-heading">
           <small>
             {t(
@@ -539,7 +637,7 @@ export function RecordedHome() {
               "SYSTEMS THAT COMPLETE YOUR SPACE",
             )}
           </small>
-          <h2>{t("Camın ötesinde bir yaşam.", "Life beyond the glass.")}</h2>
+          <h2>{t("Mekânınıza göre seçin.", "Choose for your space.")}</h2>
           <p>
             {t(
               "Kullanım alışkanlıklarınıza ve yapınızın koşullarına uygun sistemi birlikte seçelim.",
@@ -1035,8 +1133,8 @@ export function RecordedGallery() {
         </div>
         <p className="rs-muted">
           {t(
-            "Görseller özgün tasarım konseptleridir; tamamlanmış müşteri referansı olarak sunulmaz.",
-            "Images are original design concepts, not completed customer project references.",
+            "Başlangıç görselleri tasarım konseptidir; tamamlanmış uygulama örneği değildir.",
+            "Starter images are design concepts, not examples of completed installations.",
           )}
         </p>
         <div className="rs-gallery-grid">
@@ -1194,11 +1292,33 @@ export function RecordedCorporate() {
   return (
     <>
       <RecordedPageHead title={t("Kurumsal", "Company")} />
-      <section className="rs-container rs-section">
+      <section className="rs-container rs-section rs-company-layout">
+        <div className="rs-company-intro">
+          <small>{t("KILINÇ DEKORASYON", "KILINÇ DEKORASYON")}</small>
+          <h2>
+            {t(
+              "Projenizin her adımında, açık bilgi.",
+              "Clear information at every step.",
+            )}
+          </h2>
+          <p>
+            {t(
+              "Çalışma biçimimizi tanıyın, hazırlık rehberlerinden yararlanın ve ihtiyacınız olduğunda bize ulaşın.",
+              "Learn how we work, prepare with practical guides and get in touch when you need us.",
+            )}
+          </p>
+          <Link className="rs-text-link" to="/iletisim">
+            {t("Birlikte konuşalım", "Let’s talk")}
+            <ArrowRight size={16} />
+          </Link>
+        </div>
         <div className="rs-hub-grid">
-          {hub.map((c) => (
+          {hub.map((c, i) => (
             <Link to={c.href} key={c.href}>
-              <c.icon size={32} strokeWidth={1.3} />
+              <span className="rs-hub-number" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <c.icon size={23} strokeWidth={1.4} />
               <h2>{t(c.title, c.en)}</h2>
               <ArrowRight size={15} />
             </Link>
@@ -1679,6 +1799,12 @@ export function RecordedFooter() {
             <div>
               <Link to="/kurumsal/kvkk">KVKK</Link>
               <Link to="/kurumsal/gizlilik">{t("Gizlilik", "Privacy")}</Link>
+              <Link to="/kurumsal/icerik-ve-kullanim-haklari">
+                {t("İçerik ve kullanım hakları", "Content and usage rights")}
+              </Link>
+              <a href="/licenses/THIRD-PARTY-NOTICES.txt">
+                {t("Açık kaynak lisansları", "Open-source licences")}
+              </a>
               <span>
                 © {new Date().getFullYear()}{" "}
                 {String(settings.companyName || "Kılınç Dekorasyon")}
@@ -1686,8 +1812,8 @@ export function RecordedFooter() {
             </div>
             <small>
               {t(
-                "Görseller özgün tasarım konseptleridir. Teknik ve ticari koşullar projeye özel belirlenir.",
-                "Images are original design concepts. Technical and commercial terms are agreed for each project.",
+                "Başlangıç görselleri tasarım konseptidir; tamamlanmış uygulama örneği değildir. Teknik ve ticari koşullar projeye özel belirlenir.",
+                "Starter images are design concepts, not completed installations. Technical and commercial terms are agreed for each project.",
               )}
             </small>
           </div>

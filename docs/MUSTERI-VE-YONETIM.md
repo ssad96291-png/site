@@ -1,5 +1,7 @@
 # Müşteri, bayi ve canlı yönetim sürümü
 
+Güncel tasarım, görsel kaynak/izin kayıtları ve güvenli güncelleme için [özgünleştirme rehberine](OZGUNLUK-VE-KULLANIM.md) bakın.
+
 Bu sürüm önceki sitenin içerik, tasarım, mevcut yönetici ve veritabanını korur. Yeni tablolar ilk açılışta eklenir; müşteri ya da bayi örnekleri gerçek kayıt gibi oluşturulmaz.
 
 ## Müşteri akışı

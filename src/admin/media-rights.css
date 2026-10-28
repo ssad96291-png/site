@@ -1,0 +1,81 @@
+.kd-admin .ka-rights-upload,
+.kd-admin .ka-rights-editor {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid #d9dfd2;
+  border-radius: 8px;
+  background: #f9faf6;
+  min-width: 0;
+}
+.kd-admin .ka-rights-upload summary,
+.kd-admin .ka-rights-editor summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.kd-admin .ka-rights-upload summary span {
+  display: block;
+  color: #7b6847;
+  font-size: 11px;
+  font-weight: 400;
+  padding-top: 4px;
+}
+.kd-admin .ka-rights-fields {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  margin: 16px 0 0;
+}
+.kd-admin .ka-rights-fields legend {
+  font-size: 11px;
+  padding: 0 0 14px;
+  color: #53674a;
+}
+.kd-admin .ka-rights-fields .ka-field {
+  margin-bottom: 14px;
+}
+.kd-admin .ka-rights-fields .ka-field input,
+.kd-admin .ka-rights-fields .ka-field select,
+.kd-admin .ka-rights-fields .ka-field textarea {
+  width: 100%;
+  min-width: 0;
+  font-size: 12px;
+}
+.kd-admin .ka-rights-intro,
+.kd-admin .ka-rights-disclaimer {
+  margin: 12px 0 !important;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #6a745f;
+  overflow-wrap: anywhere;
+}
+.kd-admin .ka-rights-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.kd-admin .ka-rights-confirm input {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+.kd-admin .ka-rights-status {
+  padding: 9px 11px;
+  margin: 14px 0 !important;
+  font-size: 11px;
+  background: #f6edda;
+  color: #755d33;
+  border-radius: 5px;
+}
+.kd-admin .ka-rights-status.recorded {
+  background: #edf2e6;
+  color: #4b6444;
+}
+.kd-admin .ka-media-card .ka-rights-editor {
+  display: block;
+}
+.kd-admin .ka-media-rights-upload {
+  margin-bottom: 24px;
+}

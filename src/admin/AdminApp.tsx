@@ -48,6 +48,14 @@ import {
   type OperationsSection,
 } from "./OperationsPanel";
 import LiveAnalytics from "./LiveAnalytics";
+import {
+  UploadRights,
+  MediaRightsEditor,
+  appendMediaRights,
+  emptyMediaRights,
+  type MediaRightsDraft,
+  type MediaRightsRecord,
+} from "./MediaRights";
 import "./admin-integration.css";
 
 type ContentType =
@@ -1602,6 +1610,7 @@ function ContentEditor({
     value.specs?.map((s) => `${s.label}: ${s.value}`).join("\n") || "",
   );
   const [gallery, setGallery] = useState(value.gallery?.join("\n") || "");
+  const [uploadRights, setUploadRights] = useState(emptyMediaRights);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -1630,6 +1639,7 @@ function ContentEditor({
           throw new Error("Her görsel en fazla 8 MB olabilir.");
         const data = new FormData();
         data.append("image", file);
+        appendMediaRights(data, uploadRights);
         const r = await api<{ url: string }>("/api/admin/upload", {
           method: "POST",
           body: data,
@@ -1854,6 +1864,11 @@ function ContentEditor({
                 </small>
               </label>
               <h3 className="ka-editor-subtitle">Fotoğraf galerisi</h3>
+              <UploadRights
+                value={uploadRights}
+                onChange={setUploadRights}
+                disabled={uploading}
+              />
               <label className="ka-upload">
                 <ImagePlus size={24} />
                 <span>
@@ -2048,6 +2063,11 @@ function ContentEditor({
               alt={draft.imageAlt || "Kapak önizlemesi"}
             />
           )}
+          <UploadRights
+            value={uploadRights}
+            onChange={setUploadRights}
+            disabled={uploading}
+          />
           <label className="ka-upload">
             <ImagePlus size={22} />
             <span>{uploading ? "Yükleniyor…" : "Kapak görseli yükle"}</span>
@@ -2219,6 +2239,7 @@ function SettingsEditor({
   onSave: (value: Settings) => Promise<void>;
 }) {
   const [draft, setDraft] = useState<Settings>({ ...value });
+  const [uploadRights, setUploadRights] = useState(emptyMediaRights);
   const [active, setActive] = useState(settingGroups[0].title);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -2230,6 +2251,7 @@ function SettingsEditor({
     try {
       const data = new FormData();
       data.append("image", file);
+      appendMediaRights(data, uploadRights);
       const response = await api<{ url: string }>("/api/admin/upload", {
         method: "POST",
         body: data,
@@ -2307,6 +2329,11 @@ function SettingsEditor({
                       alt="Ana sayfa görseli önizlemesi"
                     />
                   )}
+                  <UploadRights
+                    value={uploadRights}
+                    onChange={setUploadRights}
+                    disabled={uploading}
+                  />
                   <label className="ka-upload">
                     <ImagePlus size={22} />
                     <span>
@@ -2566,13 +2593,19 @@ function MediaLibrary() {
   const [media, setMedia] = useState<
     { url: string; size: number; createdAt: string }[]
   >([]);
+  const [rights, setRights] = useState<MediaRightsRecord[]>([]);
+  const [uploadRights, setUploadRights] = useState(emptyMediaRights);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const load = useCallback(async () => {
-    const result = await api<{ media: typeof media }>("/api/admin/media");
+    const [result, usage] = await Promise.all([
+      api<{ media: typeof media }>("/api/admin/media"),
+      api<{ records: MediaRightsRecord[] }>("/api/admin/media-rights"),
+    ]);
     setMedia(result.media);
+    setRights(usage.records);
   }, []);
   useEffect(() => {
     load()
@@ -2587,6 +2620,7 @@ function MediaLibrary() {
       for (const file of Array.from(files)) {
         const data = new FormData();
         data.append("image", file);
+        appendMediaRights(data, uploadRights);
         await api("/api/admin/upload", { method: "POST", body: data });
       }
       await load();
@@ -2617,6 +2651,16 @@ function MediaLibrary() {
       setBusy(false);
     }
   }
+  async function saveRights(url: string, value: MediaRightsDraft) {
+    await api(
+      `/api/admin/media-rights/${encodeURIComponent(url.split("/").pop() || "")}`,
+      { method: "PUT", body: JSON.stringify(value) },
+    );
+    await load();
+  }
+  const unreviewed = media.filter(
+    (item) => !rights.find((record) => record.url === item.url)?.confirmedAt,
+  ).length;
   return (
     <>
       {error && (
@@ -2631,11 +2675,18 @@ function MediaLibrary() {
       )}
       <section className="ka-panel ka-media-header">
         <div>
-          <h2>Markanıza ait görseller</h2>
+          <h2>Görseller ve kullanım kayıtları</h2>
           <p>
             Yüklediğiniz görselleri burada bulun. Kullanımdaki dosyalar
-            silinmeye karşı korunur.
+            silinmeye karşı korunur. Kaynak bilgileri yalnızca yönetimde
+            tutulur; beyan kaydı hukuki onay anlamına gelmez.
           </p>
+          {!loading && (
+            <p>
+              {unreviewed} görselin kullanım beyanı eksik. Yayınlamadan önce
+              lisans ve izin kapsamını inceleyin.
+            </p>
+          )}
         </div>
         <label className="ka-button primary ka-upload-button">
           <ImagePlus size={18} />
@@ -2648,6 +2699,13 @@ function MediaLibrary() {
             onChange={(e) => upload(e.target.files)}
           />
         </label>
+      </section>
+      <section className="ka-panel ka-media-rights-upload">
+        <UploadRights
+          value={uploadRights}
+          onChange={setUploadRights}
+          disabled={busy}
+        />
       </section>
       {loading ? (
         <div className="ka-empty">
@@ -2663,6 +2721,13 @@ function MediaLibrary() {
                 <small>
                   {Math.round(m.size / 1024)} KB · {formatDate(m.createdAt)}
                 </small>
+                <p
+                  className={`ka-rights-status ${rights.find((r) => r.url === m.url)?.confirmedAt ? "recorded" : ""}`}
+                >
+                  {rights.find((r) => r.url === m.url)?.confirmedAt
+                    ? "Kullanım beyanı kayıtlı · Hukuki onay değildir"
+                    : "Kullanım beyanı eksik · Yayın öncesi inceleyin"}
+                </p>
                 <label className="ka-field">
                   Görsel adresi
                   <input
@@ -2698,6 +2763,11 @@ function MediaLibrary() {
                     <Trash2 size={16} />
                   </button>
                 </div>
+                <MediaRightsEditor
+                  key={`${m.url}-${rights.find((r) => r.url === m.url)?.updatedAt || "unreviewed"}`}
+                  record={rights.find((r) => r.url === m.url)}
+                  onSave={(value) => saveRights(m.url, value)}
+                />
               </div>
             </section>
           ))}

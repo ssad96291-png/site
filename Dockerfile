@@ -21,6 +21,7 @@ RUN --mount=type=secret,id=proxy_ca \
     npm ci --omit=dev --strict-ssl=true
 COPY --from=build --chown=node:node /app/dist ./dist
 COPY --from=build --chown=node:node /app/build-server ./build-server
+COPY --from=build --chown=node:node /app/server/assets ./server/assets
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

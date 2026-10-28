@@ -59,7 +59,7 @@ const products = [
   [
     "katlanir-cam-balkon",
     "Katlanır Cam Balkon",
-    "Açıldığında özgürlük, kapandığında konfor.",
+    "Katlanarak yana toplanan cam paneller.",
     "Cam balkon",
     "Bir yana toplanabilen cam panellerle balkonunuzu mevsime ve kullanımınıza göre dönüştürün. Görüşü kesmeyen bir yaklaşım, günlük yaşamınıza daha fazla alan kazandırsın.",
     "Panel düzeni|Mekâna göre projelendirilir;Cam seçimi|Ölçü ve kullanım koşullarına göre;Açılım|Katlanır panel sistemi",
@@ -67,7 +67,7 @@ const products = [
   [
     "surme-cam-sistemleri",
     "Sürme Cam Sistemleri",
-    "Manzaraya kesintisiz bir geçiş.",
+    "Raylı panellerle ayarlanabilen açıklıklar.",
     "Cam balkon",
     "Ray üzerinde hareket eden cam paneller, geniş açıklıkları esnek biçimde kullanmanıza yardımcı olur. Balkon, teras ve ticari mekânlarda ihtiyaca uygun açılım seçenekleri birlikte değerlendirilir.",
     "Açılım|Yatay sürme;Kullanım|Balkon ve teras;Projelendirme|Yerinde ölçüye özel",
@@ -75,15 +75,15 @@ const products = [
   [
     "isi-yalitimli-cam-balkon",
     "Isı Yalıtımlı Cam Balkon",
-    "Mevsimler değişir, yaşam devam eder.",
+    "Çift cam bileşimiyle planlanan balkon kapaması.",
     "Cam balkon",
-    "Isıcamlı panel seçenekleriyle balkonunuzu daha uzun süre kullanabileceğiniz bir alana dönüştürün. Cam, profil ve birleşim detayları mekânınızın koşullarına uygun olarak belirlenir.",
+    "Çift camlı panel seçenekleriyle balkonunuzu daha uzun süre kullanabileceğiniz bir alana dönüştürün. Cam, profil ve birleşim detayları mekânınızın koşullarına uygun olarak belirlenir.",
     "Cam|Çift cam seçenekleri;Profil|Projeye uygun alüminyum;Uygulama|Yerinde keşif sonrası",
   ],
   [
     "giyotin-cam",
     "Giyotin Cam",
-    "Tek dokunuşla yeni bir perspektif.",
+    "Düşey hareketli cam panel seçenekleri.",
     "Hareketli cam",
     "Düşey hareket eden cam panellerle açık ve kapalı alan arasında kontrollü bir geçiş oluşturun. Teras ve işletmeler için motor, kumanda ve güvenlik detayları proje kapsamında değerlendirilir.",
     "Hareket|Düşey panel hareketi;Kontrol|Motor ve kumanda seçeneği;Kullanım|Teras ve işletmeler",
@@ -91,7 +91,7 @@ const products = [
   [
     "pergola-sistemleri",
     "Pergola Sistemleri",
-    "Gökyüzünün altında, kendi konforunuzda.",
+    "Gölge ve tahliye detayları birlikte planlanır.",
     "Gölgelendirme",
     "Teras ve bahçelerinizi gölge, hava akışı ve yağış koşullarıyla birlikte düşünerek planlıyoruz. Taşıyıcı, örtü ve drenaj çözümleri uygulama alanınıza göre tasarlanır.",
     "Tasarım|Ölçüye özel;Seçenekler|Aydınlatma ve yan kapama;Planlama|Rüzgâr ve drenaj değerlendirmesi",
@@ -99,7 +99,7 @@ const products = [
   [
     "biyoklimatik-tavan",
     "Biyoklimatik Tavan",
-    "Işığı ve gölgeyi siz belirleyin.",
+    "Hareketli kanatlarla gün ışığı kontrolü.",
     "Gölgelendirme",
     "Hareketli tavan kanatlarıyla ışık ve hava akışını kullanım ihtiyacınıza göre düzenleyin. Açık alanınızda günün farklı saatlerine uyum sağlayan esnek bir yaşam kurgulayın.",
     "Tavan|Hareketli kanatlar;Kontrol|Motorlu seçenekler;Tamamlama|Cam kapama ile birlikte planlanabilir",
@@ -107,7 +107,7 @@ const products = [
   [
     "kis-bahcesi",
     "Kış Bahçesi",
-    "Bahçenin bir parçası, evinizin devamı.",
+    "Çatı ve yan kapaması birlikte tasarlanan alanlar.",
     "Yaşam alanları",
     "Şeffaf yüzeyler ve mekâna özel çatı seçenekleriyle bahçenize yeni bir kullanım alanı ekleyin. İzin, zemin, havalandırma ve su tahliyesi gibi konular keşif aşamasında birlikte ele alınır.",
     "Kapsam|Çatı ve yan kapama;Tasarım|Mekâna özel;Detaylar|Havalandırma ve drenaj",
@@ -115,7 +115,7 @@ const products = [
   [
     "zip-perde",
     "Zip Perde",
-    "Gölgenin en sade hâli.",
+    "Ray kılavuzlu dış mekân perde seçenekleri.",
     "Gölgelendirme",
     "Dış mekân kullanımına uygun perde seçenekleriyle güneş kontrolü ve mahremiyeti birlikte düşünün. Kumaş, renk ve motor seçenekleri alanınızın yönüne ve ihtiyaçlarına göre seçilir.",
     "Kullanım|Dış mekân güneş kontrolü;Kontrol|Motorlu seçenekler;Seçim|Kumaş ve renk alternatifleri",
@@ -123,7 +123,7 @@ const products = [
   [
     "cam-korkuluk",
     "Cam Korkuluk",
-    "Mekânı çerçeveler, manzarayı serbest bırakır.",
+    "Güvenlik koşullarına göre projelendirilen cam korkuluk.",
     "Mimari çözümler",
     "Balkon, merdiven ve teraslarda görüşü koruyan cam korkuluk çözümleri. Taşıyıcı sistem ve cam özellikleri yapı koşulları ve ilgili güvenlik gereklilikleri dikkate alınarak projelendirilir.",
     "Uygulama|Balkon, teras ve merdiven;Cam|Proje güvenlik gerekliliklerine göre;Bağlantı|Zemine ve yapıya uygun",
@@ -131,7 +131,7 @@ const products = [
   [
     "aluminyum-dograma",
     "Alüminyum Doğrama",
-    "İnce detaylar, bütünlüklü bir mimari.",
+    "Kapı, pencere ve sabit yüzeyler bir arada.",
     "Mimari çözümler",
     "Kapı, pencere ve sabit cam yüzeyleri yapınızın mimarisiyle uyum içinde tasarlayın. Profil, cam ve donanım seçimini kullanım amacı ve yapı koşullarına göre birlikte yapıyoruz.",
     "Sistem|Kapı, pencere ve sabit cam;Profil|Kullanıma uygun seri;Renk|Projeye uygun seçenekler",
@@ -149,7 +149,7 @@ export function seedContent(): Omit<
     summary: p[4],
     body:
       p[4] +
-      "\n\nHer uygulama yerinde keşif ve ölçülendirmeyle başlar. Açılım yönleri, malzeme seçenekleri ve montaj detayları size özel teklif kapsamında netleştirilir.\n\nGörseller tasarım fikrini anlatan özgün temsili çizimlerdir. Nihai ürün ve teknik özellikler seçilen sisteme göre değişir.",
+      "\n\nHer uygulama yerinde keşif ve ölçülendirmeyle başlar. Açılım yönleri, malzeme seçenekleri ve montaj detayları size özel teklif kapsamında netleştirilir.\n\nKonsept olarak belirtilen görseller tasarım seçeneklerini anlatır; tamamlanmış müşteri projesi değildir. Nihai ürün ve teknik özellikler seçilen sisteme göre değişir.",
     image: `/images/product-${i + 1}.svg`,
     category: p[3],
     featured: i < 4,
@@ -306,7 +306,7 @@ export function seedContent(): Omit<
       "gizlilik",
       "Gizlilik ve kişisel veriler",
       "Gizlilik",
-      "Bu metin yayın öncesi firma ve veri işleme süreçlerine göre tamamlanması gereken bir taslaktır.\n\nİletişim ve teklif formlarına yazdığınız ad, iletişim bilgileri ve mesajınız, talebinizi değerlendirmek amacıyla uygulamanın veritabanında saklanır. Bu site varsayılan olarak reklam veya ziyaretçi analiz hizmeti yüklemez.\n\nYönetim paneli oturumunun çalışması için gerekli oturum çerezi kullanılır. Taleplerinizi sitede yayımlanmış firma iletişim kanallarından iletebilirsiniz. Veri sorumlusu kimliği, saklama süreleri, aktarım koşulları ve başvuru yöntemi şirketin gerçek süreçlerine göre yayın öncesinde tamamlanmalıdır.",
+      "Bu metin yayın öncesi firma ve veri işleme süreçlerine göre tamamlanması gereken bir taslaktır.\n\nİletişim ve teklif formlarına yazdığınız ad, iletişim bilgileri ve mesajınız, talebinizi değerlendirmek amacıyla uygulamanın veritabanında saklanır. Ziyaretçi analizi yalnızca tercihler alanından izin verirseniz çalışır; bu sürümde üçüncü taraf reklam takip hizmeti kullanılmaz.\n\nMüşteri, personel ve yönetim girişlerinde gerekli oturum çerezleri kullanılır. Hesabınız, talep durumları, yazışmalar ve size sunulan belgeler erişim yetkileriyle saklanır. İzinli ziyaretçi analizi; sayfa yolu, cihaz türü ve etkileşim türlerini kaydeder; form metinlerini veya parola alanlarını kaydetmez. Taleplerinizi sitede yayımlanmış firma iletişim kanallarından iletebilirsiniz. Veri sorumlusu kimliği, saklama süreleri, aktarım koşulları ve başvuru yöntemi şirketin gerçek süreçlerine göre yayın öncesinde tamamlanmalıdır.",
     ],
     [
       "kullanim-kosullari",
@@ -324,7 +324,7 @@ export function seedContent(): Omit<
       "cerez-politikasi",
       "Çerez kullanımı",
       "Yasal",
-      "Bu site varsayılan olarak reklam, analiz veya üçüncü taraf takip çerezi kullanmaz.\n\nYönetim panelinde oturum açıldığında güvenli girişin sürdürülmesi için gerekli oturum çerezi oluşturulur. Dil tercihi tarayıcının yerel depolamasında tutulabilir.\n\nHarita, video, analiz veya başka üçüncü taraf hizmetleri sonradan eklenirse bu politika ve gerekli izin mekanizmaları güncellenmelidir.",
+      "Giriş yaptığınız müşteri, personel veya yönetim hesabını güvenle sürdürmek için gerekli oturum çerezleri kullanılır. Dil ve analiz tercihiniz yerel depolamada tutulabilir.\n\nZiyaretçi analizi başlangıçta kapalıdır. Tercihler alanında izin verdiğinizde bu site, oturum depolamasındaki rastgele kimliği kullanarak genel sayfa ve etkileşim istatistikleri toplar. Hesap ve yönetim sayfaları izlenmez; formda yazdığınız içerik kaydedilmez. Tercihler alanından izninizi geri alabilirsiniz.\n\nBu sürümde üçüncü taraf reklam takip hizmeti kullanılmaz. E-posta, SMS, WhatsApp, harita veya başka hizmetler etkinleştirilirse ilgili veri aktarımı ve saklama koşulları gerçek sağlayıcıya göre açıklanmalıdır. Bu metin yayın öncesinde gerçek hizmetlere ve veri sorumlusuna göre tamamlanmalıdır.",
     ],
   ];
   pages.forEach((p, i) =>
@@ -406,52 +406,52 @@ export function seedContent(): Omit<
   const enProducts = [
     [
       "Folding Glass Balcony",
-      "Open to freedom. Closed for comfort.",
+      "Glass panels that fold and stack to one side.",
       "Glass panels that fold to one side help your balcony adapt to the season and the way you live. Layout, glazing and installation details are specified after a site survey.",
     ],
     [
       "Sliding Glass Systems",
-      "A seamless connection to the view.",
+      "Adjustable openings with tracked panels.",
       "Sliding panels make wide openings flexible. Explore opening options for balconies, terraces and commercial spaces, designed around the conditions of your project.",
     ],
     [
       "Insulated Balcony Glazing",
-      "Seasons change. Life goes on.",
+      "Balcony enclosures planned with double glazing.",
       "Double-glazed panel options can extend the way you use your balcony. Glass, profiles and junction details are chosen for your space; final performance depends on the complete installation.",
     ],
     [
       "Vertical Sliding Glass",
-      "A new perspective at a touch.",
+      "Vertically moving glass panel options.",
       "Vertically moving glass panels offer a controlled transition between enclosed and open areas. Motors, controls and safety details are specified for each terrace or business.",
     ],
     [
       "Pergola Systems",
-      "Outdoor living, on your terms.",
+      "Shade and drainage planned together.",
       "Plan your terrace or garden with shade, airflow and weather in mind. Structure, covering and drainage are designed around your site conditions.",
     ],
     [
       "Bioclimatic Roof",
-      "Make room for light and shade.",
+      "Daylight control with adjustable roof blades.",
       "Adjustable roof blades help manage sunlight and airflow. Explore motorised options and complementary glazing for a flexible outdoor space.",
     ],
     [
       "Winter Gardens",
-      "Part of the garden. An extension of home.",
+      "Roof and side enclosures designed together.",
       "Transparent surfaces and tailored roof options create new possibilities in the garden. Site permissions, foundations, ventilation and drainage are addressed during planning.",
     ],
     [
       "Zip Screens",
-      "The simplest form of shade.",
+      "Outdoor screens with side-guide tracks.",
       "Outdoor screens bring solar control and privacy together. Fabric, colour and motor options are selected for the orientation and requirements of your space.",
     ],
     [
       "Glass Balustrades",
-      "Frame the space. Free the view.",
+      "Glass guards specified for project safety requirements.",
       "Glass balustrades preserve views on balconies, stairs and terraces. Glass specifications and structural connections must meet the safety requirements of each project.",
     ],
     [
       "Aluminium Joinery",
-      "Considered details. Coherent architecture.",
+      "Doors, windows and fixed surfaces considered together.",
       "Plan doors, windows and fixed glass surfaces in harmony with your building. Profiles, glazing and hardware are chosen for the intended use and site conditions.",
     ],
   ];
@@ -465,7 +465,7 @@ export function seedContent(): Omit<
         summaryEn: e[2],
         bodyEn:
           e[2] +
-          "\n\nEvery project starts with a site survey and accurate measurements. Opening direction, material options and installation details are confirmed in your written proposal.\n\nAll visuals are original illustrative design concepts. Final products and specifications depend on the selected system.",
+          "\n\nEvery project starts with a site survey and accurate measurements. Opening direction, material options and installation details are confirmed in your written proposal.\n\nVisuals labelled as concepts illustrate design options and do not show completed customer projects. Final products and specifications depend on the selected system.",
       });
     });
   const enProjects = [
@@ -584,7 +584,7 @@ export function seedContent(): Omit<
     [
       "Privacy and personal information",
       "Privacy",
-      "This is a draft that must be completed before publication to reflect the actual business and its processing activities.\n\nNames, contact details and messages submitted through enquiry forms are stored in this application database to assess your request. No advertising or visitor analytics services load by default.\n\nAn essential session cookie supports administrator login. Data controller identity, retention periods, sharing arrangements and the process for exercising legal rights must be completed before launch.",
+      "This is a draft that must be completed before publication to reflect the actual business and its processing activities.\n\nNames, contact details and messages submitted through enquiry forms are stored in this application database to assess your request. Visitor analytics runs only after you opt in through the preference controls; this release does not use third-party advertising trackers.\n\nEssential session cookies support customer, staff and administrator login. Account information, request progress, messages and private documents are stored with access controls. Consented analytics records page paths, device types and interaction categories, without typed form content or passwords. Data controller identity, retention periods, sharing arrangements and the process for exercising legal rights must be completed before launch.",
     ],
     [
       "Terms of use",
@@ -599,7 +599,7 @@ export function seedContent(): Omit<
     [
       "How cookies are used",
       "Legal",
-      "This website does not use advertising, analytics or third-party tracking cookies by default.\n\nSigning in to the administration area creates an essential session cookie. A language preference may be stored in browser local storage.\n\nIf maps, videos, analytics or other third-party services are added later, update this policy and any required consent controls.",
+      "Essential session cookies support customer, staff and administrator accounts. Language and analytics choices may be stored in local storage.\n\nVisitor analytics is off initially. If you opt in through the preference controls, this site uses a random identifier in session storage to collect public-page and interaction statistics. Account and administration pages are excluded, and typed form content is not recorded. You can withdraw consent through the preference controls.\n\nThis release does not use third-party advertising trackers. If email, SMS, WhatsApp, maps or other services are enabled, explain their actual providers, transfers and retention arrangements. Complete this draft for the actual services and data controller before launch.",
     ],
   ];
   rows

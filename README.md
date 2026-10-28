@@ -1,10 +1,12 @@
 # Kılınç Dekorasyon
 
+**Güncel özgünleştirme sürümü:** [Tasarım değişiklikleri, görsel izin kayıtları ve mevcut siteyi güncelleme](docs/OZGUNLUK-VE-KULLANIM.md). [Telif/marka incelemesi ve erişim sınırları](docs/TELIF-VE-MARKA-INCELEMESI.md), [lisans ve kaynak envanteri](docs/THIRD-PARTY-NOTICES.md).
+
 **Müşteri ve yönetim sürümü:** [Hesaplar, talep süreçleri, bayi/personel, analitik ve bildirim kurulumu](docs/MUSTERI-VE-YONETIM.md).
 
-**Yeni sürüm:** [Videolardan uyarlanan tasarım, önizlemeler ve Windows başlatma rehberi](docs/YENI-TASARIM.md). Windows için `BASLAT-WINDOWS.cmd` dosyasını kullanabilirsiniz (Node.js 24+ gerekir).
+**Önceki sürüm rehberi:** [İlk tasarım ve Windows başlatma rehberi](docs/YENI-TASARIM.md). Son görünüm için yukarıdaki güncel rehberi kullanın. Windows için `BASLAT-WINDOWS.cmd` veya güncel rehberdeki doğrulanmış komutlar kullanılabilir (Node.js 24+ gerekir).
 
-Özgün tasarım, metinler ve yerel mimari SVG görselleştirmeler içeren Türkçe/İngilizce cam, alüminyum, metal ve açık alan sitesi. React + TypeScript + Vite, Express ve SQLite.
+Bağımsız tasarım düzeni, bu proje için hazırlanmış metinler ve kaynak kaydı tutulan konsept görselleri içeren Türkçe/İngilizce cam, alüminyum, metal ve açık alan sitesi. React + TypeScript + Vite, Express ve SQLite. Hak ihlali olmayacağına dair garanti değildir.
 
 ## Geliştirme
 
@@ -50,9 +52,9 @@ Panelde ürünler, yaşam alanları, yazılar, kurumsal sayfalar, hizmet bölgel
 
 Veritabanı `.data/site.sqlite`, yüklemeler `.data/uploads/` içinde tutulur. Bu klasörler kaynak koddan ayrı kalıcı diskte saklanmalıdır. `DATA_DIR` ile farklı bir kalıcı dizin seçilebilir. Sunucuyu durdurup tüm veri dizinini güvenli bir yere kopyalamak tutarlı yedek alma yöntemidir. Kaynak kodu yeniden dağıtmak veritabanını sıfırlamaz; başlangıç içerikleri yeni veritabanında oluşturulur. İçerik genişletme paketi, mevcut kayıtlara dokunmadan eksik yeni kayıtları bir kez ekleyen sürümlü geçiş kullanır; sonradan silinen kayıtları geri getirmez.
 
-Hazır içerik: 16 sistem, 6 konsept yaşam alanı, 10 rehber yazı, 17 kurumsal/yasal sayfa, 20 SSS ve 7 hizmet bölgesi. Mevcut veritabanında yönetici tarafından düzenlenmiş metinler korunur. Görseller özgün yerel mimari illüstrasyonlardır; tamamlanmış müşteri işi olarak sunulmaz. Harici font/görsel/takip servisine istek yapılmaz; fontlar yerel paketlerden sunulur.
+Hazır içerik: 16 sistem, 6 konsept yaşam alanı, 10 rehber yazı, 18 kurumsal/yasal sayfa, 20 SSS ve 7 hizmet bölgesi. Mevcut veritabanında yönetici tarafından düzenlenmiş metinler korunur. Başlangıç görselleri, kaynak kaydı bulunan proje konseptleridir; tamamlanmış müşteri işi olarak sunulmaz. Harici font/görsel/takip servisine istek yapılmaz; fontlar yerel paketlerden sunulur. Font ve ikon lisansları `/licenses/THIRD-PARTY-NOTICES.txt` adresinde dağıtılır. `npm run rights:check` kayıtların kilitli bağımlılık ve görsellerle tutarlılığını denetler; hak sahipliğini doğrulamaz.
 
-Yayın öncesinde panelde firma iletişim bilgilerini, çalışma saatlerini, hizmet bölgelerini, ürün doğruluğunu ve kendi kullanım izinli fotoğraflarınızı tamamlayın. KVKK/gizlilik/kullanım metinleri taslaktır; gerçek veri sorumlusu ve süreçlerinizle tamamlanmalıdır. Doğrudan referans siteye ağ erişimi engellidir; sağlanan yedi video parçası görsel olarak incelenerek sayfa ve gezinme düzeni uyarlanmıştır. Başka markanın logo, metin veya görselleri alınmamıştır; telif konusunda hukuki garanti verilmez.
+Yayın öncesinde panelde firma iletişim bilgilerini, çalışma saatlerini, hizmet bölgelerini, ürün doğruluğunu ve kullanım izinli fotoğraflarınızı tamamlayın. KVKK/gizlilik/kullanım metinleri taslaktır; gerçek veri sorumlusu ve süreçlerinizle tamamlanmalıdır. Önceki video referansından ayrılan yeni yerleşim hazırlanmış ve kaynağı doğrulanamayan eski SVG'ler dağıtımdan çıkarılmıştır. Eski görsel adresleri yeni konsept görsellerine yönlendirilir; kullanıcı yüklemeleri değiştirilmez. Rakip marka ve metin taraması hukuki garanti değildir. Mevzuatın güncel metnine erişim, marka/tasarım sicil taraması ve kullanıcı içeriklerinin izin kontrolündeki açık noktalar inceleme raporunda belirtilir.
 
 ## Güvenlik
 

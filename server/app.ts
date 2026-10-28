@@ -3,6 +3,9 @@ import { installPortal } from "./portal.js";
 import { installTelemetry } from "./telemetry.js";
 import { deliverNotification, deliveryConfigured } from "./messaging.js";
 import { referencePages, referencePagesVersion } from "./reference-content.js";
+import { applyOriginalityContentMigration } from "./originality-content.js";
+import { installMediaRights } from "./media-rights.js";
+import { legacyImageReplacement } from "./media-assets.js";
 import multer from "multer";
 import PDFDocument from "pdfkit";
 import { DatabaseSync } from "node:sqlite";
@@ -250,6 +253,7 @@ export function createApp(options: AppOptions = {}) {
       throw error;
     }
   }
+  applyOriginalityContentMigration(db);
   if (!(db.prepare("SELECT COUNT(*) AS count FROM users").get() as any).count) {
     const provided = process.env.ADMIN_PASSWORD;
     if (provided && (provided.length < 12 || provided.length > 256))
@@ -403,7 +407,9 @@ export function createApp(options: AppOptions = {}) {
     if (!actor) return next(fail(401, "Devam etmek için oturum açın."));
     const safeEditor =
       actor.role === "editor" &&
-      (/^\/(?:content(?:\/[^/]+)?|media(?:\/[^/]+)?|upload)$/.test(req.path) ||
+      (/^\/(?:content(?:\/[^/]+)?|media(?:\/[^/]+)?|media-rights(?:\/[^/]+)?|upload)$/.test(
+        req.path,
+      ) ||
         (req.path === "/settings" && req.method === "GET"));
     const identity = ["/me", "/logout"].includes(req.path);
     if (actor.role !== "admin" && !safeEditor && !identity)
@@ -547,8 +553,8 @@ export function createApp(options: AppOptions = {}) {
   const pdfFont = () =>
     [
       process.env.PDF_FONT_PATH,
+      resolve("server/assets/DejaVuSans.ttf"),
       "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-      "C:/Windows/Fonts/arial.ttf",
     ].find((file): file is string => !!file && existsSync(file));
   app.get("/api/measurement-guide.pdf", (req, res, next) => {
     if (!consume("catalog", req.ip || "", 12, 15)) {
@@ -944,9 +950,16 @@ export function createApp(options: AppOptions = {}) {
     portal.onInquiryDeleted(String(req.params.id));
     res.json({ ok: true });
   });
+  const mediaRights = installMediaRights({ app, db, uploadDir, recordAudit });
   const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 8 * 1024 * 1024, files: 1, fields: 0, parts: 1 },
+    limits: {
+      fileSize: 8 * 1024 * 1024,
+      files: 1,
+      fields: 6,
+      parts: 7,
+      fieldSize: 4096,
+    },
   });
   app.post("/api/admin/upload", upload.single("image"), (req, res, next) => {
     const file = req.file;
@@ -997,6 +1010,12 @@ export function createApp(options: AppOptions = {}) {
     }
     const filename = randomUUID() + "." + extension;
     writeFileSync(join(uploadDir, filename), b, { mode: 0o600, flag: "wx" });
+    try {
+      mediaRights.recordUploadRights(filename, req.body, (req as any).admin);
+    } catch (error) {
+      unlinkSync(join(uploadDir, filename));
+      return next(error);
+    }
     res.status(201).json({ url: "/uploads/" + filename });
   });
   app.put("/api/admin/password", (req: any, res, next) => {
@@ -1142,6 +1161,7 @@ export function createApp(options: AppOptions = {}) {
     if (!existsSync(join(uploadDir, name)))
       return next(fail(404, "Görsel bulunamadı."));
     unlinkSync(join(uploadDir, name));
+    mediaRights.deleteMediaRights(name);
     res.json({ ok: true });
   });
   app.get("/robots.txt", (_req, res) => {
@@ -1221,6 +1241,11 @@ export function createApp(options: AppOptions = {}) {
   app.use(["/hesabim", "/yonetim", "/admin"], (_req, res, next) => {
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
     res.setHeader("Cache-Control", "private, no-store");
+    next();
+  });
+  app.get(/^\/images\/[^/]+\.svg$/, (req, res, next) => {
+    const replacement = legacyImageReplacement(req.path);
+    if (replacement) return res.redirect(302, replacement);
     next();
   });
   if (options.staticDir) {

@@ -10,7 +10,9 @@
     "build:server": "tsc -p tsconfig.server.json",
     "start:compiled": "node build-server/production.js",
     "test": "tsx --test server/*.test.ts",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "rights:generate": "node scripts/generate-rights-notices.mjs",
+    "rights:check": "node scripts/generate-rights-notices.mjs --check"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.3.0",

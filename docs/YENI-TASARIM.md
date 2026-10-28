@@ -1,5 +1,7 @@
 # Kayıtlardan uyarlanan yeni sürüm
 
+Bu belge önceki sürüme aittir. Güncel görünüm ve izin kayıtları için [özgünleştirme rehberini](OZGUNLUK-VE-KULLANIM.md) kullanın.
+
 Yedi video parçasındaki gezinme ve sayfa yapıları incelendi; önceki Kılınç sitesi üzerine özgün bir tasarım uyarlaması yapıldı. Önceki ürünler, müşteri talepleri, yönetici hesabı ve ayarlar korunur. Ödül, sertifika, firma yaşı, bayi ağı veya kredi kampanyası gibi doğrulanmamış bilgiler eklenmedi.
 
 ## Yeni görünüm ve akışlar
