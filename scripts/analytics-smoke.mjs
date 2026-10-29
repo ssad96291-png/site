@@ -87,7 +87,7 @@ try {
       r.url().endsWith("/api/telemetry") &&
       r.request().postDataJSON()?.path?.startsWith("/urunler/"),
   );
-  await page.locator(".ls-service-row h3 a").first().click();
+  await page.locator(".rs-image-tile").first().click();
   assert.equal((await productEvent).status(), 202);
   report = await metrics();
   assert.ok(report.topProducts.length);

@@ -160,8 +160,127 @@ try {
     ).status,
     401,
   );
+  const projectResponse = await request("/api/project-requests", "POST", {
+    name: "Production Project Test",
+    email: "production-project@example.com",
+    message: "Isolated compiled project quotation test.",
+    requestType: "project",
+    phoneRequested: false,
+    consent: true,
+  });
+  assert.equal(projectResponse.status, 201);
+  const project = await projectResponse.json();
+  const projectClaim = await request("/api/customer/claim", "POST", {
+    token: project.trackingToken,
+  });
+  assert.equal(projectClaim.status, 200);
+  const projectOwner = cookie(projectClaim, "__Host-kilinc_customer");
+  const drawing = new FormData();
+  drawing.append(
+    "files",
+    new Blob(["0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF\n"], {
+      type: "application/octet-stream",
+    }),
+    "production-plan.dxf",
+  );
+  const drawingResponse = await fetch(
+    base + `/api/customer/inquiries/${project.id}/project-files`,
+    {
+      method: "POST",
+      headers: { Cookie: projectOwner },
+      body: drawing,
+    },
+  );
+  assert.equal(drawingResponse.status, 201);
+  const uploaded = (await drawingResponse.json()).files[0];
+  assert.equal((await request(uploaded.downloadUrl)).status, 401);
+  assert.equal(
+    (await request(uploaded.downloadUrl, "GET", undefined, owner)).status,
+    404,
+  );
+  const drawingDownload = await request(
+    uploaded.downloadUrl,
+    "GET",
+    undefined,
+    projectOwner,
+  );
+  assert.equal(drawingDownload.status, 200);
+  assert.match(
+    drawingDownload.headers.get("content-disposition"),
+    /^attachment/,
+  );
+  assert.equal(
+    (await request("/api/admin/project-requests", "GET", undefined, editor))
+      .status,
+    403,
+  );
+  const draftResponse = await request(
+    `/api/admin/project-requests/${project.id}/offers`,
+    "POST",
+    {
+      title: "Compiled project offer",
+      currency: "TRY",
+      vatRate: 20,
+      items: [
+        {
+          description: "Synthetic installation",
+          quantity: 2,
+          unit: "adet",
+          unitPrice: 120,
+        },
+      ],
+      validUntil: "",
+      notes: "Only isolated verification data.",
+    },
+    admin,
+  );
+  assert.equal(draftResponse.status, 201);
+  const draft = (await draftResponse.json()).offer;
+  assert.equal(draft.totalMinor, 28800);
+  const hidden = await request(
+    `/api/customer/inquiries/${project.id}/offers`,
+    "GET",
+    undefined,
+    projectOwner,
+  );
+  assert.deepEqual((await hidden.json()).offers, []);
+  const publication = await request(
+    `/api/admin/offers/${draft.id}/publish`,
+    "POST",
+    {},
+    admin,
+  );
+  assert.equal(publication.status, 200);
+  assert.equal(
+    (await publication.json()).offer.emailDelivery.status,
+    "waiting_configuration",
+  );
+  const proposalPdf = await request(
+    `/api/customer/offers/${draft.id}/pdf`,
+    "GET",
+    undefined,
+    projectOwner,
+  );
+  assert.equal(proposalPdf.status, 200);
+  assert.equal(
+    Buffer.from(await proposalPdf.arrayBuffer())
+      .subarray(0, 5)
+      .toString(),
+    "%PDF-",
+  );
+  const eml = await request(
+    `/api/admin/offers/${draft.id}/email.eml`,
+    "GET",
+    undefined,
+    admin,
+  );
+  assert.equal(eml.status, 200);
+  const message = await eml.text();
+  assert.match(message, /To: production-project@example\.com/);
+  assert.match(message, /X-Unsent: 1/);
+  assert.match(message, /Content-Type: application\/pdf/);
   console.log(
-    "PASS compiled production: security headers,3 Secure cookies,one-use receipt,editor boundaries,private PDF",
+    "PASS compiled production: security headers,3 Secure cookies,one-use receipt,editor boundaries,private PDF,project DXF,private draft,published offer,PDF and unsent EML",
   );
 } finally {
   child.kill("SIGTERM");

@@ -1,6 +1,6 @@
 # Müşteri, teknik personel ve canlı yönetim
 
-29 Ekim 2026 tek dükkân sürümü. Yeni görünüm ve güvenli güncelleme için [tek dükkân rehberine](TEK-DUKKAN-SURUMU.md) bakın.
+29 Ekim 2026 sürümü. Ayrıntılı görünüm, dosyalı başvuru, kalemli teklif ve güvenli güncelleme için [güncel proje teklifi rehberine](PROJE-TEKLIF-SURUMU.md) bakın.
 
 Site, Etimesgut'taki tek dükkânın müşteri görüşmelerini ve uygulama takibini yönetir. Hesaplar, talepler, belgeler ve özel içerikler korunur. Örnek müşteriler veya teknik irtibatlar gerçek kayıt gibi eklenmez. Teknik ekip kayıtları işletmenin kendi işleri içindir; dış satış ağı ve bayilik başvuru akışı bulunmaz.
 
@@ -11,6 +11,8 @@ Müşteri hesabı `/hesabim`, yönetim alanı `/yonetim` adresindedir. Teklif fo
 Müşteri ekranında altı aşama vardır: talep alındı, keşif planlanıyor, keşif tamamlandı, üretimde, montaj bekliyor, tamamlandı. Teknik irtibat, uygulama sorumlusu, randevu, müşteriyle paylaşılan açıklama, özel PDF arşivi ve mesajlaşma aynı ekrandadır. Özel yönetici notları müşteriye gösterilmez. Panel yaklaşık 10 saniyede yenilenir; değişiklik kontrolü için Yenile düğmesi de vardır.
 
 Müşteri teklif revizesi, randevu değişikliği veya destek mesajı gönderebilir. İletişim profilini ve parolasını düzenleyebilir; parola değişince tüm müşteri oturumları kapanır. Parola unutulduğunda yönetici, kimliği doğruladıktan sonra kısa süreli kurtarma bağlantısı oluşturabilir.
+
+Müşteri ayrıca ilgili talebin **Proje dosyaları & teklifler** sekmesinden çizimlerini ve kendisine yayımlanan kalemli teklifleri görür, PDF indirebilir ve teklif için revize mesajı başlatabilir. Bu alan yaklaşık 30 saniyede yenilenir; Yenile düğmesi de vardır. Yönetici yeni başvuruları **Proje & fiyat talepleri** bölümünde inceler. Taslak teklif müşteriye açılmaz; paylaşılmış teklif değiştirileceğinde yeni sürüm hazırlanır.
 
 ## Yönetici için hızlı çözümler
 
@@ -73,11 +75,11 @@ Bu sürüm PDF belge arşivi, TR/EN içerik ve dört temel rol sunar. CAD/BIM k�
 
 Görüntülerde yalnızca otomatik testlerin ürettiği sentetik kayıtlar vardır; gerçek müşteri veya gönderim sayısı olarak sunulmaz.
 
-- [Yeni ana sayfa](tek-dukkan/ana-sayfa.png)
-- [Müşteri paneli](tek-dukkan/musteri.png)
-- [Tek dükkân yönetimi](tek-dukkan/yonetim.png)
+- [Yeni ana sayfa](proje-teklif/ana-sayfa.png)
+- [Müşteri paneli](proje-teklif/musteri-teklifi.png)
+- [Tek dükkân yönetimi](proje-teklif/yonetim-teklifi.png)
 
-Son teslimin doğrulama sonuçları tek dükkân rehberinde bildirilir. Önceki sürümün test sayıları güncel sonuç gibi kullanılmaz. Test verileri yalıtılmış geçici dizinlerde oluşturulup temizlenir. Windows başlatıcı bu bulut ortamında gerçek Windows oturumunda çalıştırılmaz.
+Son teslimin doğrulama sonuçları güncel proje ve teklif rehberinde bildirilir. Önceki sürümün test sayıları güncel sonuç gibi kullanılmaz. Test verileri yalıtılmış geçici dizinlerde oluşturulup temizlenir. Windows başlatıcı bu bulut ortamında gerçek Windows oturumunda çalıştırılmaz.
 
 Tekrarlanabilir komutlar: `npm test`, `npm run build`, `npm run build:server`; Playwright ve Chromium bulunan ortamda `node --import tsx scripts/local-shop-smoke.mjs`, `scripts/customer-portal-smoke.mjs`, `scripts/operations-smoke.mjs`, `scripts/analytics-smoke.mjs`; derlenmiş sunucu için `node scripts/production-smoke.mjs`.
 

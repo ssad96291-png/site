@@ -1,12 +1,12 @@
 # Kılınç Dekorasyon
 
-**Güncel tek dükkân sürümü · 29 Ekim 2026:** [Yeni görünüm, teknik ekip ve güvenli güncelleme](docs/TEK-DUKKAN-SURUMU.md). Site Etimesgut'taki tek dükkândan doğrudan hizmet veren yerel işletmeye göre düzenlendi.
+**Güncel ayrıntılı tasarım ve proje teklifi sürümü · 29 Ekim 2026:** [Proje dosyası gönderme, fiyat teklifi hazırlama ve güvenli güncelleme](docs/PROJE-TEKLIF-SURUMU.md). Tek dükkânın doğrudan hizmet modeli korunur; bayilik başvurusu veya bayi ağı bulunmaz.
 
 **Müşteri ve yönetim rehberi:** [Hesaplar, talep süreçleri, teknik personel, analitik ve bildirim kurulumu](docs/MUSTERI-VE-YONETIM.md).
 
-**İçerik izinleri:** [Görsel kaynak ve izin kaydı](docs/OZGUNLUK-VE-KULLANIM.md), [telif/marka incelemesi ve erişim sınırları](docs/TELIF-VE-MARKA-INCELEMESI.md), [lisans ve kaynak envanteri](docs/THIRD-PARTY-NOTICES.md). Tasarımın son görünümü için tek dükkân rehberini kullanın; diğer tasarım önizlemeleri önceki sürümlere aittir.
+**İçerik izinleri:** [Görsel kaynak ve izin kaydı](docs/OZGUNLUK-VE-KULLANIM.md), [telif/marka incelemesi ve erişim sınırları](docs/TELIF-VE-MARKA-INCELEMESI.md), [lisans ve kaynak envanteri](docs/THIRD-PARTY-NOTICES.md). Son görünüm ve dosyalı teklif akışı için güncel proje teklifi rehberini kullanın; sade tek dükkân tasarımının önizlemeleri önceki sürüme aittir.
 
-İş notu açılışı, hizmet satırları, fikir defteri ve doğrudan dükkân iletişimi içeren Türkçe/İngilizce cam, alüminyum, metal ve açık alan sitesi. React + TypeScript + Vite, Express ve SQLite. Metin ve konsept görsellerinin kaynak kaydı tutulur; hak ihlali olmayacağına dair garanti verilmez.
+Slaytlı açılış, ürün kartları, filtreli galeri, kataloglar, bilgi merkezi ve özel dosyalı teklif akışı içeren Türkçe/İngilizce cam, alüminyum, metal ve açık alan sitesi. React + TypeScript + Vite, Express ve SQLite. Metin ve konsept görsellerinin kaynak kaydı tutulur; hak ihlali olmayacağına dair garanti verilmez.
 
 ## Geliştirme
 
@@ -42,7 +42,8 @@ Panelde ürünler, yaşam alanları, yazılar, kurumsal sayfalar, hizmet bölgel
 - `/sistem-secici` üzerinde ihtiyaca göre öneri ve yaklaşık açıklık alanı hesabı; ölçülerle hazır teklif bağlantısı. Kesin fiyat veya mühendislik uygunluk hesabı değildir.
 - `/hizmet-alani` üzerinde tek dükkândan keşif planlaması ve bölge notları; SEO kökeni panelde tanımlandığında sitemap, robots ve llms.txt.
 - Yayındaki içeriklere göre genel site araması.
-- `/fikir-defteri` üzerinde tek tek incelenen mekân konseptleri; rehber detayları ve SSS yanıtları.
+- `/fikir-defteri` üzerinde filtreli galeri ve görsel büyütme; rehber detayları, bilgi sayfaları ve SSS yanıtları.
+- `/proje-teklif` üzerinde üyelik gerektirmeyen fiyat/proje başvurusu, isteğe bağlı özel dosya yükleme ve telefonla aranma tercihi. Yönetimde Proje & fiyat talepleri alanından kalemli teklif, PDF, e-posta taslağı ve revizyon hazırlanır. Müşteri yalnızca kendisine yayımlanan teklifleri ve kendi proje dosyalarını görür.
 - Keşif/teklif, iletişim ve servis formları; sunucu doğrulaması ve SQLite'a kayıt. Bayilik ve iş ortaklığı başvuruları kapatıldı.
 - Yönetim panelinde talep takibi. Panel içi bildirimler ve dış mesaj kuyruğu hazırdır; gerçek e-posta/SMS/WhatsApp gönderimi için bildirim adaptörü ve güvenli sunucu değişkenleri gerekir.
 - Ürünlerin güncel verisinden üretilen PDF bilgi özeti (`/api/catalog.pdf`, İngilizce için `?lang=en`). Türkçe font için kaynak pakette lisansıyla bulunan DejaVu Sans kullanılır.
@@ -50,11 +51,11 @@ Panelde ürünler, yaşam alanları, yazılar, kurumsal sayfalar, hizmet bölgel
 
 ## Veriler ve yayın öncesi
 
-Veritabanı `.data/site.sqlite`, yüklemeler `.data/uploads/` içinde tutulur. Bu klasörler kaynak koddan ayrı kalıcı diskte saklanmalıdır. `DATA_DIR` ile farklı bir kalıcı dizin seçilebilir. Sunucuyu durdurup tüm veri dizinini güvenli bir yere kopyalamak tutarlı yedek alma yöntemidir. Kaynak kodu yeniden dağıtmak veritabanını sıfırlamaz; başlangıç içerikleri yeni veritabanında oluşturulur. İçerik genişletme paketi, mevcut kayıtlara dokunmadan eksik yeni kayıtları bir kez ekleyen sürümlü geçiş kullanır; sonradan silinen kayıtları geri getirmez.
+Veritabanı `.data/site.sqlite`, genel görseller `.data/uploads/`, özel müşteri belgeleri `.data/private-documents/` ve özel proje dosyaları `.data/project-files/` içinde tutulur. Bu klasörler kaynak koddan ayrı kalıcı diskte saklanmalıdır. `DATA_DIR` ile farklı bir kalıcı dizin seçilebilir. Sunucuyu durdurup tüm veri dizinini güvenli bir yere kopyalamak tutarlı yedek alma yöntemidir. Kaynak kodu yeniden dağıtmak veritabanını sıfırlamaz; başlangıç içerikleri yeni veritabanında oluşturulur. İçerik genişletme paketi, mevcut kayıtlara dokunmadan eksik yeni kayıtları bir kez ekleyen sürümlü geçiş kullanır; sonradan silinen kayıtları geri getirmez.
 
 Hazır içerik hizmetleri, mekân konseptlerini, bakım/seçim rehberlerini, firma ve yasal taslak sayfaları, SSS yanıtlarını ve bölge notlarını kapsar. Tek dükkân geçişi eski başvuru ve büyük kurumsal proje sayfalarını silmeden yayından kaldırır; diğer özel düzenlemeler korunur. Başlangıç görselleri, kaynak kaydı bulunan proje konseptleridir; tamamlanmış müşteri işi olarak sunulmaz. Harici font/görsel/takip servisine istek yapılmaz; fontlar yerel paketlerden sunulur. Font ve ikon lisansları `/licenses/THIRD-PARTY-NOTICES.txt` adresinde dağıtılır. `npm run rights:check` kayıtların kilitli bağımlılık ve görsellerle tutarlılığını denetler; hak sahipliğini doğrulamaz.
 
-Yayın öncesinde panelde dükkânın gerçek iletişim bilgilerini, çalışma saatlerini, hizmet alanını, ürün doğruluğunu ve kullanım izinli fotoğraflarınızı tamamlayın. KVKK/gizlilik/kullanım metinleri taslaktır; gerçek veri sorumlusu ve süreçlerinizle tamamlanmalıdır. Yeni yerleşimde slaytlı vitrin, büyük kurumsal menü ve bayi ağı bulunmaz. Kaynağı doğrulanamayan eski SVG'ler dağıtımdan çıkarılmıştır; eski görsel adresleri yeni konsept görsellerine yönlendirilir. Kullanıcı yüklemeleri değiştirilmez. Mevzuatın güncel metnine erişim, marka/tasarım sicil taraması ve kullanıcı içeriklerinin izin kontrolündeki açık noktalar inceleme raporunda belirtilir.
+Yayın öncesinde panelde dükkânın gerçek iletişim bilgilerini, çalışma saatlerini, hizmet alanını, ürün doğruluğunu ve kullanım izinli fotoğraflarınızı tamamlayın. KVKK/gizlilik/kullanım metinleri taslaktır; gerçek veri sorumlusu ve süreçlerinizle tamamlanmalıdır. Ayrıntılı yerleşim; ürünler, galeri, kataloglar ve bilgi sayfalarıyla geri getirildi. Bayilik başvuruları ve bayi ağı kapalı kalır. Tek dükkânın gerçek iletişim bilgileri ve teknik irtibatları kullanılır. Kaynağı doğrulanamayan eski SVG'ler dağıtımdan çıkarılmıştır; eski görsel adresleri yeni konsept görsellerine yönlendirilir. Kullanıcı yüklemeleri değiştirilmez. Mevzuatın güncel metnine erişim, marka/tasarım sicil taraması ve kullanıcı içeriklerinin izin kontrolündeki açık noktalar inceleme raporunda belirtilir.
 
 ## Güvenlik
 
@@ -64,4 +65,4 @@ Parolalar scrypt ile özetlenir; rastgele oturum belirteçlerinin yalnızca SHA-
 
 [HTTPS, Docker Compose, yedekleme ve canlı kabul rehberi](docs/YAYINLAMA.md) hazırlandı. `npm run build:server` sunucuyu JavaScript olarak derler; `npm run start:compiled` derlenmiş sunucuyu çalıştırır. Docker root olmayan kullanıcı, sağlık kontrolü ve kalıcı veri birimi kullanır. Bu dosyaların bulunması dağıtım yapıldığı anlamına gelmez.
 
-Tarayıcı kontrolleri için Playwright ve Chromium gerekir: `node --import tsx scripts/local-shop-smoke.mjs` ve `node --import tsx scripts/browser-smoke.mjs`. Testler geçici veri dizini ve rastgele test parolası kullanır, gerçek verileri değiştirmez. Sistem Playwright kurulumu yoksa `PLAYWRIGHT_MODULE` ve `CHROMIUM_EXECUTABLE` ile yolları belirtin.
+Tarayıcı kontrolleri için Playwright ve Chromium gerekir: `node --import tsx scripts/detailed-smoke.mjs` ve `node --import tsx scripts/browser-smoke.mjs`. Testler geçici veri dizini ve rastgele test parolası kullanır, gerçek verileri değiştirmez. Sistem Playwright kurulumu yoksa `PLAYWRIGHT_MODULE` ve `CHROMIUM_EXECUTABLE` ile yolları belirtin.

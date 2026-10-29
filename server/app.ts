@@ -5,6 +5,7 @@ import { deliverNotification, deliveryConfigured } from "./messaging.js";
 import { referencePages, referencePagesVersion } from "./reference-content.js";
 import { applyOriginalityContentMigration } from "./originality-content.js";
 import { applySingleShopContentMigration } from "./single-shop-content.js";
+import { validProjectEmail } from "./project-context.js";
 import { installMediaRights } from "./media-rights.js";
 import { legacyImageReplacement } from "./media-assets.js";
 import multer from "multer";
@@ -332,6 +333,7 @@ export function createApp(options: AppOptions = {}) {
         ["POST", "PUT", "PATCH"].includes(req.method) &&
         req.path !== "/admin/upload" &&
         !/^\/admin\/pipeline\/[^/]+\/documents$/.test(req.path) &&
+        !/^\/customer\/inquiries\/[^/]+\/project-files$/.test(req.path) &&
         !req.is("application/json")
       ) {
         return next(fail(415, "Bu işlem JSON biçiminde gönderilmelidir."));
@@ -528,7 +530,7 @@ export function createApp(options: AppOptions = {}) {
           "Adınızı, iletişim bilginizi, en az 10 karakter mesajınızı ve aydınlatma onayınızı kontrol edin.",
         ),
       );
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    if (email && !validProjectEmail(email))
       return next(fail(400, "Geçerli bir e-posta adresi girin."));
     if (
       phone &&
@@ -1237,6 +1239,7 @@ export function createApp(options: AppOptions = {}) {
       "/iletisim",
       "/hizmet-alani",
       "/katalog",
+      "/proje-teklif",
       "/dukkanimiz",
       "/sistem-secici",
       ...allContent()
@@ -1269,7 +1272,7 @@ export function createApp(options: AppOptions = {}) {
     "/projeler": "/fikir-defteri",
     "/kurumsal": "/dukkanimiz",
     "/bolgeler": "/hizmet-alani",
-    "/proje-birimi": "/teklif-al",
+    "/proje-birimi": "/proje-teklif",
   };
   app.get(Object.keys(publicAliases), (req, res) =>
     res.redirect(302, publicAliases[req.path]),
@@ -1289,7 +1292,7 @@ export function createApp(options: AppOptions = {}) {
     app.use(express.static(dir));
     app.get("/{*path}", (_req, res) => res.sendFile(join(dir, "index.html")));
   }
-  app.use((err: any, _req: any, res: any, _next: any) => {
+  app.use((err: any, req: any, res: any, _next: any) => {
     if (res.headersSent) return;
     if (err.type === "entity.parse.failed")
       return res.status(400).json({ error: "Geçersiz JSON verisi." });
@@ -1302,8 +1305,16 @@ export function createApp(options: AppOptions = {}) {
       return res
         .status(409)
         .json({ error: "Bu bağlantı adı zaten kullanılıyor." });
-    if (err.code === "LIMIT_FILE_SIZE")
-      return res.status(413).json({ error: "Görsel en fazla 8 MB olabilir." });
+    if (err.code === "LIMIT_FILE_SIZE") {
+      const message = /^\/api\/customer\/inquiries\/[^/]+\/project-files$/.test(
+        req.path,
+      )
+        ? "Her proje dosyası en fazla 20 MB olabilir."
+        : /^\/api\/admin\/pipeline\/[^/]+\/documents$/.test(req.path)
+          ? "PDF belgesi en fazla 10 MB olabilir."
+          : "Görsel en fazla 8 MB olabilir.";
+      return res.status(413).json({ error: message });
+    }
     const status = Math.min(
       599,
       Math.max(

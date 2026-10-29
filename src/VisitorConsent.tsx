@@ -106,7 +106,7 @@ export default function VisitorConsent() {
           ? "quote"
           : pathname === "/servis-talebi"
             ? "service"
-            : pathname === "/proje-birimi"
+            : pathname === "/proje-birimi" || pathname === "/proje-teklif"
               ? "project"
               : "contact";
       activeForm.current = type;

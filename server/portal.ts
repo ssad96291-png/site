@@ -11,6 +11,10 @@ import { mkdirSync, writeFileSync, unlinkSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import multer from "multer";
 import { migrateSingleShopOperations } from "./single-shop.js";
+import { installProjectRequests } from "./project-requests.js";
+import { installOffers } from "./offers.js";
+import type { ProjectContext } from "./project-context.js";
+import { validProjectEmail } from "./project-context.js";
 
 export const portalStages = [
   "received",
@@ -72,7 +76,7 @@ const verify = (value: string, stored: string) => {
 };
 const validPassword = (v: string) => v.length >= 12 && v.length <= 256;
 const email = (v: any) => text(v, 254).toLowerCase();
-const validEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const validEmail = validProjectEmail;
 const now = () => new Date().toISOString();
 const canonical = (v: string) =>
   v
@@ -399,6 +403,7 @@ export function installPortal(options: PortalOptions) {
     kind: string,
     title: string,
     message: string,
+    external = true,
   ) => {
     const stamp = now();
     db.prepare(
@@ -412,10 +417,11 @@ export function installPortal(options: PortalOptions) {
       text(message, 1000),
       stamp,
     );
-    if (customerId) {
+    if (customerId && external) {
       const row = customerRow(customerId);
       if (row) {
         const profile = safeCustomer(row);
+        const emailDestination = validEmail(profile.email) ? profile.email : "";
         const preference = inquiryId
           ? originalInquiry(inquiryId)?.preferredContact
           : "";
@@ -424,7 +430,7 @@ export function installPortal(options: PortalOptions) {
             ? "whatsapp"
             : preference === "phone" && profile.phone
               ? "sms"
-              : profile.email
+              : emailDestination
                 ? "email"
                 : profile.phone
                   ? "sms"
@@ -439,7 +445,7 @@ export function installPortal(options: PortalOptions) {
             channel,
             JSON.stringify({
               name: profile.name,
-              email: profile.email || "",
+              email: emailDestination,
               phone: profile.phone || "",
               kind,
               title: text(title, 200),
@@ -1097,6 +1103,9 @@ export function installPortal(options: PortalOptions) {
     "notifications",
     "outbox",
     "staff",
+    "project-requests",
+    "project-files",
+    "offers",
   ];
   for (const prefix of prefixes)
     app.use(
@@ -1818,6 +1827,8 @@ export function installPortal(options: PortalOptions) {
     }
   };
   const onInquiryDeleted = (id: string) => {
+    projects.cleanupInquiry(id);
+    offers.cleanupInquiry(id);
     const docs = db
       .prepare("SELECT filename FROM portal_documents WHERE inquiryId=?")
       .all(id) as any[];
@@ -1846,6 +1857,27 @@ export function installPortal(options: PortalOptions) {
       (method === "GET" && route === "/settings")
     );
   };
+  const projectContext: ProjectContext = {
+    app,
+    db,
+    dataDir,
+    production,
+    requireCustomer,
+    requireStaff,
+    customer,
+    getOwned,
+    getManaged,
+    allManaged,
+    onInquiryCreated,
+    notify,
+    audit,
+    consume,
+    dispatchPending,
+    getProject: (id) => projects.getProject(id),
+    listProjectFiles: (id, admin) => projects.listFiles(id, admin),
+  };
+  const projects = installProjectRequests(projectContext);
+  const offers = installOffers(projectContext);
   return {
     onInquiryCreated,
     onLegacyInquiryUpdated,

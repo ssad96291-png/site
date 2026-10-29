@@ -1,0 +1,714 @@
+.kd-admin .kp-offers {
+  min-width: 0;
+}
+.kd-admin .kp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 23px 25px;
+  margin-bottom: 20px;
+}
+.kd-admin .kp-toolbar h2 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 500;
+}
+.kd-admin .kp-toolbar p,
+.kd-admin .kp-help {
+  font-size: 11px;
+  line-height: 1.85;
+  color: #7a8b70;
+}
+.kd-admin .kp-toolbar p {
+  margin: 0;
+}
+.kd-admin .kp-toolbar > button {
+  flex-shrink: 0;
+}
+.kd-admin .kp-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.kd-admin .kp-counts > div {
+  background: white;
+  border: 1px solid var(--ka-border);
+  border-radius: 6px;
+  padding: 19px 22px;
+}
+.kd-admin .kp-counts strong {
+  display: block;
+  font-size: 29px;
+  font-weight: 500;
+  line-height: 1.1;
+  margin-bottom: 9px;
+  color: #3d6141;
+}
+.kd-admin .kp-counts span {
+  font-size: 11px;
+  color: #7d8d73;
+}
+.kd-admin .kp-workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.7fr) minmax(0, 1.6fr);
+  gap: 20px;
+  align-items: start;
+}
+.kd-admin .kp-request-list,
+.kd-admin .kp-request-detail {
+  min-width: 0;
+}
+.kd-admin .kp-filters {
+  padding: 18px;
+  border-bottom: 1px solid var(--ka-border);
+}
+.kd-admin .kp-filters .ka-search {
+  width: 100%;
+  margin-bottom: 14px;
+}
+.kd-admin .kp-filters .ka-field {
+  margin: 0;
+  font-size: 11px;
+}
+.kd-admin .kp-filters select {
+  padding: 10px;
+  font-size: 11px;
+}
+.kd-admin .kp-request-list > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.kd-admin .kp-request-list > ul > li + li {
+  border-top: 1px solid var(--ka-border);
+}
+.kd-admin .kp-request-list li > button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: white;
+  padding: 19px 17px;
+  cursor: pointer;
+  color: #65785b;
+}
+.kd-admin .kp-request-list li > button.active {
+  background: #f2f6ed;
+  border-left-color: #68895b;
+}
+.kd-admin .kp-request-list li > button > span {
+  display: block;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.kd-admin .kp-row-top {
+  display: flex !important;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 9px;
+  margin-bottom: 7px;
+}
+.kd-admin .kp-row-top strong {
+  color: #355333;
+  font-size: 12px;
+}
+.kd-admin .kp-row-top small {
+  font-size: 9px;
+}
+.kd-admin .kp-row-meta {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 11px 0;
+}
+.kd-admin .kp-row-meta small {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+}
+.kd-admin .kp-request-list em {
+  display: inline-block;
+  font-size: 9px;
+  font-style: normal;
+  color: #947541;
+  background: #fbf1db;
+  border-radius: 4px;
+  padding: 5px 8px;
+}
+.kd-admin .kp-request-list em.shared {
+  color: #4a7140;
+  background: #eaf1e4;
+}
+.kd-admin .kp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 35px 23px;
+  text-align: center;
+  color: #9aab8b;
+}
+.kd-admin .kp-empty h2,
+.kd-admin .kp-empty h3,
+.kd-admin .kp-empty h4 {
+  font-size: 15px;
+  font-weight: 500;
+  color: #5d7952;
+  margin: 16px 0 9px;
+}
+.kd-admin .kp-empty p {
+  font-size: 11px;
+  line-height: 1.9;
+  max-width: 310px;
+}
+.kd-admin .kp-detail-placeholder {
+  min-height: 345px;
+}
+.kd-admin .kp-request-detail {
+  padding: 25px;
+}
+.kd-admin .kp-detail-heading {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--ka-border);
+}
+.kd-admin .kp-detail-heading small {
+  font-size: 10px;
+  color: #92a184;
+}
+.kd-admin .kp-detail-heading h2 {
+  font-size: 23px;
+  margin: 9px 0;
+  font-weight: 500;
+  color: #42603a;
+}
+.kd-admin .kp-detail-heading p {
+  font-size: 12px;
+  color: #7e8e74;
+}
+.kd-admin .kp-back {
+  display: none;
+  margin-bottom: 20px;
+}
+.kd-admin .kp-request-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+  margin: 23px 0;
+}
+.kd-admin .kp-request-facts > div {
+  min-width: 0;
+}
+.kd-admin .kp-request-facts dt {
+  font-size: 10px;
+  color: #8b9a80;
+  margin-bottom: 7px;
+}
+.kd-admin .kp-request-facts dd {
+  margin: 0;
+  font-size: 11px;
+  color: #4e6c42;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.kd-admin .kp-request-facts dd svg {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+.kd-admin .kp-request-facts a {
+  display: block;
+  text-decoration: underline;
+}
+.kd-admin .kp-customer-note {
+  background: #f7f9f2;
+  border-left: 3px solid #b0c09e;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+}
+.kd-admin .kp-customer-note h3 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.kd-admin .kp-customer-note p {
+  font-size: 12px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.kd-admin .kp-files {
+  border-bottom: 1px solid var(--ka-border);
+  padding-bottom: 25px;
+  margin-bottom: 27px;
+}
+.kd-admin .kp-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.kd-admin .kp-section-heading h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.kd-admin .kp-section-heading h3 span {
+  margin-left: 5px;
+  color: #92a083;
+  font-size: 11px;
+}
+.kd-admin .kp-section-heading .ka-button {
+  min-height: 34px;
+  padding: 8px 11px;
+  font-size: 10px;
+}
+.kd-admin .kp-files ul {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+.kd-admin .kp-files li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  border-top: 1px solid #edf1e7;
+}
+.kd-admin .kp-files li > div {
+  flex: 1;
+  min-width: 0;
+}
+.kd-admin .kp-files li strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.kd-admin .kp-files li small {
+  display: block;
+  font-size: 9px;
+  color: #92a083;
+  margin-top: 5px;
+}
+.kd-admin .kp-files li .ka-button {
+  font-size: 10px;
+  padding: 8px 10px;
+  min-height: 32px;
+}
+.kd-admin .kp-icon-button {
+  display: grid;
+  place-content: center;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  padding: 5px;
+  border: 1px solid var(--ka-border);
+  color: #8d967d;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.kd-admin .kp-pricing-empty {
+  padding: 20px 15px;
+}
+.kd-admin .kp-offer-editor {
+  background: #f8faf4;
+  border: 1px solid #d9e3d0;
+  border-radius: 6px;
+  padding: 18px;
+  margin: 18px 0 24px;
+}
+.kd-admin .kp-editor-title,
+.kd-admin .kp-item-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.kd-admin .kp-editor-title small {
+  font-size: 9px;
+  color: #8da17b;
+}
+.kd-admin .kp-editor-title h4 {
+  font-size: 13px;
+  margin: 7px 0 17px;
+  font-weight: 500;
+  line-height: 1.7;
+}
+.kd-admin .kp-offer-editor fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.kd-admin .kp-offer-editor .ka-field {
+  font-size: 10px;
+  margin-bottom: 15px;
+}
+.kd-admin .kp-offer-editor input,
+.kd-admin .kp-offer-editor select,
+.kd-admin .kp-offer-editor textarea {
+  font-size: 12px;
+  min-width: 0;
+  width: 100%;
+}
+.kd-admin .kp-editor-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+  gap: 15px;
+}
+.kd-admin .kp-editor-terms {
+  margin-top: 20px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.kd-admin .kp-edit-item {
+  background: white;
+  border: 1px solid #e1e8da;
+  border-radius: 5px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.kd-admin .kp-item-head {
+  align-items: center;
+  margin-bottom: 14px;
+}
+.kd-admin .kp-item-head strong {
+  font-size: 10px;
+  color: #7e9470;
+}
+.kd-admin .kp-item-numbers {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.85fr) minmax(0, 1.25fr);
+  gap: 10px;
+}
+.kd-admin .kp-editor-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 17px;
+}
+.kd-admin .kp-offer-card {
+  border: 1px solid var(--ka-border);
+  border-radius: 6px;
+  padding: 20px;
+  margin-top: 20px;
+}
+.kd-admin .kp-offer-card > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.kd-admin .kp-offer-card > header small {
+  font-size: 9px;
+  color: #96a68b;
+}
+.kd-admin .kp-offer-card h4 {
+  font-size: 16px;
+  color: #42603a;
+  font-weight: 500;
+  margin: 7px 0 9px;
+  overflow-wrap: anywhere;
+}
+.kd-admin .kp-offer-card > header p {
+  font-size: 10px;
+  color: #90a080;
+}
+.kd-admin .kp-offer-status {
+  font-size: 9px;
+  background: #f6efd9;
+  color: #8f7447;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+.kd-admin .kp-offer-card.published .kp-offer-status {
+  background: #eaf2e3;
+  color: #557849;
+}
+.kd-admin .kp-offer-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-top: 17px;
+}
+.kd-admin .kp-offer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+.kd-admin .kp-offer-table th,
+.kd-admin .kp-offer-table td {
+  padding: 11px 9px;
+  text-align: left;
+  border-bottom: 1px solid #edf1e7;
+  vertical-align: top;
+}
+.kd-admin .kp-offer-table th {
+  font-weight: 500;
+  color: #8ca07a;
+  white-space: nowrap;
+}
+.kd-admin .kp-offer-table td:first-child {
+  min-width: 140px;
+  overflow-wrap: anywhere;
+}
+.kd-admin .kp-offer-table td:not(:first-child) {
+  white-space: nowrap;
+}
+.kd-admin .kp-offer-totals {
+  margin: 20px 0 15px auto;
+  max-width: 270px;
+}
+.kd-admin .kp-offer-totals > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 15px;
+  padding: 7px 0;
+}
+.kd-admin .kp-offer-totals dt {
+  font-size: 10px;
+  color: #809573;
+}
+.kd-admin .kp-offer-totals dd {
+  margin: 0;
+  font-size: 12px;
+  color: #4a6d3c;
+  white-space: nowrap;
+}
+.kd-admin .kp-offer-totals > div:last-child {
+  border-top: 1px solid var(--ka-border);
+  margin-top: 5px;
+  padding-top: 13px;
+}
+.kd-admin .kp-offer-totals > div:last-child dd {
+  font-size: 18px;
+}
+.kd-admin .kp-validity {
+  font-size: 10px;
+  color: #8a9a7b;
+  margin-bottom: 17px;
+}
+.kd-admin .kp-offer-notes {
+  font-size: 11px;
+  line-height: 1.9;
+  color: #6b825c;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.kd-admin .kp-offer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 20px;
+}
+.kd-admin .kp-offer-actions .ka-button {
+  font-size: 10px;
+  min-height: 34px;
+  padding: 8px 11px;
+}
+.kd-admin .kp-email-state {
+  margin-top: 19px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 15px;
+  background: #f7f9f3;
+  border-radius: 5px;
+}
+.kd-admin .kp-email-state > svg {
+  flex-shrink: 0;
+  color: #8da17b;
+}
+.kd-admin .kp-email-state strong {
+  font-size: 11px;
+  color: #70885e;
+  font-weight: 500;
+}
+.kd-admin .kp-email-state p {
+  font-size: 10px;
+  color: #91a183;
+  line-height: 1.85;
+  margin: 7px 0 0;
+  overflow-wrap: anywhere;
+}
+.kd-admin .kp-contact-log {
+  border-top: 1px solid var(--ka-border);
+  padding-top: 20px;
+  margin-top: 20px;
+}
+.kd-admin .kp-contact-log h5 {
+  font-size: 11px;
+  font-weight: 500;
+  margin: 0 0 7px;
+  color: #668052;
+}
+.kd-admin .kp-contact-log > p {
+  font-size: 10px;
+  line-height: 1.8;
+  color: #92a185;
+}
+.kd-admin .kp-contact-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+  gap: 12px;
+  margin-top: 15px;
+}
+.kd-admin .kp-contact-fields .ka-field {
+  font-size: 10px;
+  margin: 0;
+}
+.kd-admin .kp-contact-fields input,
+.kd-admin .kp-contact-fields select {
+  font-size: 11px;
+}
+.kd-admin .kp-contact-fields > button {
+  grid-column: 1 / -1;
+  justify-self: start;
+  font-size: 10px;
+  min-height: 33px;
+}
+.kd-admin .kp-contact-log > small {
+  color: #a3977c;
+  display: block;
+  font-size: 9px;
+  line-height: 1.8;
+  margin-top: 12px;
+}
+.kd-admin .kp-contact-history {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+}
+.kd-admin .kp-contact-history li {
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #edf1e7;
+  padding: 14px 0;
+}
+.kd-admin .kp-contact-history li > svg {
+  color: #8da17d;
+  flex-shrink: 0;
+}
+.kd-admin .kp-contact-history strong {
+  font-size: 10px;
+  font-weight: 500;
+  color: #6c865d;
+}
+.kd-admin .kp-contact-history p {
+  font-size: 11px;
+  line-height: 1.85;
+  margin: 5px 0;
+  color: #7e9171;
+  overflow-wrap: anywhere;
+}
+.kd-admin .kp-contact-history small {
+  font-size: 9px;
+  color: #9eaa92;
+}
+.kd-admin .kp-loading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  color: #8b9c7c;
+  padding: 30px;
+}
+@media (max-width: 1200px) {
+  .kd-admin .kp-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .kd-admin .kp-detail-placeholder {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .kd-admin .kp-toolbar {
+    padding: 18px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .kd-admin .kp-toolbar h2 {
+    font-size: 15px;
+  }
+  .kd-admin .kp-toolbar p {
+    font-size: 11px;
+  }
+  .kd-admin .kp-counts {
+    gap: 9px;
+  }
+  .kd-admin .kp-counts > div {
+    padding: 15px 11px;
+  }
+  .kd-admin .kp-counts strong {
+    font-size: 24px;
+  }
+  .kd-admin .kp-counts span {
+    font-size: 9px;
+    line-height: 1.6;
+    display: block;
+  }
+  .kd-admin .kp-workspace.has-selected .kp-request-list {
+    display: none;
+  }
+  .kd-admin .kp-back {
+    display: inline-flex;
+  }
+  .kd-admin .kp-request-detail {
+    padding: 18px;
+  }
+  .kd-admin .kp-detail-heading h2 {
+    font-size: 20px;
+  }
+  .kd-admin .kp-request-facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .kd-admin .kp-offer-editor {
+    padding: 13px;
+  }
+  .kd-admin .kp-editor-fields,
+  .kd-admin .kp-editor-terms {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .kd-admin .kp-item-numbers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kd-admin .kp-item-numbers > label:last-child {
+    grid-column: 1 / -1;
+  }
+  .kd-admin .kp-offer-card {
+    padding: 15px;
+  }
+  .kd-admin .kp-offer-card h4 {
+    font-size: 14px;
+  }
+  .kd-admin .kp-contact-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .kd-admin .kp-files li {
+    flex-wrap: wrap;
+  }
+  .kd-admin .kp-files li > div {
+    flex-basis: calc(100% - 30px);
+  }
+  .kd-admin .kp-files li > a {
+    margin-left: 29px;
+  }
+  .kd-admin .kp-section-heading h3 {
+    font-size: 13px;
+  }
+  .kd-admin .kp-editor-actions {
+    flex-wrap: wrap;
+  }
+  .kd-admin .kp-editor-actions > button {
+    flex: 1;
+  }
+}

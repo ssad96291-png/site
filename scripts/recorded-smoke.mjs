@@ -1,2 +1,2 @@
-// Compatibility entry point for the superseded design test command.
-import "./local-shop-smoke.mjs";
+// Compatibility entry point for the detailed website smoke test.
+import "./detailed-smoke.mjs";

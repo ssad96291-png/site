@@ -50,6 +50,7 @@ import {
 import type { Content, Settings } from "./types";
 const AdminApp = lazy(() => import("./admin/AdminApp"));
 const CustomerPortal = lazy(() => import("./customer/CustomerPortal"));
+const ProjectRequest = lazy(() => import("./ProjectRequest"));
 import VisitorConsent from "./VisitorConsent";
 import {
   SiteContext,
@@ -58,17 +59,17 @@ import {
   type SiteContextValue as Context,
 } from "./site-context";
 import {
-  LocalHeader as Header,
-  LocalHome as Home,
-  LocalFooter as Footer,
-  LocalProducts as Products,
-  LocalCorporate as Corporate,
-  LocalCatalog as Catalog,
-  LocalGallery,
-  LocalServiceAreas,
-  LocalInformation,
-  LocalPageHead,
-} from "./LocalStudio";
+  DetailedHeader as Header,
+  DetailedHome as Home,
+  DetailedFooter as Footer,
+  DetailedProducts as Products,
+  DetailedCorporate as Corporate,
+  DetailedCatalog as Catalog,
+  DetailedGallery,
+  DetailedServiceAreas,
+  DetailedInformation,
+  DetailedPageHead,
+} from "./DetailedSite";
 const pathFor = (c: Content) =>
   `/${({ product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler", faq: "sikca-sorulan-sorular" } as Record<string, string>)[c.type] || "kurumsal"}/${c.slug}`;
 function ScrollTop() {
@@ -388,7 +389,7 @@ function PageHead({
   subtitle?: string;
   tag?: string;
 }) {
-  return <LocalPageHead title={title} subtitle={subtitle} />;
+  return <DetailedPageHead title={title} subtitle={subtitle} />;
 }
 function ProductComparison() {
   const { content, t, local } = useSite();
@@ -1413,6 +1414,17 @@ function Contact({ quote = false }: { quote?: boolean }) {
           )}
         </div>
         <div className="form-panel">
+          {quote && (
+            <p className="project-entry-note">
+              <Link to="/proje-teklif">
+                {t(
+                  "Çizim veya proje dosyası ekleyerek fiyat teklifi isteyin",
+                  "Request a quote with your drawings or project files",
+                )}{" "}
+                <ArrowUpRight size={16} />
+              </Link>
+            </p>
+          )}
           <h3>{t("Bize bir not bırakın.", "Leave us a note.")}</h3>
           <p>
             {t(
@@ -1521,6 +1533,7 @@ export default function App() {
       "/fikir-defteri": ["Fikir Defteri", "Ideas Notebook"],
       "/dukkanimiz": ["Etimesgut’taki Dükkânımız", "Our Etimesgut Shop"],
       "/hizmet-alani": ["Hizmet Alanımız", "Our Service Area"],
+      "/proje-teklif": ["Proje ve Fiyat Teklifi", "Project and Price Request"],
       "/servis-talebi": ["Servis Talebi", "Service Request"],
       "/urun-karsilastir": ["Ürün Karşılaştırma", "Compare Systems"],
       "/projeler": [
@@ -1702,7 +1715,7 @@ export default function App() {
   };
   return (
     <SiteContext.Provider value={ctx}>
-      <div className="local-studio">
+      <div className="detailed-site">
         <ScrollTop />
         <a className="skip-link" href="#main">
           {en ? "Skip to content" : "İçeriğe geç"}
@@ -1733,23 +1746,23 @@ export default function App() {
               element={<Navigate to="/hizmetler" replace />}
             />
             <Route path="/urun-karsilastir" element={<ProductComparison />} />
-            <Route path="/fikir-defteri" element={<LocalGallery />} />
+            <Route path="/fikir-defteri" element={<DetailedGallery />} />
             <Route
               path="/galeri"
               element={<Navigate to="/fikir-defteri" replace />}
             />
             <Route
               path="/proje-birimi"
-              element={<Navigate to="/teklif-al" replace />}
+              element={<Navigate to="/proje-teklif" replace />}
             />
             <Route
               path="/servis-talebi"
               element={
                 <>
-                  <LocalPageHead
+                  <DetailedPageHead
                     title={en ? "Service request" : "Servis Talebi"}
                   />
-                  <section className="ls-container ls-service-form">
+                  <section className="rs-container rs-service-form">
                     <div>
                       <h2>
                         {en
@@ -1769,26 +1782,26 @@ export default function App() {
             />
             <Route
               path="/kurumsal/terimler-sozlugu"
-              element={<LocalInformation kind="glossary" />}
+              element={<DetailedInformation kind="glossary" />}
             />
             <Route
               path="/kurumsal/renk-kartelasi"
-              element={<LocalInformation kind="colours" />}
+              element={<DetailedInformation kind="colours" />}
             />
             <Route
               path="/kurumsal/olcu-rehberi"
-              element={<LocalInformation kind="measuring" />}
+              element={<DetailedInformation kind="measuring" />}
             />
             <Route
               path="/kurumsal/uygulama-sureci"
-              element={<LocalInformation kind="process" />}
+              element={<DetailedInformation kind="process" />}
             />
             <Route
               path="/kurumsal/garanti-servis"
-              element={<LocalInformation kind="warranty" />}
+              element={<DetailedInformation kind="warranty" />}
             />
             <Route path="/sistem-secici" element={<SystemFinder />} />
-            <Route path="/hizmet-alani" element={<LocalServiceAreas />} />
+            <Route path="/hizmet-alani" element={<DetailedServiceAreas />} />
             <Route
               path="/bolgeler"
               element={<Navigate to="/hizmet-alani" replace />}
@@ -1810,6 +1823,20 @@ export default function App() {
             <Route path="/kurumsal/:slug" element={<Detail type="page" />} />
             <Route path="/sikca-sorulan-sorular" element={<FAQ />} />
             <Route path="/iletisim" element={<Contact />} />
+            <Route
+              path="/proje-teklif"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="loading-screen">
+                      Teklif alanı yükleniyor…
+                    </div>
+                  }
+                >
+                  <ProjectRequest />
+                </Suspense>
+              }
+            />
             <Route path="/teklif-al" element={<Contact quote />} />
             <Route path="/is-ortakligi" element={<NotFound />} />
             <Route path="/katalog" element={<Catalog />} />

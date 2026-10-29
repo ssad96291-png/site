@@ -48,6 +48,7 @@ import {
   type OperationsSection,
 } from "./OperationsPanel";
 import LiveAnalytics from "./LiveAnalytics";
+import ProjectOffers from "./ProjectOffers";
 import {
   UploadRights,
   MediaRightsEditor,
@@ -73,7 +74,8 @@ type Section =
   | "pipeline"
   | "teams"
   | "notifications"
-  | "staff";
+  | "staff"
+  | "projectRequests";
 type OperatorRole = "admin" | "manager" | "editor" | "technician";
 type Operator = {
   username: string;
@@ -134,6 +136,7 @@ const groups: {
   { id: "live", label: "Canlı izleme & analiz", icon: Activity },
   { id: "customers", label: "Müşteriler", icon: Users },
   { id: "pipeline", label: "Talep süreçleri", icon: Columns3 },
+  { id: "projectRequests", label: "Proje & fiyat talepleri", icon: FileText },
   { id: "teams", label: "Teknik ekip", icon: Network },
   { id: "notifications", label: "Bildirim merkezi", icon: Bell },
   { id: "staff", label: "Personel ve roller", icon: UserCog },
@@ -404,12 +407,18 @@ export default function AdminApp() {
                       "live",
                       "customers",
                       "pipeline",
+                      "projectRequests",
                       "teams",
                       "notifications",
                       "security",
                     ]
                   : role === "technician"
-                    ? ["pipeline", "notifications", "security"]
+                    ? [
+                        "pipeline",
+                        "projectRequests",
+                        "notifications",
+                        "security",
+                      ]
                     : [
                         "product",
                         "project",
@@ -490,9 +499,11 @@ export default function AdminApp() {
                     ? "Marka bilgilerinizi ve iletişim kanallarınızı yönetin."
                     : section === "inquiries"
                       ? "Sitenizden gelen gerçek müşteri taleplerini takip edin."
-                      : section === "security"
-                        ? "Yönetici hesabınızın güvenliğini koruyun."
-                        : "İçeriklerinizi oluşturun, düzenleyin ve yayına alın."}
+                      : section === "projectRequests"
+                        ? "Müşteri dosyalarını inceleyin; fiyat teklifini hazırlayıp paylaşın."
+                        : section === "security"
+                          ? "Yönetici hesabınızın güvenliğini koruyun."
+                          : "İçeriklerinizi oluşturun, düzenleyin ve yayına alın."}
               </p>
             </div>
             {[
@@ -564,6 +575,7 @@ export default function AdminApp() {
           ) : (
             <>
               {section === "live" && <LiveAnalytics />}
+              {section === "projectRequests" && <ProjectOffers role={role} />}
               {[
                 "customers",
                 "pipeline",
@@ -2992,7 +3004,7 @@ function OperatorHeaderTools({
             "security",
           ]
         : role === "technician"
-          ? ["pipeline", "notifications", "security"]
+          ? ["pipeline", "projectRequests", "notifications", "security"]
           : [
               "product",
               "project",

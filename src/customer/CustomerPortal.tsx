@@ -33,6 +33,7 @@ import {
   X,
 } from "lucide-react";
 import "./customer.css";
+import ProjectQuotes from "./ProjectQuotes";
 
 type Stage =
   | "received"
@@ -486,6 +487,10 @@ export default function CustomerPortal() {
                 İlgili talebinizi seçerek ekipten destek veya teklif revizesi
                 isteyebilirsiniz.
               </p>
+              <Link to="/proje-teklif">
+                Yeni proje / fiyat talebi
+                <ArrowRight size={13} />
+              </Link>
               <Link to="/iletisim">
                 İletişim bilgileri
                 <ArrowRight size={13} />
@@ -1038,9 +1043,9 @@ function RequestDetail({
   onChanged: () => Promise<void>;
   notify: (message: string) => void;
 }) {
-  const [tab, setTab] = useState<"overview" | "documents" | "messages">(
-      "overview",
-    ),
+  const [tab, setTab] = useState<
+      "overview" | "documents" | "messages" | "projects"
+    >("overview"),
     [kind, setKind] = useState("support"),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false),
@@ -1109,6 +1114,12 @@ function RequestDetail({
           Süreç & Ekip
         </button>
         <button
+          className={tab === "projects" ? "active" : ""}
+          onClick={() => setTab("projects")}
+        >
+          Proje dosyaları & teklifler
+        </button>
+        <button
           className={tab === "documents" ? "active" : ""}
           onClick={() => setTab("documents")}
         >
@@ -1121,6 +1132,22 @@ function RequestDetail({
           Mesajlar<span>{messages.length}</span>
         </button>
       </nav>
+      {tab === "projects" && (
+        <ProjectQuotes
+          key={inquiry.id}
+          inquiryId={inquiry.id}
+          onRequestRevision={(reference) => {
+            setKind("revision");
+            setMessage(
+              (current) =>
+                current ||
+                `#${reference} numaralı teklif hakkında revize talebim: `,
+            );
+            setTab("messages");
+            window.setTimeout(() => composer.current?.focus(), 0);
+          }}
+        />
+      )}
       {tab === "overview" && (
         <>
           {inquiry.customerMessage && (

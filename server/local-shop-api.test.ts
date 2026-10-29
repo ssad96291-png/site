@@ -42,7 +42,7 @@ test("The public site describes one shop and closes the retired application flow
       "/galeri": "/fikir-defteri",
       "/kurumsal": "/dukkanimiz",
       "/bolgeler": "/hizmet-alani",
-      "/proje-birimi": "/teklif-al",
+      "/proje-birimi": "/proje-teklif",
     })) {
       const response = await fetch(base + from, { redirect: "manual" });
       assert.equal(response.status, 302);

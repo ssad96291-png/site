@@ -1,8 +1,10 @@
 # Tek dükkândan doğrudan hizmet
 
+Bu belge önceki sade görünümün rehberidir. Güncel ayrıntılı tasarım ve dosyalı teklif akışı için [Proje ve teklif sürümü](PROJE-TEKLIF-SURUMU.md) rehberini kullanın.
+
 29 Ekim 2026 sürümü. Kılınç Dekorasyon'un Etimesgut'taki tek dükkânından müşterileriyle doğrudan görüşmesine göre hazırlandı. Bu sürümün görünümü ve çalışma modeli, önceki tasarım rehberlerinin yerini alır.
 
-Önizlemeler: [Ana sayfa](tek-dukkan/ana-sayfa.png), [yönetim](tek-dukkan/yonetim.png), [müşteri paneli](tek-dukkan/musteri.png). Panel görüntüleri yalnızca sentetik test kayıtlarını gösterir.
+Güncel önizlemeler [proje ve teklif rehberindedir](PROJE-TEKLIF-SURUMU.md); eski sade görünümün görüntüleri dağıtımdan çıkarılmıştır.
 
 ## Yeni görünüm
 

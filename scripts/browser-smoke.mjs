@@ -154,11 +154,11 @@ try {
   assert.equal(languageSetting.status(), 200);
   await publicPage.evaluate(() => localStorage.setItem('kilinc-locale', 'en'));
   await publicPage.goto(base, { waitUntil: 'networkidle' });
-  assert.equal(await publicPage.locator('button[aria-label="İngilizceye geç"], button[aria-label="Switch to Turkish"]').count(), 0);
+  assert.equal(await publicPage.locator('button[aria-label="Switch to English"], button[aria-label="Türkçeye geç"]').count(), 0);
   assert.equal(await publicPage.locator('html').getAttribute('lang'), 'tr');
   assert.equal((await context.request.put(`${base}/api/admin/settings`, { data: { languages: ['tr', 'en'], heroTitle: initialSite.settings.heroTitle } })).status(), 200);
   await publicPage.reload({ waitUntil: 'networkidle' });
-  assert.equal(await publicPage.locator('button[aria-label="İngilizceye geç"], button[aria-label="Switch to Turkish"]').count(), 1);
+  assert.equal(await publicPage.locator('button[aria-label="Switch to English"], button[aria-label="Türkçeye geç"]').count(), 1);
   pass('language setting hides disabled English and restores switch when enabled');
 
   await nav.getByRole('button', { name: 'Görsel kütüphanesi', exact: true }).click();
