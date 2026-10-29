@@ -30,6 +30,7 @@ const staticPages: Record<string, string> = {
   "/dukkanimiz": "Dükkânımız",
   "/hizmet-alani": "Hizmet alanımız",
   "/proje-teklif": "Proje ve fiyat teklifi",
+  "/proje-birimi": "Proje planlama",
   "/projeler": "Mekân çözümleri",
   "/galeri": "Galeri",
   "/blog": "Bilgi merkezi",

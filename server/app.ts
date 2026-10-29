@@ -5,6 +5,7 @@ import { deliverNotification, deliveryConfigured } from "./messaging.js";
 import { referencePages, referencePagesVersion } from "./reference-content.js";
 import { applyOriginalityContentMigration } from "./originality-content.js";
 import { applySingleShopContentMigration } from "./single-shop-content.js";
+import { applyCorporateContentMigration } from "./corporate-content.js";
 import { validProjectEmail } from "./project-context.js";
 import { installMediaRights } from "./media-rights.js";
 import { legacyImageReplacement } from "./media-assets.js";
@@ -257,6 +258,7 @@ export function createApp(options: AppOptions = {}) {
   }
   applyOriginalityContentMigration(db);
   applySingleShopContentMigration(db);
+  applyCorporateContentMigration(db);
   if (!(db.prepare("SELECT COUNT(*) AS count FROM users").get() as any).count) {
     const provided = process.env.ADMIN_PASSWORD;
     if (provided && (provided.length < 12 || provided.length > 256))
@@ -1235,12 +1237,14 @@ export function createApp(options: AppOptions = {}) {
       "",
       "/hizmetler",
       "/fikir-defteri",
+      "/projeler",
       "/blog",
       "/iletisim",
       "/hizmet-alani",
       "/katalog",
       "/proje-teklif",
-      "/dukkanimiz",
+      "/proje-birimi",
+      "/kurumsal",
       "/sistem-secici",
       ...allContent()
         .filter((c) => c.published && routes[c.type])
@@ -1269,10 +1273,8 @@ export function createApp(options: AppOptions = {}) {
   const publicAliases: Record<string, string> = {
     "/urunler": "/hizmetler",
     "/galeri": "/fikir-defteri",
-    "/projeler": "/fikir-defteri",
-    "/kurumsal": "/dukkanimiz",
+    "/dukkanimiz": "/kurumsal",
     "/bolgeler": "/hizmet-alani",
-    "/proje-birimi": "/proje-teklif",
   };
   app.get(Object.keys(publicAliases), (req, res) =>
     res.redirect(302, publicAliases[req.path]),

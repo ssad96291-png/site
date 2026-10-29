@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createApp } from "./app.js";
@@ -11,7 +11,13 @@ test("The public site describes one shop and closes the retired application flow
   const previous = process.env.ADMIN_PASSWORD;
   const password = randomBytes(24).toString("base64url");
   process.env.ADMIN_PASSWORD = password;
-  const app = createApp({ dataDir: dir, production: false });
+  const staticDir = join(dir, "web");
+  mkdirSync(staticDir);
+  writeFileSync(
+    join(staticDir, "index.html"),
+    "<!doctype html><title>Synthetic site</title>",
+  );
+  const app = createApp({ dataDir: dir, staticDir, production: false });
   if (previous === undefined) delete process.env.ADMIN_PASSWORD;
   else process.env.ADMIN_PASSWORD = previous;
   const server = app.listen(0, "127.0.0.1");
@@ -40,13 +46,26 @@ test("The public site describes one shop and closes the retired application flow
     for (const [from, to] of Object.entries({
       "/urunler": "/hizmetler",
       "/galeri": "/fikir-defteri",
-      "/kurumsal": "/dukkanimiz",
+      "/dukkanimiz": "/kurumsal",
       "/bolgeler": "/hizmet-alani",
-      "/proje-birimi": "/proje-teklif",
     })) {
       const response = await fetch(base + from, { redirect: "manual" });
       assert.equal(response.status, 302);
       assert.equal(response.headers.get("location"), to);
+    }
+    for (const path of [
+      "/kurumsal",
+      "/projeler",
+      "/proje-birimi",
+      "/proje-teklif",
+    ]) {
+      const response = await fetch(base + path, { redirect: "manual" });
+      assert.equal(
+        response.status,
+        200,
+        path + " remains a separate public page",
+      );
+      assert.equal(response.headers.get("location"), null);
     }
     const inquiry = {
       name: "Sentetik Yerel Talep",
@@ -101,14 +120,19 @@ test("The public site describes one shop and closes the retired application flow
     for (const path of [
       "hizmetler",
       "fikir-defteri",
-      "dukkanimiz",
+      "kurumsal",
+      "projeler",
+      "proje-birimi",
       "hizmet-alani",
     ])
       assert.ok(sitemap.includes(`https://example.invalid/${path}<`));
-    assert.doesNotMatch(
-      sitemap,
-      /is-ortakligi|kurumsal-projeler-taahhut|proje-birimi/,
+    assert.doesNotMatch(sitemap, /is-ortakligi|bayilik|franchise/);
+    assert.ok(
+      site.content.some(
+        (item: any) => item.slug === "kurumsal-projeler-taahhut",
+      ),
     );
+    assert.ok(sitemap.includes("/kurumsal/kurumsal-projeler-taahhut<"));
   } finally {
     await new Promise<void>((resolve) => server.close(() => resolve()));
     app.locals.close();

@@ -69,6 +69,7 @@ import {
   DetailedServiceAreas,
   DetailedInformation,
   DetailedPageHead,
+  DetailedProjectOffice,
 } from "./DetailedSite";
 const pathFor = (c: Content) =>
   `/${({ product: "urunler", project: "projeler", article: "blog", page: "kurumsal", region: "bolgeler", faq: "sikca-sorulan-sorular" } as Record<string, string>)[c.type] || "kurumsal"}/${c.slug}`;
@@ -609,7 +610,7 @@ function Listing({ type }: { type: "project" | "article" }) {
       <PageHead
         title={
           type === "project"
-            ? t("Birlikte hayal edelim.", "Imagine the possibilities.")
+            ? t("Projeler & Mekân Fikirleri", "Projects & Space Ideas")
             : t("Yaşam alanınıza ilham.", "Inspiration for your space.")
         }
         subtitle={
@@ -630,6 +631,25 @@ function Listing({ type }: { type: "project" | "article" }) {
         }
       />
       <section className="container section compact">
+        {type === "project" && (
+          <div className="rs-dual-links">
+            <Link to="/fikir-defteri">
+              <Layers />
+              <span>{t("Görsel galeriyi aç", "Open the image gallery")}</span>
+              <ArrowRight />
+            </Link>
+            <Link to="/proje-birimi">
+              <SlidersHorizontal />
+              <span>
+                {t(
+                  "Projenizi nasıl planlıyoruz?",
+                  "How do we plan your project?",
+                )}
+              </span>
+              <ArrowRight />
+            </Link>
+          </div>
+        )}
         <div className="filter-tabs standalone">
           <button
             className={category === "all" ? "active" : ""}
@@ -678,6 +698,35 @@ function Listing({ type }: { type: "project" | "article" }) {
       </section>
       <CallToAction />
     </>
+  );
+}
+function ProjectOffice() {
+  const { t } = useSite();
+  return (
+    <DetailedProjectOffice>
+      <div className="rs-office-enquiry">
+        <h3>
+          {t("Fikirden yazılı teklife", "From an idea to a written quotation")}
+        </h3>
+        <p>
+          {t(
+            "Fiyat sorabilir veya çizim, proje ve ölçü dosyalarınızı özel başvurunuza ekleyebilirsiniz. Dosya yüklemek ve hesap oluşturmak zorunlu değildir. Talebinizi biz değerlendirir, kapsamı ve fiyatı yazılı teklifimizde netleştiririz.",
+            "Ask a price question or attach drawings, project files and dimensions to your private enquiry. Uploading files and creating an account are optional. We review your request and confirm the scope and price in a written quotation.",
+          )}
+        </p>
+        <Link className="rs-button" to="/proje-teklif">
+          {t(
+            "Proje / fiyat talebi oluştur",
+            "Create a project / price request",
+          )}
+          <ArrowRight size={16} />
+        </Link>
+        <Link className="rs-text-link" to="/hesabim">
+          {t("Mevcut talebimi takip et", "Track my existing request")}
+          <ArrowRight size={15} />
+        </Link>
+      </div>
+    </DetailedProjectOffice>
   );
 }
 function Detail({
@@ -1534,6 +1583,10 @@ export default function App() {
       "/dukkanimiz": ["Etimesgut’taki Dükkânımız", "Our Etimesgut Shop"],
       "/hizmet-alani": ["Hizmet Alanımız", "Our Service Area"],
       "/proje-teklif": ["Proje ve Fiyat Teklifi", "Project and Price Request"],
+      "/proje-birimi": [
+        "Proje Birimi ve Çalışma Sürecimiz",
+        "Project Planning & Our Process",
+      ],
       "/servis-talebi": ["Servis Talebi", "Service Request"],
       "/urun-karsilastir": ["Ürün Karşılaştırma", "Compare Systems"],
       "/projeler": [
@@ -1545,8 +1598,8 @@ export default function App() {
         "Buying & Maintenance Guides",
       ],
       "/kurumsal": [
-        "Hakkımızda ve Çalışma Yaklaşımımız",
-        "About & Our Approach",
+        "Kurumsal, Hakkımızda ve Çalışma Yaklaşımımız",
+        "Company, About Us & Our Approach",
       ],
       "/bolgeler": ["Ankara Hizmet Bölgeleri", "Ankara Service Areas"],
       "/sistem-secici": [
@@ -1751,10 +1804,7 @@ export default function App() {
               path="/galeri"
               element={<Navigate to="/fikir-defteri" replace />}
             />
-            <Route
-              path="/proje-birimi"
-              element={<Navigate to="/proje-teklif" replace />}
-            />
+            <Route path="/proje-birimi" element={<ProjectOffice />} />
             <Route
               path="/servis-talebi"
               element={
@@ -1808,17 +1858,14 @@ export default function App() {
             />
             <Route path="/bolgeler/:slug" element={<Detail type="region" />} />
             <Route path="/urunler/:slug" element={<Detail type="product" />} />
-            <Route
-              path="/projeler"
-              element={<Navigate to="/fikir-defteri" replace />}
-            />
+            <Route path="/projeler" element={<Listing type="project" />} />
             <Route path="/projeler/:slug" element={<Detail type="project" />} />
             <Route path="/blog" element={<Listing type="article" />} />
             <Route path="/blog/:slug" element={<Detail type="article" />} />
-            <Route path="/dukkanimiz" element={<Corporate />} />
+            <Route path="/kurumsal" element={<Corporate />} />
             <Route
-              path="/kurumsal"
-              element={<Navigate to="/dukkanimiz" replace />}
+              path="/dukkanimiz"
+              element={<Navigate to="/kurumsal" replace />}
             />
             <Route path="/kurumsal/:slug" element={<Detail type="page" />} />
             <Route path="/sikca-sorulan-sorular" element={<FAQ />} />

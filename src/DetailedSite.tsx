@@ -34,7 +34,7 @@ import {
   X,
   ZoomIn,
 } from "lucide-react";
-import type { Content } from "./types";
+import type { Content, Settings } from "./types";
 import { contentImage, contentPath, useSite } from "./site-context";
 
 export function DetailedBrand({ light = false }: { light?: boolean }) {
@@ -95,15 +95,15 @@ export function DetailedHeader() {
         .filter((c) => c.type === "product")
         .map((c) => ({ label: local(c, "title"), href: contentPath(c) })),
     },
-    {
-      label: t("Galeri", "Gallery"),
-      href: "/fikir-defteri",
-      links:
-        settings.showProjects !== false
-          ? [
+    ...(settings.showProjects !== false
+      ? [
+          {
+            label: t("Projeler", "Projects"),
+            href: "/projeler",
+            links: [
               {
                 label: t("Mekân çözümleri", "Space ideas"),
-                href: "/fikir-defteri",
+                href: "/projeler",
               },
               ...content
                 .filter((c) => c.type === "project")
@@ -111,13 +111,20 @@ export function DetailedHeader() {
                   label: local(c, "title"),
                   href: contentPath(c),
                 })),
-            ]
-          : [],
+            ],
+          },
+        ]
+      : []),
+    {
+      label: t("Galeri", "Gallery"),
+      href: "/fikir-defteri",
+      links: [],
     },
     {
       label: t("Proje & teklif", "Project & quote"),
       href: "/proje-teklif",
       links: [
+        { label: t("Proje birimi", "Project office"), href: "/proje-birimi" },
         {
           label: t("Proje & fiyat teklifi", "Project & price quotation"),
           href: "/proje-teklif",
@@ -140,23 +147,11 @@ export function DetailedHeader() {
     },
     {
       label: t("Kurumsal", "Company"),
-      href: "/dukkanimiz",
-      links: [
-        { label: t("Hakkımızda", "About us"), href: "/kurumsal/hakkimizda" },
-        {
-          label: t("Çalışma sürecimiz", "Our process"),
-          href: "/kurumsal/uygulama-sureci",
-        },
-        { label: t("Bilgi merkezi", "Knowledge centre"), href: "/blog" },
-        {
-          label: t("Terimler sözlüğü", "Glossary"),
-          href: "/kurumsal/terimler-sozlugu",
-        },
-        {
-          label: t("Renk kartelası", "Colours"),
-          href: "/kurumsal/renk-kartelasi",
-        },
-      ],
+      href: "/kurumsal",
+      links: visibleCorporateHub(content, settings).map((item) => ({
+        label: t(item.title, item.en),
+        href: item.href,
+      })),
     },
     {
       label: t("İletişim", "Contact"),
@@ -1261,6 +1256,18 @@ const hub = [
     icon: Ruler,
   },
   {
+    title: "Teknik Dokümanlar",
+    en: "Technical documents",
+    href: "/kurumsal/teknik-dokumanlar",
+    icon: FileText,
+  },
+  {
+    title: "Proje Birimi",
+    en: "Project office",
+    href: "/proje-birimi",
+    icon: Building2,
+  },
+  {
     title: "Proje & Fiyat Teklifi",
     en: "Project & price quotation",
     href: "/proje-teklif",
@@ -1296,15 +1303,181 @@ const hub = [
     href: "/hesabim",
     icon: UserRound,
   },
+  {
+    title: "Proje Çözümleri",
+    en: "Project solutions",
+    href: "/projeler",
+    icon: Image,
+  },
+  {
+    title: "Kataloglar",
+    en: "Catalogues",
+    href: "/katalog",
+    icon: Download,
+  },
+  {
+    title: "Sistem Karşılaştırma",
+    en: "Compare systems",
+    href: "/urun-karsilastir",
+    icon: Layers,
+  },
+  {
+    title: "Sıkça Sorulan Sorular",
+    en: "Frequently asked questions",
+    href: "/sikca-sorulan-sorular",
+    icon: MessageSquare,
+  },
+  {
+    title: "İşyeri & Mimari Projeler",
+    en: "Commercial & architectural projects",
+    href: "/kurumsal/kurumsal-projeler-taahhut",
+    icon: Grid2X2,
+  },
 ];
+function visibleCorporateHub(content: Content[], settings: Settings) {
+  return hub.filter((item) => {
+    if (item.href === "/projeler" && settings.showProjects === false)
+      return false;
+    if (item.href === "/hizmet-alani" && settings.showRegions === false)
+      return false;
+    if (item.href === "/sikca-sorulan-sorular" && settings.showFaq === false)
+      return false;
+    if (item.href === "/blog" && settings.showBlog === false) return false;
+    return (
+      !item.href.startsWith("/kurumsal/") ||
+      content.some(
+        (page) => page.type === "page" && contentPath(page) === item.href,
+      )
+    );
+  });
+}
+function CompanyProcess() {
+  const { settings, en, t } = useSite();
+  const defaults = [
+    [
+      "İhtiyaç analizi",
+      "Needs assessment",
+      "Mekânınızı, kullanım beklentilerinizi ve projenin kapsamını birlikte değerlendiriyoruz.",
+      "We review your space, needs and project scope together.",
+    ],
+    [
+      "Yerinde keşif",
+      "Site survey",
+      "Ölçüleri, mevcut yüzeyleri ve uygulama koşullarını keşifle netleştiriyoruz.",
+      "A site survey clarifies dimensions, existing surfaces and installation conditions.",
+    ],
+    [
+      "Teknik planlama",
+      "Technical planning",
+      "Malzeme, renk, detaylar ve yazılı teklif onayının ardından uygulama planını hazırlıyoruz.",
+      "Materials, finishes, details and an approved written quotation shape the installation plan.",
+    ],
+    [
+      "Uygulama ve teslim",
+      "Installation & handover",
+      "Uygulama sonrası kullanım, bakım ve servis bilgilerini sizinle paylaşıyoruz.",
+      "After installation, we share use, maintenance and service information.",
+    ],
+  ];
+  return (
+    <div className="rs-process-grid rs-company-process-grid">
+      {defaults.map(([titleTr, titleEn, textTr, textEn], i) => {
+        const n = i + 1;
+        return (
+          <article key={n}>
+            <span>0{n}</span>
+            <h3>
+              {String(
+                (en && settings[`processStep${n}TitleEn`]) ||
+                  settings[`processStep${n}Title`] ||
+                  t(titleTr, titleEn),
+              )}
+            </h3>
+            <p>
+              {String(
+                (en && settings[`processStep${n}TextEn`]) ||
+                  settings[`processStep${n}Text`] ||
+                  t(textTr, textEn),
+              )}
+            </p>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
 export function DetailedCorporate() {
-  const { t, content, local } = useSite();
+  const { t, content, local, settings, en } = useSite();
+  const links = visibleCorporateHub(content, settings);
   const pages = content.filter(
-    (c) => c.type === "page" && !hub.some((h) => h.href === contentPath(c)),
+    (c) => c.type === "page" && !links.some((h) => h.href === contentPath(c)),
   );
   return (
     <>
       <DetailedPageHead title={t("Kurumsal", "Company")} />
+      <section
+        className="rs-container rs-section rs-company-story"
+        aria-label={t("Firmamızı tanıyın", "Meet our company")}
+      >
+        <figure>
+          <img
+            src="/images/original-terrace.png"
+            alt={t(
+              "Cam ve açık alan sistemleri için mimari konsept",
+              "Architectural concept for glass and outdoor systems",
+            )}
+          />
+          <figcaption>
+            {t(
+              "Tasarım konsepti · tamamlanmış uygulama fotoğrafı değildir.",
+              "Design concept · not a completed installation photograph.",
+            )}
+          </figcaption>
+        </figure>
+        <div>
+          <small>
+            {t(
+              "KILINÇ DEKORASYON · ETİMESGUT",
+              "KILINÇ DEKORASYON · ETİMESGUT",
+            )}
+          </small>
+          <h2>
+            {t(
+              "İhtiyacınızı dinliyor,\ndetayları birlikte planlıyoruz.",
+              "We listen to your needs\nand plan the details together.",
+            )}
+          </h2>
+          <p className="rs-company-about">
+            {String(
+              (en && settings.aboutTextEn) ||
+                settings.aboutText ||
+                t(
+                  "Cam, alüminyum ve metal uygulamalarında ihtiyaçlarınızı bizimle doğrudan paylaşabilirsiniz.",
+                  "Talk directly with us about your glass, aluminium and metal installation needs.",
+                ),
+            )}
+          </p>
+          <Link to="/iletisim" className="rs-text-link">
+            {t("Bizimle tanışın", "Meet us")}
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
+      <section
+        className="rs-container rs-company-process"
+        aria-label={t("Nasıl çalışıyoruz?", "How we work")}
+      >
+        <div className="rs-company-section-heading">
+          <small>{t("NASIL ÇALIŞIYORUZ?", "HOW WE WORK")}</small>
+          <h2>
+            {t(
+              "İlk fikirden uygulama ve teslim aşamasına.",
+              "From first idea to installation and handover.",
+            )}
+          </h2>
+        </div>
+        <CompanyProcess />
+      </section>
       <section className="rs-container rs-section rs-company-layout">
         <div className="rs-company-intro">
           <small>{t("KILINÇ DEKORASYON", "KILINÇ DEKORASYON")}</small>
@@ -1326,7 +1499,7 @@ export function DetailedCorporate() {
           </Link>
         </div>
         <div className="rs-hub-grid">
-          {hub.map((c, i) => (
+          {links.map((c, i) => (
             <Link to={c.href} key={c.href}>
               <span className="rs-hub-number" aria-hidden="true">
                 {String(i + 1).padStart(2, "0")}
@@ -1440,12 +1613,10 @@ export function DetailedServiceAreas() {
   );
 }
 export function DetailedProjectOffice({ children }: { children: ReactNode }) {
-  const { t, settings } = useSite();
+  const { t } = useSite();
   return (
     <>
-      <DetailedPageHead
-        title={t("Proje & Fiyat Teklifi", "Project & Price Quotation")}
-      />
+      <DetailedPageHead title={t("Proje Birimi", "Project Office")} />
       <section className="rs-container rs-section">
         <div className="rs-office-hero">
           <img
@@ -1468,36 +1639,16 @@ export function DetailedProjectOffice({ children }: { children: ReactNode }) {
                 "Ask for a price for your home or workplace, and attach drawings, dimensions and installation notes. After review, you can see your quotation in your account.",
               )}
             </p>
-            <a href="#proje-formu" className="rs-button">
-              {t("Projenizi anlatın", "Tell us about your project")}
+            <Link to="/proje-teklif" className="rs-button">
+              {t(
+                "Proje dosyanızla teklif isteyin",
+                "Request a quote with your project files",
+              )}
               <ArrowRight size={15} />
-            </a>
+            </Link>
           </div>
         </div>
-        <div className="rs-process-grid">
-          {[1, 2, 3, 4].map((n, i) => (
-            <article key={n}>
-              <span>0{n}</span>
-              <h3>
-                {String(
-                  settings[`processStep${n}Title`] ||
-                    [
-                      "İhtiyaç analizi",
-                      "Yerinde keşif",
-                      "Teknik planlama",
-                      "Uygulama ve teslim",
-                    ][i],
-                )}
-              </h3>
-              <p>
-                {String(
-                  settings[`processStep${n}Text`] ||
-                    "Detaylar proje koşullarıyla birlikte değerlendirilir.",
-                )}
-              </p>
-            </article>
-          ))}
-        </div>
+        <CompanyProcess />
         <div className="rs-project-form" id="proje-formu">
           <div>
             <small>{t("DANIŞMANLIK TALEBİ", "PROJECT ENQUIRY")}</small>
@@ -1704,7 +1855,10 @@ export function DetailedFooter() {
           <div className="rs-footer-grid">
             <section>
               <h2>{t("KURUMSAL", "COMPANY")}</h2>
-              {hub
+              <Link to="/kurumsal">
+                {t("Kurumsal merkez", "Company centre")}
+              </Link>
+              {visibleCorporateHub(content, settings)
                 .filter((h) =>
                   [
                     "/kurumsal/hakkimizda",
@@ -1714,6 +1868,7 @@ export function DetailedFooter() {
                     "/kurumsal/garanti-servis",
                     "/kurumsal/olcu-rehberi",
                     "/kurumsal/renk-kartelasi",
+                    "/kurumsal/teknik-dokumanlar",
                   ].includes(h.href),
                 )
                 .map((h) => (
@@ -1738,10 +1893,13 @@ export function DetailedFooter() {
               <h2>{t("KEŞFET", "EXPLORE")}</h2>
               <Link to="/fikir-defteri">{t("Tüm galeri", "Gallery")}</Link>
               {settings.showProjects !== false && (
-                <Link to="/fikir-defteri">
-                  {t("Mekân çözümleri", "Spaces")}
+                <Link to="/projeler">
+                  {t("Proje çözümleri", "Project solutions")}
                 </Link>
               )}
+              <Link to="/proje-birimi">
+                {t("Proje birimi", "Project office")}
+              </Link>
               <Link to="/proje-teklif">
                 {t("Proje & fiyat teklifi", "Project & price quotation")}
               </Link>
