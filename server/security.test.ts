@@ -160,7 +160,7 @@ test("Existing databases receive one additive content migration without overwrit
     app = createApp({dataDir, production: false});
     assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM content").get().count, initialCount - 2);
     assert.equal(app.locals.db.prepare("SELECT id FROM content WHERE type=? AND slug=?").get(removed.type, removed.slug), undefined);
-    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM schema_migrations").get().count, 7);
+    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM schema_migrations").get().count, 8);
   } finally {
     app.locals.close(); rmSync(dataDir, {recursive: true, force: true});
   }

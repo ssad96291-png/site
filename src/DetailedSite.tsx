@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import type { Content, Settings } from "./types";
 import { contentImage, contentPath, useSite } from "./site-context";
+import { PhotoJournal } from "./PhotoJournal";
 
 export function DetailedBrand({ light = false }: { light?: boolean }) {
   const { settings } = useSite();
@@ -460,6 +461,7 @@ export function DetailedHome() {
           : String(settings.heroImage),
       href: "/hizmetler",
       tag: t("CAM · ALÜMİNYUM · METAL", "GLASS · ALUMINIUM · METAL"),
+      photo: String(settings.heroImage || "").includes("/photo-"),
     },
     {
       title: t(
@@ -540,10 +542,17 @@ export function DetailedHome() {
             <img
               key={current.image}
               src={current.image}
-              alt={t(
-                "Mimari tasarım görselleştirmesi",
-                "Architectural design visualization",
-              )}
+              alt={
+                current.photo
+                  ? t(
+                      "Gün batımında cam balkon · fotoğraftan AI ile düzenlendi",
+                      "Sunset balcony · AI-edited from a photograph",
+                    )
+                  : t(
+                      "Mimari tasarım görselleştirmesi",
+                      "Architectural design visualization",
+                    )
+              }
               fetchPriority="high"
             />
             <div className="rs-hero-controls">
@@ -578,7 +587,9 @@ export function DetailedHome() {
               </button>
             </div>
             <span className="rs-concept-label">
-              {t("Tasarım görselleştirmesi", "Design visualization")}
+              {current.photo
+                ? t("Fotoğraftan düzenlendi · AI", "AI-edited photograph")
+                : t("Tasarım görselleştirmesi", "Design visualization")}
             </span>
           </div>
         </div>
@@ -684,6 +695,7 @@ export function DetailedHome() {
           ))}
         </div>
       </section>
+      <PhotoJournal />
       <section className="rs-container rs-material-strip">
         <div>
           <small>{t("CAMDAN METALE", "FROM GLASS TO METAL")}</small>
@@ -697,14 +709,18 @@ export function DetailedHome() {
           </h2>
         </div>
         <Link to="/hizmetler?grup=aluminium">
-          <img src="/images/aluminium-facade.svg" alt="" />
+          <img src="/images/photo-entrance-edited.webp" alt="" loading="lazy" />
           <span>
             {t("Alüminyum sistemler", "Aluminium systems")}
             <ArrowRight size={16} />
           </span>
         </Link>
         <Link to="/hizmetler?grup=metal">
-          <img src="/images/metal-gate.svg" alt="" />
+          <img
+            src="/images/photo-garden-gate-edited.webp"
+            alt=""
+            loading="lazy"
+          />
           <span>
             {t("Demir & çelik imalat", "Steel & metalwork")}
             <ArrowRight size={16} />
@@ -1088,10 +1104,12 @@ export function DetailedGallery() {
     [selected, setSelected] = useState<number | null>(null);
   const gallery = content
     .filter((c) => ["product", "project"].includes(c.type) && c.image)
-    .flatMap((c) => [
-      { item: c, url: contentImage(c) },
-      ...(c.gallery || []).map((url) => ({ item: c, url })),
-    ]);
+    .flatMap((c) =>
+      [...new Set([contentImage(c), ...(c.gallery || [])])].map((url) => ({
+        item: c,
+        url,
+      })),
+    );
   const visible = gallery.filter(
     ({ item }) =>
       (filter === "all" ||
@@ -1141,8 +1159,8 @@ export function DetailedGallery() {
         </div>
         <p className="rs-muted">
           {t(
-            "Başlangıç görselleri tasarım konseptidir; tamamlanmış uygulama örneği değildir.",
-            "Starter images are design concepts, not examples of completed installations.",
+            "Fotoğraf arşivi ve tasarım konseptleri birlikte sunulmaktadır. Konseptler tamamlanmış uygulama fotoğrafı değildir; fotoğraflar teknik performans belgesi yerine geçmez.",
+            "The photo archive and design concepts are presented together. Concepts are not completed installation photos; photographs do not certify technical performance.",
           )}
         </p>
         <div className="rs-gallery-grid">
@@ -1160,7 +1178,18 @@ export function DetailedGallery() {
                 />
                 <ZoomIn size={23} />
               </div>
-              <span>{local(item, "title")}</span>
+              <span>
+                {local(item, "title")}
+                <small className="rs-photo-kind">
+                  {url.includes("-edited.webp")
+                    ? t("Fotoğraftan düzenlendi · AI", "AI-edited photograph")
+                    : url.startsWith("/images/photo-")
+                      ? t("Fotoğraf arşivi", "Photo archive")
+                      : url.startsWith("/images/")
+                        ? t("Tasarım konsepti", "Design concept")
+                        : t("Yüklenen görsel", "Uploaded image")}
+                </small>
+              </span>
             </button>
           ))}
         </div>
@@ -1421,16 +1450,16 @@ export function DetailedCorporate() {
       >
         <figure>
           <img
-            src="/images/original-terrace.png"
+            src="/images/photo-shop.jpg"
             alt={t(
-              "Cam ve açık alan sistemleri için mimari konsept",
-              "Architectural concept for glass and outdoor systems",
+              "Kılınç Dekorasyon dükkânının dış cephesi",
+              "Kılınç Dekorasyon shop exterior",
             )}
           />
           <figcaption>
             {t(
-              "Tasarım konsepti · tamamlanmış uygulama fotoğrafı değildir.",
-              "Design concept · not a completed installation photograph.",
+              "Kılınç Dekorasyon · dükkânımızdan bir kare.",
+              "Kılınç Dekorasyon · a view of our shop.",
             )}
           </figcaption>
         </figure>
@@ -1989,8 +2018,8 @@ export function DetailedFooter() {
             </div>
             <small>
               {t(
-                "Başlangıç görselleri tasarım konseptidir; tamamlanmış uygulama örneği değildir. Teknik ve ticari koşullar projeye özel belirlenir.",
-                "Starter images are design concepts, not completed installations. Technical and commercial terms are agreed for each project.",
+                "Fotoğraf arşivi ve tasarım konseptleri ayrı etiketlenir. Konseptler tamamlanmış uygulama değildir. Teknik ve ticari koşullar projeye özel belirlenir.",
+                "Archive photos and design concepts are labelled separately. Concepts are not completed installations. Technical and commercial terms are agreed for each project.",
               )}
             </small>
           </div>

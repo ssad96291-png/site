@@ -21,3 +21,5 @@ Tarihsel sıra konuşma ve Git kayıtlarından yeniden kurulmuştur; kesin olmay
 ## Yeni çalışma ekleme
 
 Bir sonraki anlamlı görevde `10-<konu>.md` oluşturun; yukarıya 14. sıra olarak gerçek sonuç ve bağlantı ekleyin. `07` dosyasında son durum/sıradaki adımı güncelleyin. Başlamadığınız veya dış servis bekleyen işi tamamlandı olarak işaretlemeyin.
+
+- **30 Ekim 2026 · Fotoğraflar:** 13 kaynak fotoğraf, 4 AI iyileştirmesi, ana sayfa seçkisi/ürün galerileri/Kurumsal; özel CMS düzenlemelerini koruyan geçiş. [Aşama 10](10-FOTOGRAF-VE-KALITE.md).

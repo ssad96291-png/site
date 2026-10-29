@@ -6,6 +6,7 @@ import { referencePages, referencePagesVersion } from "./reference-content.js";
 import { applyOriginalityContentMigration } from "./originality-content.js";
 import { applySingleShopContentMigration } from "./single-shop-content.js";
 import { applyCorporateContentMigration } from "./corporate-content.js";
+import { applyPhotoContentMigration } from "./photo-content.js";
 import { validProjectEmail } from "./project-context.js";
 import { migratePrivateStorage } from "./private-storage.js";
 import {
@@ -303,6 +304,7 @@ export function createApp(options: AppOptions = {}) {
     applyOriginalityContentMigration(db);
     applySingleShopContentMigration(db);
     applyCorporateContentMigration(db);
+    applyPhotoContentMigration(db);
     if (
       !(db.prepare("SELECT COUNT(*) AS count FROM users").get() as any).count
     ) {

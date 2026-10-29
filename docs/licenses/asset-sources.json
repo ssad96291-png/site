@@ -42,6 +42,108 @@
       "origin": "Procedural vector mark created for this project during the originality redesign.",
       "review": "Original geometric drawing; a trademark clearance search for the company name and logo has not been completed.",
       "sha256": "dc5570b92e04d1c35c8f35fa9db70e93233ca7120a7e316c91553fd5cca641c9"
+    },
+    "public/images/photo-sunset.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-33.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "b6fc8b4f4ea7645a304e00a6115bdc400b2122fe6102ac4feef4e3af1d08ea64"
+    },
+    "public/images/photo-wood-balcony.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-18.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "189da4daefab3aa8d999b2d8143610912c95c763c1236a389491e9c3f1e0b935"
+    },
+    "public/images/photo-corner-balcony.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-5.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "e534dbeba52b8e738db74a1d6dd1f477e86ef8c70cc4599596dfcda01cc3b449"
+    },
+    "public/images/photo-long-balcony.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-13.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "16c8cf31e190476348e821ca2199c1add24df649c5ac1c5e8c8863f648111774"
+    },
+    "public/images/photo-dark-balcony.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-38.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "fab01b9f35b1c5e5fcfe4166aff4203b701173b7180cef40812dd4cec0772b11"
+    },
+    "public/images/photo-terrace.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-56.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "45d27befb26c80c78485a8d544d6323c5f0598a0ad28c127be2e89d85a444c8c"
+    },
+    "public/images/photo-glass-detail.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-58.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "bc444a467c6fab5254225920696e704cdf13f12369e4fb5e9a3cb88312ab9654"
+    },
+    "public/images/photo-garden-balcony.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-25.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "e6b62d5bf9d81af8b63d73ce2f83ebddaf1655809113caddb6788c306a2f7a2e"
+    },
+    "public/images/photo-entrance.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-45.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "064a25b250bbf23ebef2a1a2017ec22a5973b2cc5177d64990a36b2e75845ef4"
+    },
+    "public/images/photo-glazed-door.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "2cad893e4753f03cf5eaef4dd97a548f22e230c8cd0f0d8f45a81e694c456534"
+    },
+    "public/images/photo-garden-gate.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-51.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "6323c3efac150f899a4448953a9e1dedfd5a4c5e4176b674f803da05e75a4afc"
+    },
+    "public/images/photo-shop.jpg": {
+      "record": "User-uploaded foto.zip, 2026-10-30; source entry: unnamed-15.jpg",
+      "origin": "Photograph supplied by the user for placement in this website. Original bytes retained; display crop uses CSS.",
+      "review": "User supplied and requested publication. Independent authorship, location, client consent and third-party rights have not been verified. No fabricated project identity, date or technical specification.",
+      "sha256": "68474c81a6a4f5e678f96517435a17b93f689640d5a897c49b3704a94ec1f217"
+    },
+    "public/images/photo-sunset-edited.webp": {
+      "record": "image_gen exec-f4a0ba90-1858-4ca8-9a9b-10f034c75c9d, 2026-10-30; based on foto.zip/unnamed-33.jpg",
+      "origin": "AI-restored derivative of the user-supplied sunset balcony photograph; encoded as WebP for web delivery.",
+      "review": "Label as AI-edited photograph. Reconstructed details are not technical evidence. Original photo remains in the gallery. Editing does not remove underlying third-party rights.",
+      "sha256": "a2fb6838276d12ae02296bfe4b395ffcce8352e85c8e7ebd08391ca59a53428b"
+    },
+    "public/images/photo-wood-balcony-edited.webp": {
+      "record": "image_gen exec-76e442ab-33ee-45d2-89e9-638b67f55497, 2026-10-30; based on foto.zip/unnamed-18.jpg",
+      "origin": "AI-restored derivative of a user-supplied photograph; encoded as WebP.",
+      "review": "Label as AI-edited photograph. Original retained in gallery. Reconstructed details are not technical evidence and editing does not clear third-party rights.",
+      "sha256": "6eb370880748d82fd209e789de5ca066fd4105b572120cedb4e827720e937005"
+    },
+    "public/images/photo-entrance-edited.webp": {
+      "record": "image_gen exec-0ccc02db-d265-4e9e-be21-4f3590b55d7c, 2026-10-30; based on foto.zip/unnamed-45.jpg",
+      "origin": "AI-restored derivative of a user-supplied photograph; encoded as WebP.",
+      "review": "Label as AI-edited photograph. Original retained in gallery. Reconstructed details are not technical evidence and editing does not clear third-party rights.",
+      "sha256": "1179bebf69d40602f6f454e193ea1b4e7944433a251c82288a69089dc1c4b859"
+    },
+    "public/images/photo-garden-gate-edited.webp": {
+      "record": "image_gen exec-7d968066-14a8-4d72-8904-ccf455083e67, 2026-10-30; based on foto.zip/unnamed-51.jpg",
+      "origin": "AI-restored derivative of a user-supplied photograph; encoded as WebP.",
+      "review": "Label as AI-edited photograph. Original retained in gallery. Reconstructed details are not technical evidence and editing does not clear third-party rights.",
+      "sha256": "8fd58ce728e8e91177011edb5a84a28e67118ccbde0850a5c0214298a5901ede"
+    },
+    "public/images/photo-metal-railing.jpg": {
+      "record": "User-uploaded foto.zip/unnamed-10.jpg, 2026-10-30",
+      "origin": "User-supplied photo, original bytes retained.",
+      "review": "Publication requested by user; independent authorship and permissions not verified.",
+      "sha256": "b5e73914444988f3073628cc286f21a597c2130dcb859995577f84a8e70e8abc"
     }
   }
 }

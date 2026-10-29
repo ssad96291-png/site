@@ -13,6 +13,7 @@ Bu klasör, kullanıcının “ne yaptık, neye karar verdik, nerede hata yaptı
 7. **[En son durum / sıradaki iş](07-SON-DURUM-VE-DEVAM.md)**.
 8. [Sonraki modelin ekleyeceği kayıt şablonu](08-SONRAKI-CALISMA-SABLONU.md).
 9. [Windows kayıt hatası ve düzeltme aşaması](09-WINDOWS-KAYIT-DUZELTMESI.md).
+10. [Fotoğraf seçkisi ve kalite düzenlemesi](10-FOTOGRAF-VE-KALITE.md).
 
 Güncel kodla işe başlarken önce `07` ve [kök çalışma kurallarını](../../AGENTS.md) okuyabilirsiniz; ayrıntı için ilgili aşamaya dönün. Yeni çalışmalar artan numarayla eklenir; eski karar değişirse yeni kayıtta nedeni belirtilir.
 

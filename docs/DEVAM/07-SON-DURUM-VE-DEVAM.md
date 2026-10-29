@@ -2,7 +2,11 @@
 
 Kayıt tarihi: 29 Ekim 2026. Bu kayıt, güvenli yönetim sürümü ve başka yapay zekâya devir isteği tamamlanırken hazırlanmıştır. Önce [okuma sırasını](00-ONCE-OKU.md), ardından ihtiyacınız olan aşama dosyasını okuyun.
 
-## Son güncelleme: Windows kayıt düzeltmesi
+## Son güncelleme: Fotoğraf seçkisi (30 Ekim 2026)
+
+Kullanıcının foto.zip arşivinden 13 fotoğraf seçildi; dört kare AI ile iyileştirildi ve açıkça etiketlendi. Ana sayfa, ürün galerileri ve Kurumsal görselleri güncellendi. Ayrıntılar [10 · Fotoğraf ve kalite](10-FOTOGRAF-VE-KALITE.md). Mevcut düzenlenmiş kapak/galeriler korunur; yeni tek seferlik geçişle şema kayıt sayısı 8 olur. 148/148 sunucu testi ve 12/12 tarayıcı kontrolü; istemci/sunucu derlemesi ve hak envanteri kontrolü başarılı. Teslim dalı `codex/photo-refresh-20261030`. [Güncelleme adımları](../FOTOGRAF-GUNCELLEMESI.md). Sonraki kayıt 11 olmalıdır. Önceki Windows düzeltmesi kaynakta korunmuştur.
+
+## Önceki güncelleme: Windows kayıt düzeltmesi
 
 Kullanıcı `e2b0cb1` sürümünü Windows Node **26.13.0** ile açarken şifreli kayıt hatası bildirdi. API kapanınca Vite `/api/site` için bağlantı reddi gösterdi. Son iş, bu kayıt yolunu veri/anahtar koruyarak düzeltmek ve daha açıklayıcı tanı eklemekti; kod ve otomatik kontroller tamamlandı. Ayrıntı ve gerçek/doğrulanmamış bulgular [09 · Windows kayıt düzeltmesi](09-WINDOWS-KAYIT-DUZELTMESI.md) dosyasındadır.
 
