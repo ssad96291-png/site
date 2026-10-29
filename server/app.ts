@@ -220,17 +220,27 @@ export function createApp(options: AppOptions = {}) {
       chmodSync(bootstrapFile, 0o600);
     }
     const firstRun = !db.prepare("SELECT id FROM settings LIMIT 1").get();
-    if (firstRun)
-      db.prepare("INSERT INTO settings(id,data) VALUES (1,?)").run(
-        JSON.stringify({ ...extraSettings, ...defaultSettings }),
-      );
     if (firstRun) {
-      const insert = db.prepare(
-        "INSERT INTO content(id,type,slug,data) VALUES(?,?,?,?)",
-      );
-      for (const seed of seedContent()) {
-        const item = cleanContent(seed);
-        insert.run(item.id, item.type, item.slug, JSON.stringify(item));
+      // One durable snapshot keeps settings and the initial catalogue together
+      // and avoids a Windows file replacement for every single seed record.
+      db.exec("BEGIN IMMEDIATE");
+      try {
+        db.prepare("INSERT INTO settings(id,data) VALUES (1,?)").run(
+          JSON.stringify({ ...extraSettings, ...defaultSettings }),
+        );
+        const insert = db.prepare(
+          "INSERT INTO content(id,type,slug,data) VALUES(?,?,?,?)",
+        );
+        for (const seed of seedContent()) {
+          const item = cleanContent(seed);
+          insert.run(item.id, item.type, item.slug, JSON.stringify(item));
+        }
+        db.exec("COMMIT");
+      } catch (error) {
+        try {
+          if (db.isTransaction) db.exec("ROLLBACK");
+        } catch {}
+        throw error;
       }
     }
     // Add the expanded catalogue only once. Existing edits and future deletions stay intact.
@@ -253,8 +263,12 @@ export function createApp(options: AppOptions = {}) {
         ).run(contentExpansionVersion, new Date().toISOString());
         db.exec("COMMIT");
       } catch (error) {
-        db.exec("ROLLBACK");
-        db.close();
+        try {
+          if (db.isTransaction) db.exec("ROLLBACK");
+        } catch {}
+        try {
+          db.close();
+        } catch {}
         throw error;
       }
     }
@@ -277,8 +291,12 @@ export function createApp(options: AppOptions = {}) {
         ).run(referencePagesVersion, new Date().toISOString());
         db.exec("COMMIT");
       } catch (error) {
-        db.exec("ROLLBACK");
-        db.close();
+        try {
+          if (db.isTransaction) db.exec("ROLLBACK");
+        } catch {}
+        try {
+          db.close();
+        } catch {}
         throw error;
       }
     }
@@ -1435,7 +1453,9 @@ export function createApp(options: AppOptions = {}) {
     });
     return app;
   } catch (error) {
-    db.close();
+    try {
+      db.close();
+    } catch {}
     throw error;
   }
 }

@@ -26,7 +26,7 @@ Kayıtların bazıları geçmiş konuşma, Git commitleri ve önceki rehberlerde
 
 ## Her anlamlı çalışma sonunda
 
-1. [Şablondan](docs/DEVAM/08-SONRAKI-CALISMA-SABLONU.md) yeni, artan numaralı aşama dosyası oluşturun; ilk yeni dosya `09-<konu>.md` olabilir.
+1. [Şablondan](docs/DEVAM/08-SONRAKI-CALISMA-SABLONU.md) yeni, artan numaralı aşama dosyası oluşturun; ilk yeni dosya `10-<konu>.md` olabilir.
 2. İstek, başlangıç durumu, değişen dosyalar, kararın nedeni, hata/düzeltme, gerçek test sonucu ve kalan tek somut adımı yazın.
 3. [Çalışma günlüğüne](docs/DEVAM/06-CALISMA-GUNLUGU.md) yeni satır ekleyin; [son durum dosyasını](docs/DEVAM/07-SON-DURUM-VE-DEVAM.md) güncelleyin. Yeni aşama bağlantısını okuma sırasına ekleyin.
 4. Önceki tarihsel kayıtları topluca değiştirmek yerine yeni düzeltme kaydı ekleyin. `07` güncel durum dosyasıdır; yeni durumla yenilenmesi beklenir.

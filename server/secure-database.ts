@@ -16,7 +16,6 @@ import {
   openSync,
   readFileSync,
   realpathSync,
-  renameSync,
   unlinkSync,
   writeFileSync,
 } from "node:fs";
@@ -29,6 +28,7 @@ import {
   resolve,
   sep,
 } from "node:path";
+import { replaceAtomicFileSync } from "./atomic-file.js";
 
 /** The only persistent database representation is an authenticated encrypted
  * SQLite snapshot. SQLite itself runs in memory; no plaintext WAL or temp file
@@ -49,6 +49,56 @@ interface SecureRecord {
   snapshot: () => Buffer;
 }
 type Effect = { write: boolean };
+type PersistenceStage =
+  | "serialize"
+  | "size"
+  | "encrypt"
+  | "create"
+  | "write"
+  | "sync"
+  | "close"
+  | "replace"
+  | "directory-sync";
+
+/** Keep diagnostics useful without putting SQL, payloads or private paths in
+ * the startup error. The original failure category is retained across cleanup. */
+export class EncryptedDatabasePersistenceError extends Error {
+  readonly code = "ENCRYPTED_DATABASE_PERSISTENCE";
+  readonly storageCode: string;
+  constructor(
+    readonly stage: PersistenceStage,
+    original: unknown,
+  ) {
+    const candidate = original as
+      { code?: unknown; errcode?: unknown; name?: unknown } | undefined;
+    const value = candidate?.code ?? candidate?.errcode;
+    const storageCode =
+      typeof value === "string" && /^[A-Z0-9_]{1,64}$/.test(value)
+        ? value
+        : typeof value === "number" && Number.isSafeInteger(value)
+          ? "SQLITE_" + value
+          : "UNKNOWN";
+    const snapshotFailure = ["serialize", "size", "encrypt"].includes(stage);
+    const description = snapshotFailure
+      ? "Şifreli veri tabanı görüntüsü hazırlanamadı."
+      : "Şifreli veri tabanı diske kaydedilemedi.";
+    const help = ["EPERM", "EACCES", "EBUSY"].includes(storageCode)
+      ? "Veri klasörüne yazma iznini ve dosyayı kullanan diğer uygulamaları kontrol edin."
+      : storageCode === "ENOSPC"
+        ? "Veri diski üzerinde boş alan açın."
+        : "Aşağıdaki aşama ve hata koduyla kayıt sorununu kontrol edin.";
+    const cause = Object.assign(
+      new Error("Kayıt aşaması: " + stage + "; hata kodu: " + storageCode),
+      { code: storageCode },
+    );
+    super(
+      `${description} [aşama=${stage}; kod=${storageCode}] Veri kaybını önlemek için işlemler durduruldu. ${help} Mevcut veri ve anahtar dosyalarını silmeden sunucuyu yeniden başlatın.`,
+      { cause },
+    );
+    this.name = "EncryptedDatabasePersistenceError";
+    this.storageCode = storageCode;
+  }
+}
 
 function configuredKey(value: string): Buffer {
   const raw = value.trim();
@@ -183,23 +233,41 @@ function directorySync(directory: string) {
     closeSync(fd);
   }
 }
-function writeAtomic(path: string, bytes: Buffer) {
+function writeAtomic(
+  path: string,
+  bytes: Buffer,
+  stage?: (value: PersistenceStage) => void,
+) {
   const temporary = join(
     dirname(path),
     "." + basename(path) + "." + randomBytes(12).toString("hex") + ".tmp",
   );
   let fd: number | undefined;
   try {
+    stage?.("create");
     fd = openSync(temporary, "wx", 0o600);
+    stage?.("write");
     writeFileSync(fd, bytes);
+    stage?.("sync");
     fsyncSync(fd);
+    stage?.("close");
     closeSync(fd);
     fd = undefined;
-    renameSync(temporary, path);
+    stage?.("replace");
+    replaceAtomicFileSync(temporary, path);
+    stage?.("directory-sync");
     directorySync(dirname(path));
   } finally {
-    if (fd !== undefined) closeSync(fd);
-    if (existsSync(temporary)) unlinkSync(temporary);
+    // A scanner can also hold the temporary file. Cleanup must not replace the
+    // original write/rename failure; the old database is never removed here.
+    if (fd !== undefined) {
+      try {
+        closeSync(fd);
+      } catch {}
+    }
+    try {
+      if (existsSync(temporary)) unlinkSync(temporary);
+    } catch {}
   }
 }
 function maxDatabaseBytes() {
@@ -391,25 +459,30 @@ export function openSecureDatabase(
     if (fatal) throw fatal;
     if (closed) throw new Error("Veri tabanı kapalı.");
   };
-  const snapshot = () => {
+  const snapshot = (stage?: (value: PersistenceStage) => void) => {
     safe();
     if (native.isTransaction)
       throw new Error("Açık işlem sırasında veri tabanı yedeği alınamaz.");
+    stage?.("serialize");
     const bytes = native.serialize();
+    stage?.("size");
     if (bytes.byteLength > maxBytes)
       throw new Error(
         "Veri tabanı boyut sınırını aşıyor; yedekleyip depolama sınırını değerlendirin.",
       );
+    stage?.("encrypt");
     return encryptSnapshot(bytes, key);
   };
   const persist = () => {
+    let stage: PersistenceStage = "serialize";
     try {
-      writeAtomic(file, snapshot());
+      const onStage = (value: PersistenceStage) => {
+        stage = value;
+      };
+      writeAtomic(file, snapshot(onStage), onStage);
       dirty = false;
-    } catch {
-      fatal = new Error(
-        "Şifreli veri tabanı diske kaydedilemedi. Veri kaybını önlemek için işlemler durduruldu; disk erişimini/alanını kontrol edip sunucuyu yeniden başlatın.",
-      );
+    } catch (cause) {
+      fatal = new EncryptedDatabasePersistenceError(stage, cause);
       throw fatal;
     }
   };
@@ -611,9 +684,15 @@ export function openSecureDatabase(
     if (!existsSync(file)) persist();
     return wrapped;
   } catch (error) {
-    legacySnapshot?.close();
-    native.close();
-    unlock();
+    try {
+      legacySnapshot?.close();
+    } catch {}
+    try {
+      native.close();
+    } catch {}
+    try {
+      unlock();
+    } catch {}
     throw error;
   }
 }

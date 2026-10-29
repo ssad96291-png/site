@@ -1,5 +1,7 @@
 # Kılınç Dekorasyon
 
+**Windows başlangıç düzeltmesi · 29 Ekim 2026:** [Mevcut e2b0cb1 sürümüne küçük düzeltme ve veri kaybetmeden güncelleme](docs/WINDOWS-BASLATMA-DUZELTMESI.md). Dosya kilitleri güvenli biçimde yeniden denenir; `npm run dev` öncesi şifreli kayıt kontrolü, gerçek hata aşaması/kodu ve atomik ilk kurulum eklendi.
+
 **Başka yapay zekâ / geliştiriciyle devam:** önce [aşama sırası ve devir kaydı](docs/DEVAM/00-ONCE-OKU.md), sonra [son durum ve devam noktası](docs/DEVAM/07-SON-DURUM-VE-DEVAM.md) okunmalı. Kararlar, hatalar ve geçmiş işlemler ayrı aşama dosyalarında tutulur; kök [AGENTS.md](AGENTS.md) sonraki çalışmaların kayda eklenmesini ister.
 
 **Güncel müşteri yönetimi ve veri güvenliği sürümü · 29 Ekim 2026:** [Müşteri dosyası, destek kayıtları, şifreli veri tabanı, antivirüs ve taşınabilir yedekleme](docs/VERI-GUVENLIK-VE-DESTEK.md). Önceki ayrıntılı Kurumsal tasarım korunur. Bu sürümde `.data/site.sqlite.enc` şifreli veritabanı kullanılır; yerel anahtar `.data.key` ve ilk parola `.data.initial-admin-password` dosyaları veri dizininin dışında tutulur. **Güncellerken `.data` ile mevcut `.data.key` ayrı ayrı korunmalıdır.**

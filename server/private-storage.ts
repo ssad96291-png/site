@@ -13,12 +13,12 @@ import {
   openSync,
   readFileSync,
   readdirSync,
-  renameSync,
   unlinkSync,
   writeFileSync,
 } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { getDataProtectionKey } from "./secure-database.js";
+import { replaceAtomicFileSync } from "./atomic-file.js";
 
 export interface StorageContext {
   dataDir: string;
@@ -89,10 +89,16 @@ function atomicWrite(path: string, bytes: Buffer, replace: boolean) {
     fd = undefined;
     if (!replace && existsSync(path))
       throw storageError("Özel dosya zaten mevcut.");
-    renameSync(tmp, path);
+    replaceAtomicFileSync(tmp, path);
   } finally {
-    if (fd !== undefined) closeSync(fd);
-    if (existsSync(tmp)) unlinkSync(tmp);
+    if (fd !== undefined) {
+      try {
+        closeSync(fd);
+      } catch {}
+    }
+    try {
+      if (existsSync(tmp)) unlinkSync(tmp);
+    } catch {}
   }
 }
 export function writeProtectedFile(

@@ -2,7 +2,15 @@
 
 Kayıt tarihi: 29 Ekim 2026. Bu kayıt, güvenli yönetim sürümü ve başka yapay zekâya devir isteği tamamlanırken hazırlanmıştır. Önce [okuma sırasını](00-ONCE-OKU.md), ardından ihtiyacınız olan aşama dosyasını okuyun.
 
-## Son kullanıcı isteği
+## Son güncelleme: Windows kayıt düzeltmesi
+
+Kullanıcı `e2b0cb1` sürümünü Windows Node **26.13.0** ile açarken şifreli kayıt hatası bildirdi. API kapanınca Vite `/api/site` için bağlantı reddi gösterdi. Son iş, bu kayıt yolunu veri/anahtar koruyarak düzeltmek ve daha açıklayıcı tanı eklemekti; kod ve otomatik kontroller tamamlandı. Ayrıntı ve gerçek/doğrulanmamış bulgular [09 · Windows kayıt düzeltmesi](09-WINDOWS-KAYIT-DUZELTMESI.md) dosyasındadır.
+
+Windows'a özel atomik değiştirme yeniden denemesi en fazla 300 ms'dir; önceki hedef silinmez. Kayıt aşaması/hata kodu ayrılır, başlangıç içerik yazıları işlemlerde toplanır ve `npm run diagnose` gerçek veriye dokunmadan aynı dosya sisteminde yalıtılmış kontrol yapar. Şifreli biçim ve özgün anahtar korunur. Resmî Node 26.13.0 **Linux** karşılaştırması temiz açılış/iki yeniden başlatmada başarılıdır; gerçek Windows çalıştırması yapılmış değildir. Son kanıt: Node 24.19.0 ve resmî Node 26.13.0 ile ayrı ayrı **146/146 API/güvenlik testi**, **17 tarayıcı kontrolü**, istemci/sunucu derlemesi ve TypeScript başarılı. Her iki Node sürümünde gerçek `npm run dev` aynı şifreli veri/anahtarla açıldı; Vite proxy üzerinden 76 içerik ve yeniden başlatmada aynı kayıt kimlikleri doğrulandı. Bu son testler Linux üzerindedir.
+
+Sonraki model, kullanıcı hatanın sürdüğünü bildirirse önce yeni tanı çıktısının aşama/kodunu incelemelidir; `.data` ve anahtarı sıfırlama önerilmez. Aşağıdaki güvenli yönetim özeti ve 139/93 sonuçları **önceki `e2b0cb1` teslimine** aittir.
+
+## Önceki güvenli yönetim aşamasındaki kullanıcı isteği
 
 Kullanıcı ayrıntılı tasarımı beğendi. Sonraki isteği: daha ayrıntılı ve açıklamalı admin paneli; üye/misafir hesapları, sorunları, mesajları ve dosyalarının tek yerde yönetilmesi; ileride başka siteye taşınabilecek veri tabanı; zararlı yükleme önlemleri ve veri şifreleme. Ardından başka bir yapay zekâyla devam edeceğini, yapılanları/kararları/hataları aşamalar halinde dosyalamayı ve sonraki modellerin de bu kaydı sürdürmesini istedi.
 
@@ -24,6 +32,8 @@ Kullanıcı ayrıntılı tasarımı beğendi. Sonraki isteği: daha ayrıntılı
 | Hesaplar, roller, talep akışı | `server/portal.ts`, `server/single-shop.ts` |
 | Destek / müşteri dosyası | `server/customer-service.ts`, `src/admin/CustomerWorkspace.tsx`, `src/customer/SupportCenter.tsx` |
 | Şifreli SQLite ve kilitleme | `server/secure-database.ts` |
+| Windows atomik değiştirme | `server/atomic-file.ts` |
+| Gerçek veriye dokunmayan ön kontrol / tanı | `scripts/check-startup.mjs` |
 | Özel dosyaların şifrelenmesi | `server/private-storage.ts` |
 | Dosya denetimi ve yükleme | `server/file-security.ts`, `server/project-requests.ts`, ilgili `portal.ts` yolları |
 | Yedek / aktarım / güvenlik olayları | `server/data-portability.ts`, `server/data-cli.ts`, `server/system-center.ts` |
@@ -32,7 +42,7 @@ Kullanıcı ayrıntılı tasarımı beğendi. Sonraki isteği: daha ayrıntılı
 | Teklifler / müşteri dosyaları | `server/offers.ts`, `src/admin/ProjectOffers.tsx`, `src/customer/ProjectQuotes.tsx` |
 | Kurulum ve güvenlik rehberi | [VERI-GUVENLIK-VE-DESTEK.md](../VERI-GUVENLIK-VE-DESTEK.md) |
 
-## Doğrulama kanıtı
+## Önceki güvenli yönetim tesliminin doğrulama kanıtı (`e2b0cb1`)
 
 - **139 API/güvenlik/geçiş testi geçti:** `npm test`.
 - **93 tarayıcı kontrolü geçti:** ayrıntılı site 12, kurumsal 9, CMS 12, müşteri 12, operasyon 11, proje/teklif 11, analitik 6, görsel kaynak kayıtları 6, yeni destek/müşteri dosyası 8, veri merkezi 6.
@@ -56,7 +66,7 @@ Veri taşırken sunucuyu durdurun. **`.data` bütünü ile mevcut `.data.key` ay
 
 ## Depo ve teslim durumu
 
-Bu çalışma ortamında `work` checkout'u tarihsel ana dal başlığında kalırken önceki kaynak değişiklikleri korunmuştur. Teslimler geçici Git index'iyle ayrı commit/dallarda oluşturulmuştur. Son önceki teslim `d0d599da36463571764094434aa046883eced1b3` (`codex/restore-corporate-20261029`). Bu güvenlik/yönetim ve devir sürümünün hedef dalı **`codex/secure-admin-data-20261029`**; kesin commit ve doğrulanmış ZIP bağlantısı teslim mesajında verilir. Paylaşılan klasördeki kaydedilmemiş işi koruyun; yeni görev başlangıcında gerçek `git status` ve dal durumunu okuyun.
+Bu çalışma ortamında `work` checkout'u tarihsel ana dal başlığında kalırken önceki kaynak değişiklikleri korunmuştur. Teslimler geçici Git index'iyle ayrı commit/dallarda oluşturulmuştur. Kurumsal teslim `d0d599da36463571764094434aa046883eced1b3` (`codex/restore-corporate-20261029`), ardından güvenlik/yönetim/devir teslimi `e2b0cb1e432a10a17e76b8cdea3cac078a6f603d` (`codex/secure-admin-data-20261029`) yayımlandı. Son Windows kayıt düzeltmesinin hedef dalı **`codex/windows-startup-fix-20261029`**, başlangıç commit’i `e2b0cb1`dir. Küçük kaynak yaması `docs/patches/windows-startup-fix-e2b0cb1.zip` ve tam kaynak ZIP’i hazırlanır; kesin teslim commit’i/indirilebilir adres teslim mesajında verilir. [Windows düzeltme rehberi](../WINDOWS-BASLATMA-DUZELTMESI.md) güncelleme adımlarını açıklar. Paylaşılan klasördeki kaydedilmemiş işi koruyun; yeni görev başlangıcında gerçek `git status` ve dal durumunu okuyun.
 
 ## Canlıda ayrıca yapılacaklar
 

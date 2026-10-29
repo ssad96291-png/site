@@ -7,7 +7,7 @@ const app = createApp({
 });
 const server = app.listen(port, process.env.APP_HOST || "0.0.0.0", () =>
   console.log(
-    `Kılınç server listening on port ${port}. Admin bootstrap details: .data/initial-admin-password (or configured ADMIN_PASSWORD).`,
+    `Kılınç API hazır: http://localhost:${port}. İlk yönetici parolası: .data.initial-admin-password (veya tanımlı ADMIN_PASSWORD).`,
   ),
 );
 function shutdown() {

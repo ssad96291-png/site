@@ -1,6 +1,6 @@
 # 08 · Sonraki yapay zekâ için kayıt şablonu
 
-Her anlamlı geliştirmeyi ayrı, artan numaralı bir aşama dosyasına kaydedin. İlk yeni dosya `09-<kisa-konu>.md` olabilir. Önceki aşamaları topluca yeniden yazmayın; değişen bir kararın hangi önceki kararı neden değiştirdiğini yeni kayıtla belirtin. Sonra [çalışma günlüğüne](06-CALISMA-GUNLUGU.md) kısa satır ekleyin ve [son durumu](07-SON-DURUM-VE-DEVAM.md) güncelleyin.
+Her anlamlı geliştirmeyi ayrı, artan numaralı bir aşama dosyasına kaydedin. İlk yeni dosya `10-<kisa-konu>.md` olabilir. Önceki aşamaları topluca yeniden yazmayın; değişen bir kararın hangi önceki kararı neden değiştirdiğini yeni kayıtla belirtin. Sonra [çalışma günlüğüne](06-CALISMA-GUNLUGU.md) kısa satır ekleyin ve [son durumu](07-SON-DURUM-VE-DEVAM.md) güncelleyin.
 
 Aşağıdaki alanları gerçek sonuçlarla doldurun:
 

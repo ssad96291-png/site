@@ -16,7 +16,9 @@
     "data:keygen": "tsx server/data-cli.ts keygen",
     "data:backup": "tsx server/data-cli.ts backup",
     "data:restore": "tsx server/data-cli.ts restore",
-    "data:export-json": "tsx server/data-cli.ts export-json"
+    "data:export-json": "tsx server/data-cli.ts export-json",
+    "predev": "node --import tsx scripts/check-startup.mjs",
+    "diagnose": "node --import tsx scripts/check-startup.mjs"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.3.0",
