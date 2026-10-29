@@ -1,3 +1,5 @@
+**Güncel veri ve güvenlik kurulumu:** [Şifreleme anahtarı, ClamAV, yedek ve geri yükleme](VERI-GUVENLIK-VE-DESTEK.md). Bu sürümde üretim anahtarı, başlangıç yönetici parolası ve ClamAV bağlantısı ayrıca gerekir. Eski düz SQLite taşıma açıklamaları yerine güncel rehberdeki şifreli veri akışını kullanın.
+
 # Yayınlama ve işletim
 
 Bu paket bir sunucuya henüz dağıtılmadı. Alan adı, sunucu ve kalıcı disk sizin hesabınızda hazırlanır. Canlıya almadan önce paneldeki yayın kontrol listesini tamamlayın.

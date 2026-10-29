@@ -4,16 +4,22 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createApp } from "./app.js";
+import { randomBytes } from "node:crypto";
+import { startTestScanner } from "./scanner-fixture.test-helper.js";
 import { expansionContent, contentExpansionVersion } from "./seed.js";
 
 test("CMS extensions, private CRM exports, audit and hardened request boundaries", async (t) => {
   const dataDir = mkdtempSync(join(tmpdir(), "kilinc-security-"));
+  const scanner = await startTestScanner();
+  const saved = { DATA_ENCRYPTION_KEY: process.env.DATA_ENCRYPTION_KEY, CLAMAV_HOST: process.env.CLAMAV_HOST, CLAMAV_PORT: process.env.CLAMAV_PORT };
+  process.env.DATA_ENCRYPTION_KEY = randomBytes(32).toString("base64");
+  process.env.CLAMAV_HOST = scanner.host; process.env.CLAMAV_PORT = scanner.port;
   let app = createApp({ dataDir, production: true });
   let server = app.listen(0, "127.0.0.1");
   await new Promise<void>(r => server.once("listening", r));
   let base = `http://127.0.0.1:${(server.address() as any).port}`;
   let cookie = "";
-  const password = readFileSync(join(dataDir, "initial-admin-password"), "utf8").trim();
+  const password = readFileSync(dataDir + ".initial-admin-password", "utf8").trim();
   const request = (path: string, method = "GET", body?: any, headers: Record<string, string> = {}) => fetch(base + path, {
     method, headers: { ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...(cookie ? { Cookie: cookie } : {}), ...headers },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
@@ -119,6 +125,8 @@ test("CMS extensions, private CRM exports, audit and hardened request boundaries
     });
   } finally {
     await new Promise<void>(r => server.close(() => r())); app.locals.close(); rmSync(dataDir, {recursive: true, force: true});
+    await scanner.close();
+    for (const [name, value] of Object.entries(saved)) { if (value === undefined) delete process.env[name]; else process.env[name] = value; }
   }
 });
 
@@ -152,7 +160,7 @@ test("Existing databases receive one additive content migration without overwrit
     app = createApp({dataDir, production: false});
     assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM content").get().count, initialCount - 2);
     assert.equal(app.locals.db.prepare("SELECT id FROM content WHERE type=? AND slug=?").get(removed.type, removed.slug), undefined);
-    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM schema_migrations").get().count, 6);
+    assert.equal(app.locals.db.prepare("SELECT count(*) AS count FROM schema_migrations").get().count, 7);
   } finally {
     app.locals.close(); rmSync(dataDir, {recursive: true, force: true});
   }

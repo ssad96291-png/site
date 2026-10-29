@@ -49,6 +49,9 @@ import {
 } from "./OperationsPanel";
 import LiveAnalytics from "./LiveAnalytics";
 import ProjectOffers from "./ProjectOffers";
+import { SupportDesk } from "./CustomerWorkspace";
+import SystemCenter from "./SystemCenter";
+import AdminHelp from "./AdminHelp";
 import {
   UploadRights,
   MediaRightsEditor,
@@ -75,7 +78,9 @@ type Section =
   | "teams"
   | "notifications"
   | "staff"
-  | "projectRequests";
+  | "projectRequests"
+  | "support"
+  | "system";
 type OperatorRole = "admin" | "manager" | "editor" | "technician";
 type Operator = {
   username: string;
@@ -135,11 +140,13 @@ const groups: {
 }[] = [
   { id: "live", label: "Canlı izleme & analiz", icon: Activity },
   { id: "customers", label: "Müşteriler", icon: Users },
+  { id: "support", label: "Destek & hesap sorunları", icon: MessageSquare },
   { id: "pipeline", label: "Talep süreçleri", icon: Columns3 },
   { id: "projectRequests", label: "Proje & fiyat talepleri", icon: FileText },
   { id: "teams", label: "Teknik ekip", icon: Network },
   { id: "notifications", label: "Bildirim merkezi", icon: Bell },
   { id: "staff", label: "Personel ve roller", icon: UserCog },
+  { id: "system", label: "Veri, yedek & güvenlik", icon: ShieldCheck },
 
   { id: "dashboard", label: "Genel bakış", icon: LayoutDashboard },
   { id: "product", label: "Ürünler", singular: "ürün", icon: Package },
@@ -406,6 +413,7 @@ export default function AdminApp() {
                   ? [
                       "live",
                       "customers",
+                      "support",
                       "pipeline",
                       "projectRequests",
                       "teams",
@@ -415,6 +423,7 @@ export default function AdminApp() {
                   : role === "technician"
                     ? [
                         "pipeline",
+                        "support",
                         "projectRequests",
                         "notifications",
                         "security",
@@ -497,13 +506,19 @@ export default function AdminApp() {
                   ? "Sitenizin içeriği ve müşteri talepleri tek bir yerde."
                   : section === "settings"
                     ? "Marka bilgilerinizi ve iletişim kanallarınızı yönetin."
-                    : section === "inquiries"
-                      ? "Sitenizden gelen gerçek müşteri taleplerini takip edin."
-                      : section === "projectRequests"
-                        ? "Müşteri dosyalarını inceleyin; fiyat teklifini hazırlayıp paylaşın."
-                        : section === "security"
-                          ? "Yönetici hesabınızın güvenliğini koruyun."
-                          : "İçeriklerinizi oluşturun, düzenleyin ve yayına alın."}
+                    : section === "customers"
+                      ? "Üye ve misafir hesaplarını, görüşmeleri, dosyaları ve hesap erişimini yönetin."
+                      : section === "inquiries"
+                        ? "Sitenizden gelen gerçek müşteri taleplerini takip edin."
+                        : section === "projectRequests"
+                          ? "Müşteri dosyalarını inceleyin; fiyat teklifini hazırlayıp paylaşın."
+                          : section === "support"
+                            ? "Müşteri ve hesap sorunlarını, yanıtları ve ekip içi notları yönetin."
+                            : section === "system"
+                              ? "Şifreleme durumunu, güvenlik kayıtlarını ve taşınabilir yedekleri yönetin."
+                              : section === "security"
+                                ? "Yönetici hesabınızın güvenliğini koruyun."
+                                : "İçeriklerinizi oluşturun, düzenleyin ve yayına alın."}
               </p>
             </div>
             {[
@@ -574,6 +589,9 @@ export default function AdminApp() {
             />
           ) : (
             <>
+              <AdminHelp section={section} />
+              {section === "support" && <SupportDesk role={role} />}
+              {section === "system" && role === "admin" && <SystemCenter />}
               {section === "live" && <LiveAnalytics />}
               {section === "projectRequests" && <ProjectOffers role={role} />}
               {[

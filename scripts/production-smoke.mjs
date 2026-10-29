@@ -7,6 +7,8 @@ import { join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
+import { startTestScanner } from "../server/scanner-fixture.test-helper.ts";
+const testScanner = await startTestScanner();
 const dir = await mkdtemp(join(tmpdir(), "kilinc-production-"));
 const reserved = createServer();
 await new Promise((r) => reserved.listen(0, "127.0.0.1", r));
@@ -21,6 +23,9 @@ const child = spawn(process.execPath, ["build-server/production.js"], {
     PORT: String(port),
     APP_HOST: "127.0.0.1",
     DATA_DIR: dir,
+    DATA_ENCRYPTION_KEY: randomBytes(32).toString("base64"),
+    CLAMAV_HOST: testScanner.host,
+    CLAMAV_PORT: testScanner.port,
     ADMIN_PASSWORD: password,
     PUBLIC_ORIGIN: "https://example.invalid",
     NOTIFY_WEBHOOK_URL: "",
@@ -290,4 +295,5 @@ try {
   ]);
   if (child.exitCode === null) child.kill("SIGKILL");
   await rm(dir, { recursive: true, force: true });
+  await testScanner.close();
 }

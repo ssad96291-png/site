@@ -1,5 +1,7 @@
 # Kurumsal bölümü korunan ayrıntılı sürüm
 
+Güncel müşteri çalışma alanı, destek ve şifreli veri kurulumu için [Veri, güvenlik ve destek rehberini](VERI-GUVENLIK-VE-DESTEK.md) kullanın. **Yeni sürümde `.data` ile birlikte yanındaki `.data.key` dosyası da korunmalıdır**; eski açık SQLite anlatımları bu güncellemeyle değişmiştir. İlk yönetici parolası artık `.data.initial-admin-password` dosyasındadır.
+
 29 Ekim 2026 güncellemesi. Önceki ayrıntılı tasarımın kurumsal anlatımı ve ayrı proje sayfaları yeniden öne çıkarıldı. Yeşil/krem palet, slaytlı ana sayfa, ürünler, galeri, kataloglar, bilgi rehberleri, yönetim paneli ve müşteri takip sistemi korunur. Firma Etimesgut'taki tek dükkânından hizmet verir; bayilik başvurusu veya bayi ağı bulunmaz.
 
 Önizlemeler: [Kurumsal sayfası](kurumsal-ayrintili/kurumsal.png), [mobil kurumsal](kurumsal-ayrintili/mobil-kurumsal.png), [Proje Birimi](kurumsal-ayrintili/proje-birimi.png). Görseller yalıtılmış örnek kurulumdan alınmıştır.

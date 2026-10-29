@@ -1,3 +1,5 @@
 # Preserve upstream licence notices, including their original whitespace.
 public/licenses/THIRD-PARTY-NOTICES.txt -whitespace
 server/assets/DejaVuSans-COPYRIGHT.txt -whitespace
+# Keep the Windows launcher CRLF bytes and validate its real trailing spaces.
+BASLAT-WINDOWS.cmd -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

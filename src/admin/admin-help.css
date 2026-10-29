@@ -1,0 +1,113 @@
+.ah-root {
+  margin: 0 0 22px;
+  border: 1px solid #e0e7d8;
+  border-radius: 7px;
+  background: #f4f7ef;
+  color: #536b45;
+  font-size: 11px;
+  min-width: 0;
+}
+.ah-root > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  padding: 15px 18px;
+}
+.ah-root > summary::-webkit-details-marker {
+  display: none;
+}
+.ah-root > summary > svg {
+  flex-shrink: 0;
+}
+.ah-root > summary > span {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  min-width: 0;
+}
+.ah-root > summary strong {
+  font-weight: 500;
+  color: #405935;
+}
+.ah-root > summary > span > span {
+  color: #839177;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.ah-root[open] .ah-chevron {
+  transform: rotate(180deg);
+}
+.ah-chevron {
+  transition: transform 0.15s;
+}
+.ah-body {
+  border-top: 1px solid #e3e9dd;
+  padding: 15px 18px 18px;
+}
+.ah-body > p {
+  margin: 0 0 15px;
+  line-height: 1.85;
+}
+.ah-body > ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ah-body li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  min-width: 0;
+}
+.ah-body li > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 23px;
+  height: 23px;
+  background: #e4ebdb;
+  color: #648052;
+  border-radius: 50%;
+  font-size: 10px;
+}
+.ah-body li > p {
+  margin: 0;
+  line-height: 1.85;
+  color: #6f8063;
+}
+.ah-body > .ah-note {
+  border-top: 1px solid #e4e9dd;
+  padding-top: 12px;
+  color: #87947b;
+  font-size: 10px;
+  margin: 17px 0 0;
+}
+@media (max-width: 1100px) {
+  .ah-body > ol {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+}
+@media (max-width: 760px) {
+  .ah-root > summary {
+    padding: 13px 14px;
+    align-items: flex-start;
+  }
+  .ah-root > summary > span {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .ah-root > summary > .ah-chevron {
+    margin-top: 2px;
+  }
+  .ah-body {
+    padding: 14px;
+  }
+}

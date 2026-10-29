@@ -32,6 +32,7 @@ import {
   X,
 } from "lucide-react";
 import "./operations.css";
+import CustomerWorkspace from "./CustomerWorkspace";
 
 export type OperationsSection =
   "customers" | "pipeline" | "teams" | "notifications" | "staff";
@@ -221,7 +222,7 @@ export function OperationsPanel({
   return (
     <div className="op-workspace">
       {section === "customers" ? (
-        <Customers canManage={role === "admin"} />
+        <Customers role={role} />
       ) : section === "pipeline" ? (
         <Pipeline canAssign={role !== "technician"} />
       ) : section === "teams" ? (
@@ -301,11 +302,13 @@ export function OperationsSummary({ role = "admin" }: { role?: string } = {}) {
   );
 }
 
-function Customers({ canManage }: { canManage: boolean }) {
+function Customers({ role }: { role: string }) {
+  const canManage = role === "admin";
   const [customers, setCustomers] = useState<Customer[]>([]),
     [selected, setSelected] = useState<Customer | null>(null),
     [query, setQuery] = useState(""),
     [filter, setFilter] = useState("all"),
+    [accountKind, setAccountKind] = useState("all"),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(""),
     [notice, setNotice] = useState("");
@@ -331,6 +334,8 @@ function Customers({ canManage }: { canManage: boolean }) {
   const visible = customers.filter(
     (c) =>
       (filter === "all" || c.status === filter) &&
+      (accountKind === "all" ||
+        (accountKind === "guest" ? c.pending === true : c.pending !== true)) &&
       [c.name, c.email, c.phone, c.address]
         .join(" ")
         .toLocaleLowerCase("tr-TR")
@@ -379,6 +384,16 @@ function Customers({ canManage }: { canManage: boolean }) {
               <option value="active">Aktif</option>
               <option value="suspended">Dondurulmuş</option>
             </select>
+            <select
+              aria-label="Müşteri üyelik türü filtresi"
+              className="ka-filter"
+              value={accountKind}
+              onChange={(event) => setAccountKind(event.target.value)}
+            >
+              <option value="all">Üye ve misafir hesapları</option>
+              <option value="member">Üyeler</option>
+              <option value="guest">Misafir takip hesapları</option>
+            </select>
           </div>
           {loading ? (
             <div className="op-loading">
@@ -402,6 +417,11 @@ function Customers({ canManage }: { canManage: boolean }) {
                     {customerTypes[c.customerType] || "Bireysel müşteri"} ·{" "}
                     {c.activeInquiryCount} aktif talep
                   </small>
+                  <small>
+                    {c.pending
+                      ? "Misafir takip hesabı · üyelik tamamlanmamış"
+                      : "Kayıtlı üye"}
+                  </small>
                 </span>
                 <span
                   className={`op-state ${c.status === "suspended" ? "suspended" : c.online ? "online" : ""}`}
@@ -423,19 +443,26 @@ function Customers({ canManage }: { canManage: boolean }) {
           )}
         </section>
         {selected ? (
-          <CustomerEditor
-            key={selected.id}
-            customer={selected}
-            canManage={canManage}
-            onSave={async (changes) => {
-              await api(
-                `/api/admin/customers/${selected.id}`,
-                json("PATCH", changes),
-              );
-              await load();
-              setNotice("Müşteri bilgileri kaydedildi.");
-            }}
-          />
+          <div className="cw-selected-detail">
+            <CustomerWorkspace
+              key={`workspace-${selected.id}`}
+              customerId={selected.id}
+              role={role}
+            />
+            <CustomerEditor
+              key={selected.id}
+              customer={selected}
+              canManage={canManage}
+              onSave={async (changes) => {
+                await api(
+                  `/api/admin/customers/${selected.id}`,
+                  json("PATCH", changes),
+                );
+                await load();
+                setNotice("Müşteri bilgileri kaydedildi.");
+              }}
+            />
+          </div>
         ) : (
           <section className="ka-panel">
             <Empty
@@ -743,6 +770,8 @@ function CustomerEditor({
                       "password-change": "Parola değiştirildi",
                       "password-reset": "Hesap kurtarıldı",
                       "admin-update": "Yönetici profil değişikliği",
+                      "support-created": "Destek kaydı açıldı",
+                      "support-reply": "Destek yanıtı gönderildi",
                     } as Record<string, string>
                   )[event.action] || event.action}
                 </span>

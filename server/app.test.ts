@@ -15,7 +15,7 @@ test("Persistent CMS, admin authentication, enquiries, uploads and catalogue", a
   let contentId = "";
   let inquiryId = "";
   const initialPassword = readFileSync(
-    join(dataDir, "initial-admin-password"),
+    dataDir + ".initial-admin-password",
     "utf8",
   ).trim();
   const request = async (

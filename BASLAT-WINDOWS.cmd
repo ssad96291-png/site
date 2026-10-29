@@ -28,7 +28,7 @@ echo Site: http://localhost:5173
 echo Yonetim: http://localhost:5173/yonetim
 echo Musteri paneli: http://localhost:5173/hesabim
 echo Bu pencere acik kalmali. Durdurmak icin Ctrl+C.
-echo Ilk sifre: .data\initial-admin-password dosyasinda, sadece ilk kurulumda.
+echo Ilk sifre: .data.initial-admin-password dosyasinda, sadece ilk kurulumda.
 echo.
 call "%NODE_HOME%npm.cmd" run dev
 if errorlevel 1 goto failed

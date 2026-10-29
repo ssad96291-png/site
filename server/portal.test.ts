@@ -67,7 +67,7 @@ test("Customer portal ownership, private documents, staff scopes and recovery", 
     const login = await req("/api/admin/login", "POST", {
       username: "admin",
       password: readFileSync(
-        join(dir, "initial-admin-password"),
+        dir + ".initial-admin-password",
         "utf8",
       ).trim(),
     });

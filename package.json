@@ -12,7 +12,11 @@
     "test": "tsx --test server/*.test.ts",
     "typecheck": "tsc -b",
     "rights:generate": "node scripts/generate-rights-notices.mjs",
-    "rights:check": "node scripts/generate-rights-notices.mjs --check"
+    "rights:check": "node scripts/generate-rights-notices.mjs --check",
+    "data:keygen": "tsx server/data-cli.ts keygen",
+    "data:backup": "tsx server/data-cli.ts backup",
+    "data:restore": "tsx server/data-cli.ts restore",
+    "data:export-json": "tsx server/data-cli.ts export-json"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.3.0",

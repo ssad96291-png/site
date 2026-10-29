@@ -7,14 +7,25 @@ import {
   scryptSync,
   timingSafeEqual,
 } from "node:crypto";
-import { mkdirSync, writeFileSync, unlinkSync, existsSync } from "node:fs";
+import { mkdirSync, unlinkSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import multer from "multer";
 import { migrateSingleShopOperations } from "./single-shop.js";
 import { installProjectRequests } from "./project-requests.js";
 import { installOffers } from "./offers.js";
+import { installCustomerService, transferSupportOwnership } from "./customer-service.js";
 import type { ProjectContext } from "./project-context.js";
 import { validProjectEmail } from "./project-context.js";
+import {
+  assertFileScannerConfigured,
+  FileSecurityError,
+  scanBuffer,
+} from "./file-security.js";
+import {
+  protectExistingFile,
+  readProtectedFile,
+  writeProtectedFile,
+} from "./private-storage.js";
 
 export const portalStages = [
   "received",
@@ -567,6 +578,7 @@ export function installPortal(options: PortalOptions) {
       if (s && s.customerId === current.customer.id) {
         s.customerId = newId;
         saveState(s);
+        transferSupportOwnership(db, current.inquiryId, current.customer.id, newId);
         db.prepare(
           "UPDATE portal_notifications SET customerId=? WHERE customerId=? AND inquiryId=?",
         ).run(newId, current.customer.id, current.inquiryId);
@@ -602,6 +614,7 @@ export function installPortal(options: PortalOptions) {
       const s = state(row.inquiryId);
       s.customerId = signed.customer.id;
       saveState(s);
+      transferSupportOwnership(db, row.inquiryId, row.customerId, signed.customer.id);
       issueSession(res, signed.customer.id);
       activity(signed.customer.id, "claim", "Yeni talep bağlandı.");
       return { customer: signed.customer, scoped: false };
@@ -979,17 +992,51 @@ export function installPortal(options: PortalOptions) {
     },
   );
   const downloadDocument =
-    (admin: boolean) => (req: any, res: Response, next: NextFunction) => {
+    (admin: boolean) => async (req: any, res: Response, next: NextFunction) => {
+      let row: any;
       try {
-        const row = db
+        row = db
           .prepare("SELECT * FROM portal_documents WHERE id=?")
           .get(req.params.id) as any;
         if (!row) throw error(404, "Belge bulunamadı.");
         if (admin) getManaged(req, row.inquiryId);
         else getOwned(req, row.inquiryId);
+        if (
+          !consume(
+            "private-document-read",
+            admin ? req.portalActor.id : req.portalCustomer.customer.id,
+            60,
+            15,
+          )
+        )
+          throw error(
+            429,
+            "Çok fazla belge indirme/tarama isteği. Daha sonra tekrar deneyin.",
+          );
         const data = JSON.parse(row.data);
         const file = join(privateDir, row.filename);
         if (!existsSync(file)) throw error(404, "Belge dosyası bulunamadı.");
+        const bytes = readProtectedFile(file, { dataDir, production });
+        const scan = await scanBuffer(bytes, {
+          production,
+          maxBytes: 10 * 1024 * 1024,
+        });
+        if (admin) {
+          const actor = adminContext(req);
+          if (!actor) throw error(401, "Yetkili oturumunuz sona erdi.");
+          req.portalActor = actor;
+          getManaged(req, row.inquiryId);
+        } else {
+          const freshCustomer = customer(req);
+          if (!freshCustomer) throw error(401, "Oturumunuz sona erdi.");
+          req.portalCustomer = freshCustomer;
+          getOwned(req, row.inquiryId);
+        }
+        protectExistingFile(file, { dataDir, production });
+        db.prepare("UPDATE portal_documents SET data=? WHERE id=?").run(
+          JSON.stringify({ ...data, scan }),
+          row.id,
+        );
         res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
         res.setHeader("Cache-Control", "private, no-store");
         res.setHeader("X-Content-Type-Options", "nosniff");
@@ -999,8 +1046,20 @@ export function installPortal(options: PortalOptions) {
             "download",
             `${data.kind}: ${data.name}`,
           );
-        res.download(file, data.name);
+        res.attachment(data.name);
+        res.type("application/octet-stream").send(bytes);
       } catch (e) {
+        if (row && e instanceof FileSecurityError) {
+          db.prepare("UPDATE portal_documents SET data=? WHERE id=?").run(
+            JSON.stringify({ ...JSON.parse(row.data), scan: e.scan }),
+            row.id,
+          );
+          audit(
+            admin ? req.portalActor.username : req.portalCustomer.customer.id,
+            "DOCUMENT_SECURITY_BLOCK",
+            row.id + ":" + e.scan.reason,
+          );
+        }
         next(e);
       }
     };
@@ -1418,6 +1477,7 @@ export function installPortal(options: PortalOptions) {
     (req: any, _res, next) => {
       try {
         getManaged(req, String(req.params.id));
+        assertFileScannerConfigured(production);
         if (!consume("document-upload", req.portalActor.id, 20, 60))
           throw error(429, "Çok fazla belge yükleme denemesi.");
         next();
@@ -1426,9 +1486,9 @@ export function installPortal(options: PortalOptions) {
       }
     },
     documentUpload.single("document"),
-    (req: any, res, next) => {
+    async (req: any, res, next) => {
       try {
-        const { inq, s } = getManaged(req, String(req.params.id));
+        getManaged(req, String(req.params.id));
         const file = req.file;
         if (!file) throw error(400, "Bir PDF dosyası seçin.");
         const bytes = file.buffer as Buffer;
@@ -1439,7 +1499,7 @@ export function installPortal(options: PortalOptions) {
         )
           throw error(400, "Geçerli bir PDF dosyası yükleyin.");
         if (
-          /\/(JavaScript|JS|Launch|EmbeddedFile|OpenAction)\b/i.test(
+          /\/(JavaScript|JS|Launch|EmbeddedFile|OpenAction|AA|RichMedia)\b/i.test(
             bytes
               .toString("latin1")
               .replace(/#([0-9a-f]{2})/gi, (_all: string, code: string) =>
@@ -1448,6 +1508,15 @@ export function installPortal(options: PortalOptions) {
           )
         )
           throw error(400, "Etkin içerik içeren PDF kabul edilmedi.");
+        const scan = await scanBuffer(bytes, {
+          production,
+          maxBytes: 10 * 1024 * 1024,
+        });
+        const actor = adminContext(req);
+        if (!actor)
+          throw error(401, "Belge taranırken yetkili oturumunuz kapatıldı.");
+        req.portalActor = actor;
+        const { inq, s } = getManaged(req, String(req.params.id));
         const kind = text(req.query.kind, 30) || "quote";
         if (!["quote", "survey", "warranty", "project"].includes(kind))
           throw error(400, "Geçerli belge türü seçin.");
@@ -1460,9 +1529,9 @@ export function installPortal(options: PortalOptions) {
         name = name.replace(/[\\/\u0000-\u001f\u007f]/g, "-");
         const id = randomUUID(),
           filename = id + ".pdf";
-        writeFileSync(join(privateDir, filename), bytes, {
-          mode: 0o600,
-          flag: "wx",
+        writeProtectedFile(join(privateDir, filename), bytes, {
+          dataDir,
+          production,
         });
         const data = {
           id,
@@ -1471,6 +1540,7 @@ export function installPortal(options: PortalOptions) {
           kind,
           size: bytes.length,
           createdAt: now(),
+          scan,
         };
         try {
           db.prepare(
@@ -1489,6 +1559,12 @@ export function installPortal(options: PortalOptions) {
           },
         });
       } catch (e) {
+        if (e instanceof FileSecurityError)
+          audit(
+            req.portalActor.username,
+            "DOCUMENT_SECURITY_BLOCK",
+            String(req.params.id) + ":" + e.scan.reason,
+          );
         next(e);
       }
     },
@@ -1878,6 +1954,7 @@ export function installPortal(options: PortalOptions) {
   };
   const projects = installProjectRequests(projectContext);
   const offers = installOffers(projectContext);
+  installCustomerService(projectContext);
   return {
     onInquiryCreated,
     onLegacyInquiryUpdated,

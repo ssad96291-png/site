@@ -1,5 +1,7 @@
 # Ayrıntılı site ve dosyalı proje teklifi
 
+Güncel müşteri çalışma alanı, destek ve şifreli veri kurulumu için [Veri, güvenlik ve destek rehberini](VERI-GUVENLIK-VE-DESTEK.md) kullanın. **Yeni sürümde `.data` ile birlikte yanındaki `.data.key` dosyası da korunmalıdır**; eski açık SQLite anlatımları bu güncellemeyle değişmiştir. İlk yönetici parolası artık `.data.initial-admin-password` dosyasındadır.
+
 Son kurumsal tanıtım ve ayrı proje sayfaları güncellemesi için [Kurumsal bölümü korunan ayrıntılı sürüm](KURUMSAL-AYRINTILI-SURUM.md) rehberine bakın. Bu belge dosya ve teklif akışını açıklar; sondaki sayısal test sonuçları bu belgenin önceki teslimine aittir.
 
 29 Ekim 2026 sürümü. Önceki ayrıntılı görünüm; ürün kartları, duraklatılabilir ana slaytlar, filtreli galeri, katalog PDF'leri, bilgi sayfaları ve mobil menüyle geri getirildi. Tek Etimesgut dükkânından doğrudan hizmet verilir; bayilik başvurusu, bayi listesi ve otomatik bayi atama akışı kapalı kalır. Yeşil/krem palet, bu proje için hazırlanan konsept görselleri, lisans kayıtları ve müşteri takip altyapısı korunur.

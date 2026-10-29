@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import "./customer.css";
 import ProjectQuotes from "./ProjectQuotes";
+import SupportCenter from "./SupportCenter";
 
 type Stage =
   | "received"
@@ -172,9 +173,9 @@ export default function CustomerPortal() {
     [inquiries, setInquiries] = useState<Inquiry[]>([]),
     [notifications, setNotifications] = useState<Notification[]>([]),
     [selected, setSelected] = useState(""),
-    [section, setSection] = useState<"requests" | "profile" | "notifications">(
-      "requests",
-    ),
+    [section, setSection] = useState<
+      "requests" | "profile" | "notifications" | "support"
+    >("requests"),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [notice, setNotice] = useState(""),
@@ -473,6 +474,13 @@ export default function CustomerPortal() {
                 Bildirimler{unread > 0 && <span>{unread}</span>}
               </button>
               <button
+                className={section === "support" ? "active" : ""}
+                onClick={() => setSection("support")}
+              >
+                <HelpCircle size={18} />
+                Destek & hesap sorunları
+              </button>
+              <button
                 className={section === "profile" ? "active" : ""}
                 onClick={() => setSection("profile")}
               >
@@ -702,6 +710,9 @@ export default function CustomerPortal() {
                   }}
                 />
               ))}
+            {section === "support" && (
+              <SupportCenter inquiries={inquiries} scoped={!!session.scoped} />
+            )}
           </main>
         </div>
         <footer className="cp-footer">

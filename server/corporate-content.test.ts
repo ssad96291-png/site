@@ -21,7 +21,7 @@ function fixture() {
   );
   return db;
 }
-function add(db: DatabaseSync, data: Record<string, unknown> = {}) {
+function add(db: DatabaseSync, data: Record<string, unknown> = {}): Record<string, any> {
   const item = {
     id: randomUUID(),
     type: "page",

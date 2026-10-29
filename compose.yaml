@@ -6,12 +6,19 @@ services:
     environment:
       NODE_ENV: production
       DATA_DIR: /data
+      DATA_ENCRYPTION_KEY_FILE: /run/secrets/data_encryption_key
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set a strong initial admin password outside source control}
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
+      CLAMAV_TIMEOUT_MS: 15000
       PORT: 3000
       TRUST_PROXY: "1"
       NOTIFY_WEBHOOK_URL: ${NOTIFY_WEBHOOK_URL:-}
       NOTIFY_ALLOWED_HOSTS: ${NOTIFY_ALLOWED_HOSTS:-}
       NOTIFY_WEBHOOK_TOKEN: ${NOTIFY_WEBHOOK_TOKEN:-}
       PUBLIC_ORIGIN: https://${SITE_DOMAIN:?Set SITE_DOMAIN to your real domain}
+    secrets:
+      - data_encryption_key
     volumes:
       - site_data:/data
     expose:
@@ -26,6 +33,16 @@ services:
     mem_limit: 768m
     cpus: 1.0
     pids_limit: 128
+  clamav:
+    image: clamav/clamav:stable
+    restart: unless-stopped
+    volumes:
+      - clamav_signatures:/var/lib/clamav
+    expose:
+      - "3310"
+    mem_limit: 1536m
+    security_opt:
+      - no-new-privileges:true
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
@@ -43,7 +60,11 @@ services:
         condition: service_healthy
     security_opt:
       - no-new-privileges:true
+secrets:
+  data_encryption_key:
+    file: ${DATA_KEY_FILE:?Set DATA_KEY_FILE to a key file outside the data directory}
 volumes:
+  clamav_signatures:
   site_data:
   caddy_data:
   caddy_config:

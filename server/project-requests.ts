@@ -1,14 +1,16 @@
-import { randomUUID } from "node:crypto";
+import {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  randomUUID,
+} from "node:crypto";
 import {
   createWriteStream,
-  closeSync,
   existsSync,
   lstatSync,
   mkdirSync,
-  openSync,
-  readSync,
+  readFileSync,
   readdirSync,
-  renameSync,
   unlinkSync,
 } from "node:fs";
 import { join } from "node:path";
@@ -20,6 +22,16 @@ import type {
   ProjectMetadata,
 } from "./project-context.js";
 import { validProjectEmail } from "./project-context.js";
+import {
+  assertFileScannerConfigured,
+  FileSecurityError,
+  scanBuffer,
+} from "./file-security.js";
+import {
+  protectExistingFile,
+  readProtectedFile,
+  writeProtectedFile,
+} from "./private-storage.js";
 
 const MiB = 1024 * 1024;
 export const projectLimits = {
@@ -83,111 +95,130 @@ function safeName(value: string) {
 /** Format checks are deliberately bounded and never parse/execute CAD content.
  * Downloads are attachments. These checks are not an antivirus scanner.
  */
-function validateFile(file: Express.Multer.File, extension: string) {
-  if (!file.size || file.size > projectLimits.maxFileBytes)
+function validateFile(bytes: Buffer, extension: string) {
+  const size = bytes.length;
+  if (!size || size > projectLimits.maxFileBytes)
     throw fail(
       413,
       "Her dosya 20 MB sınırında ve boş olmayan bir dosya olmalıdır.",
     );
-  const fd = openSync(file.path, "r");
-  try {
-    const head = Buffer.alloc(Math.min(file.size, 65_536));
-    readSync(fd, head, 0, head.length, 0);
-    const tail = Buffer.alloc(Math.min(file.size, 65_536));
-    readSync(fd, tail, 0, tail.length, file.size - tail.length);
-    const ascii = head.toString("latin1");
-    let valid = false;
-    if (extension === "png") {
+  const head = bytes.subarray(0, Math.min(size, 65_536));
+  const tail = bytes.subarray(Math.max(0, size - 65_536));
+  const ascii = head.toString("latin1");
+  let valid = false;
+  if (extension === "png") {
+    valid =
+      head.length >= 24 &&
+      head
+        .subarray(0, 8)
+        .equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) &&
+      head.subarray(12, 16).toString() === "IHDR" &&
+      tail.length >= 12 &&
+      tail.subarray(-8, -4).toString() === "IEND";
+    if (valid) {
+      const width = head.readUInt32BE(16),
+        height = head.readUInt32BE(20);
       valid =
-        head.length >= 24 &&
-        head
-          .subarray(0, 8)
-          .equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) &&
-        head.subarray(12, 16).toString() === "IHDR" &&
-        tail.length >= 12 &&
-        tail.subarray(-8, -4).toString() === "IEND";
-      if (valid) {
-        const width = head.readUInt32BE(16),
-          height = head.readUInt32BE(20);
-        valid =
-          width > 0 &&
-          height > 0 &&
-          width <= 16_000 &&
-          height <= 16_000 &&
-          width * height <= 64_000_000;
-      }
-    } else if (extension === "jpg" || extension === "jpeg") {
-      valid =
-        head.length > 10 &&
-        head[0] === 255 &&
-        head[1] === 216 &&
-        head[2] === 255 &&
-        tail.at(-2) === 255 &&
-        tail.at(-1) === 217;
-    } else if (extension === "webp") {
-      valid =
-        head.length > 16 &&
-        head.subarray(0, 4).toString() === "RIFF" &&
-        head.subarray(8, 12).toString() === "WEBP" &&
-        head.readUInt32LE(4) + 8 === file.size;
-    } else if (extension === "pdf") {
-      valid =
-        head.length >= 12 &&
-        ascii.startsWith("%PDF-") &&
-        /%%EOF\s*$/.test(tail.toString("latin1"));
-    } else if (extension === "dwg") {
-      valid = /^AC10\d{2}/.test(ascii) && file.size >= 32;
-    } else if (extension === "dxf") {
-      valid =
-        ascii.startsWith("AutoCAD Binary DXF\r\n\x1a\0") ||
-        (/^\s*0\s+SECTION\b/i.test(ascii) &&
-          /\bENDSEC\b/i.test(tail.toString("latin1")) &&
-          /\b0\s+EOF\s*$/i.test(tail.toString("latin1")));
-    } else if (["ifc", "step", "stp"].includes(extension)) {
-      valid =
-        /^\s*ISO-10303-21\s*;/i.test(ascii) &&
-        /\bHEADER\s*;/i.test(ascii) &&
-        /FILE_SCHEMA\s*\(/i.test(ascii) &&
-        /END-ISO-10303-21\s*;\s*$/i.test(tail.toString("latin1"));
-      if (extension === "ifc")
-        valid = valid && /FILE_SCHEMA\s*\(\s*\(\s*['"]IFC/i.test(ascii);
+        width > 0 &&
+        height > 0 &&
+        width <= 16_000 &&
+        height <= 16_000 &&
+        width * height <= 64_000_000;
     }
-    if (!valid)
-      throw fail(
-        400,
-        "Dosyanın içeriği seçilen dosya türüyle eşleşmiyor veya dosya tamamlanmamış.",
+  } else if (extension === "jpg" || extension === "jpeg") {
+    valid =
+      head.length > 10 &&
+      head[0] === 255 &&
+      head[1] === 216 &&
+      head[2] === 255 &&
+      tail.at(-2) === 255 &&
+      tail.at(-1) === 217;
+  } else if (extension === "webp") {
+    valid =
+      head.length > 16 &&
+      head.subarray(0, 4).toString() === "RIFF" &&
+      head.subarray(8, 12).toString() === "WEBP" &&
+      head.readUInt32LE(4) + 8 === size;
+  } else if (extension === "pdf") {
+    valid =
+      head.length >= 12 &&
+      ascii.startsWith("%PDF-") &&
+      /%%EOF\s*$/.test(tail.toString("latin1"));
+  } else if (extension === "dwg") {
+    valid = /^AC10\d{2}/.test(ascii) && size >= 32;
+  } else if (extension === "dxf") {
+    valid =
+      ascii.startsWith("AutoCAD Binary DXF\r\n\x1a\0") ||
+      (/^\s*0\s+SECTION\b/i.test(ascii) &&
+        /\bENDSEC\b/i.test(tail.toString("latin1")) &&
+        /\b0\s+EOF\s*$/i.test(tail.toString("latin1")));
+  } else if (["ifc", "step", "stp"].includes(extension)) {
+    valid =
+      /^\s*ISO-10303-21\s*;/i.test(ascii) &&
+      /\bHEADER\s*;/i.test(ascii) &&
+      /FILE_SCHEMA\s*\(/i.test(ascii) &&
+      /END-ISO-10303-21\s*;\s*$/i.test(tail.toString("latin1"));
+    if (extension === "ifc")
+      valid = valid && /FILE_SCHEMA\s*\(\s*\(\s*['"]IFC/i.test(ascii);
+  }
+  if (!valid)
+    throw fail(
+      400,
+      "Dosyanın içeriği seçilen dosya türüyle eşleşmiyor veya dosya tamamlanmamış.",
+    );
+  if (["pdf", "dxf", "ifc", "step", "stp"].includes(extension)) {
+    let position = 0,
+      overlap = "";
+    while (position < size) {
+      const count = Math.min(65_536, size - position);
+      const source =
+        overlap + bytes.subarray(position, position + count).toString("latin1");
+      const decoded = source.replace(/#([0-9a-f]{2})/gi, (_s, code: string) =>
+        String.fromCharCode(parseInt(code, 16)),
       );
-    if (["pdf", "dxf", "ifc", "step", "stp"].includes(extension)) {
-      const chunk = Buffer.alloc(65_536);
-      let position = 0,
-        overlap = "";
-      while (position < file.size) {
-        const count = readSync(
-          fd,
-          chunk,
-          0,
-          Math.min(chunk.length, file.size - position),
-          position,
-        );
-        if (!count) break;
-        const source = overlap + chunk.subarray(0, count).toString("latin1");
-        const decoded = source.replace(/#([0-9a-f]{2})/gi, (_s, code: string) =>
-          String.fromCharCode(parseInt(code, 16)),
-        );
-        if (
-          /<\s*(?:script|html|svg|iframe|object|body)\b/i.test(decoded) ||
-          (extension === "pdf" &&
-            /\/(?:JavaScript|JS|Launch|EmbeddedFile|OpenAction|AA|RichMedia)\b/i.test(
-              decoded,
-            ))
-        )
-          throw fail(400, "Etkin içerik içeren belge kabul edilmedi.");
-        overlap = source.slice(-512);
-        position += count;
-      }
+      if (
+        /<\s*(?:script|html|svg|iframe|object|body)\b/i.test(decoded) ||
+        (extension === "pdf" &&
+          /\/(?:JavaScript|JS|Launch|EmbeddedFile|OpenAction|AA|RichMedia)\b/i.test(
+            decoded,
+          ))
+      )
+        throw fail(400, "Etkin içerik içeren belge kabul edilmedi.");
+      overlap = source.slice(-512);
+      position += count;
     }
+  }
+}
+
+type StagedFile = Express.Multer.File & {
+  stagingKey: Buffer;
+  stagingNonce: Buffer;
+  stagingTag: Buffer;
+};
+/** Staging secrets exist only in this in-flight request. They are never written
+ * to metadata, logs or the database; interrupted staging is deleted on restart.
+ */
+function readStagedFile(file: Express.Multer.File): Buffer {
+  const staged = file as StagedFile;
+  try {
+    const decipher = createDecipheriv(
+      "aes-256-gcm",
+      staged.stagingKey,
+      staged.stagingNonce,
+    );
+    decipher.setAAD(Buffer.from(staged.filename, "ascii"));
+    decipher.setAuthTag(staged.stagingTag);
+    return Buffer.concat([
+      decipher.update(readFileSync(file.path)),
+      decipher.final(),
+    ]);
+  } catch {
+    throw fail(
+      400,
+      "Aktarım dosyasının bütünlüğü doğrulanamadı. Dosyayı yeniden yükleyin.",
+    );
   } finally {
-    closeSync(fd);
+    staged.stagingKey?.fill(0);
   }
 }
 
@@ -400,6 +431,10 @@ export function installProjectRequests(ctx: ProjectContext) {
       const filename = randomUUID() + ".tmp",
         path = join(directory, filename);
       pending.paths.add(path);
+      const stagingKey = randomBytes(32),
+        stagingNonce = randomBytes(12);
+      const cipher = createCipheriv("aes-256-gcm", stagingKey, stagingNonce);
+      cipher.setAAD(Buffer.from(filename, "ascii"));
       const output = createWriteStream(path, { flags: "wx", mode: 0o600 });
       let size = 0,
         called = false;
@@ -414,10 +449,19 @@ export function installProjectRequests(ctx: ProjectContext) {
           output.once("close", () => {
             if (existsSync(path)) unlinkSync(path);
           });
+          cipher.destroy();
           output.destroy();
           if (existsSync(path)) unlinkSync(path);
           callback(err);
-        } else callback(null, { path, filename, size });
+        } else
+          callback(null, {
+            path,
+            filename,
+            size,
+            stagingKey,
+            stagingNonce,
+            stagingTag: cipher.getAuthTag(),
+          } as Partial<StagedFile>);
       };
       const aborted = () => done(fail(400, "Yükleme bağlantısı kesildi."));
       req.once("aborted", aborted);
@@ -425,9 +469,10 @@ export function installProjectRequests(ctx: ProjectContext) {
         size += chunk.length;
       });
       file.stream.on("error", (e) => done(e));
+      cipher.on("error", (e) => done(e));
       output.on("error", (e) => done(e));
       output.on("finish", () => done());
-      file.stream.pipe(output);
+      file.stream.pipe(cipher).pipe(output);
     },
     _removeFile(_req, file, callback) {
       try {
@@ -458,6 +503,7 @@ export function installProjectRequests(ctx: ProjectContext) {
         ctx.getOwned(req, id);
         requiresProject(id);
         assertMutable(id);
+        assertFileScannerConfigured(ctx.production);
         if (activeUploads.has(id))
           throw fail(409, "Bu talep için bir dosya yüklemesi sürüyor.");
         const existing = listFiles(id);
@@ -513,7 +559,7 @@ export function installProjectRequests(ctx: ProjectContext) {
           if (activeUploads.get(id) === pending) activeUploads.delete(id);
         };
         req.once("aborted", cleanup);
-        upload(req, res, (uploadError) => {
+        upload(req, res, async (uploadError) => {
           const created: string[] = [];
           try {
             if (uploadError) {
@@ -551,11 +597,35 @@ export function installProjectRequests(ctx: ProjectContext) {
                 409,
                 "Bir talepte en fazla 3 dosya ve toplam 60 MB saklanabilir.",
               );
-            const prepared = files.map((file) => {
+            const prepared = [];
+            for (const file of files) {
               const named = safeName(file.originalname);
-              validateFile(file, named.extension);
-              return { file, ...named };
-            });
+              const bytes = readStagedFile(file);
+              validateFile(bytes, named.extension);
+              const scan = await scanBuffer(bytes, {
+                production: ctx.production,
+                maxBytes: projectLimits.maxFileBytes,
+              });
+              prepared.push({ file, ...named, bytes, scan });
+            }
+            // Antivirus checks are asynchronous. A revoked session, abandoned
+            // request or newly published quote must still stop the final write.
+            const freshCustomer = ctx.customer(req);
+            if (!freshCustomer || freshCustomer.customer.id !== owner)
+              throw fail(
+                401,
+                "Dosya taranırken oturumunuz kapatıldı. Yeniden giriş yapın.",
+              );
+            req.portalCustomer = freshCustomer;
+            ctx.getOwned(req, id);
+            requiresProject(id);
+            assertMutable(id);
+            if (
+              req.aborted ||
+              res.destroyed ||
+              activeUploads.get(id) !== pending
+            )
+              throw fail(400, "Dosya yükleme bağlantısı kapatıldı.");
             db.exec("BEGIN IMMEDIATE");
             try {
               const count = Number(
@@ -596,9 +666,11 @@ export function installProjectRequests(ctx: ProjectContext) {
                 const fileId = randomUUID(),
                   filename = fileId + ".bin",
                   destination = join(directory, filename);
-                renameSync(entry.file.path, destination);
+                writeProtectedFile(destination, entry.bytes, {
+                  dataDir: ctx.dataDir,
+                  production: ctx.production,
+                });
                 created.push(destination);
-                pending.paths.delete(entry.file.path);
                 const data = {
                   id: fileId,
                   inquiryId: id,
@@ -606,6 +678,7 @@ export function installProjectRequests(ctx: ProjectContext) {
                   extension: entry.extension,
                   size: entry.file.size,
                   createdAt: stamp(),
+                  scan: entry.scan,
                 };
                 db.prepare(
                   "INSERT INTO project_files(id,inquiryId,filename,size,data) VALUES(?,?,?,?,?)",
@@ -627,6 +700,12 @@ export function installProjectRequests(ctx: ProjectContext) {
             res.status(201).json(response(id));
           } catch (e) {
             for (const path of created) if (existsSync(path)) unlinkSync(path);
+            if (e instanceof FileSecurityError)
+              ctx.audit(
+                owner,
+                "PROJECT_FILE_SECURITY_BLOCK",
+                id + ":" + e.scan.reason,
+              );
             next(e);
           } finally {
             req.off("aborted", cleanup);
@@ -700,14 +779,27 @@ export function installProjectRequests(ctx: ProjectContext) {
     (req, res) => res.json(response(String(req.params.id), true)),
   );
   const download =
-    (admin: boolean) => (req: any, res: Response, next: NextFunction) => {
+    (admin: boolean) => async (req: any, res: Response, next: NextFunction) => {
+      let row: any;
       try {
-        const row = db
+        row = db
           .prepare("SELECT * FROM project_files WHERE id=?")
           .get(String(req.params.fileId)) as any;
         if (!row) throw fail(404, "Dosya bulunamadı.");
         if (admin) ctx.getManaged(req, row.inquiryId);
         else ctx.getOwned(req, row.inquiryId);
+        if (
+          !ctx.consume(
+            "project-file-read",
+            admin ? req.portalActor.id : req.portalCustomer.customer.id,
+            60,
+            15,
+          )
+        )
+          throw fail(
+            429,
+            "Çok fazla dosya indirme/tarama isteği. Daha sonra tekrar deneyin.",
+          );
         const path = join(directory, row.filename);
         if (
           !/^[a-f0-9-]{36}\.bin$/.test(row.filename) ||
@@ -716,6 +808,36 @@ export function installProjectRequests(ctx: ProjectContext) {
         )
           throw fail(404, "Dosya bulunamadı.");
         const data = JSON.parse(row.data);
+        const bytes = readProtectedFile(path, {
+          dataDir: ctx.dataDir,
+          production: ctx.production,
+        });
+        const scan = await scanBuffer(bytes, {
+          production: ctx.production,
+          maxBytes: projectLimits.maxFileBytes,
+        });
+        // Authorization is checked again after the external scanner responds.
+        if (admin) {
+          await new Promise<void>((resolve, reject) => {
+            ctx.requireStaff(req, res, (error) =>
+              error ? reject(error) : resolve(),
+            );
+          });
+          ctx.getManaged(req, row.inquiryId);
+        } else {
+          const freshCustomer = ctx.customer(req);
+          if (!freshCustomer) throw fail(401, "Oturumunuz sona erdi.");
+          req.portalCustomer = freshCustomer;
+          ctx.getOwned(req, row.inquiryId);
+        }
+        protectExistingFile(path, {
+          dataDir: ctx.dataDir,
+          production: ctx.production,
+        });
+        db.prepare("UPDATE project_files SET data=? WHERE id=?").run(
+          JSON.stringify({ ...data, scan }),
+          row.id,
+        );
         res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
         res.setHeader("Cache-Control", "private, no-store");
         res.setHeader("X-Content-Type-Options", "nosniff");
@@ -725,8 +847,20 @@ export function installProjectRequests(ctx: ProjectContext) {
           "PROJECT_FILE_DOWNLOAD",
           row.id,
         );
-        res.download(path, data.name);
+        res.attachment(data.name);
+        res.type("application/octet-stream").send(bytes);
       } catch (e) {
+        if (row && e instanceof FileSecurityError) {
+          db.prepare("UPDATE project_files SET data=? WHERE id=?").run(
+            JSON.stringify({ ...JSON.parse(row.data), scan: e.scan }),
+            row.id,
+          );
+          ctx.audit(
+            admin ? req.portalActor.username : req.portalCustomer.customer.id,
+            "PROJECT_FILE_SECURITY_BLOCK",
+            row.id + ":" + e.scan.reason,
+          );
+        }
         next(e);
       }
     };

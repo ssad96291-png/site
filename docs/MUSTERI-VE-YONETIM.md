@@ -1,5 +1,7 @@
 # Müşteri, teknik personel ve canlı yönetim
 
+Güncel müşteri çalışma alanı, destek ve şifreli veri kurulumu için [Veri, güvenlik ve destek rehberini](VERI-GUVENLIK-VE-DESTEK.md) kullanın. **Yeni sürümde `.data` ile birlikte yanındaki `.data.key` dosyası da korunmalıdır**; eski açık SQLite anlatımları bu güncellemeyle değişmiştir. İlk yönetici parolası artık `.data.initial-admin-password` dosyasındadır.
+
 29 Ekim 2026 sürümü. Ayrıntılı görünüm, dosyalı başvuru, kalemli teklif ve güvenli güncelleme için [güncel proje teklifi rehberine](PROJE-TEKLIF-SURUMU.md) bakın.
 
 Site, Etimesgut'taki tek dükkânın müşteri görüşmelerini ve uygulama takibini yönetir. Hesaplar, talepler, belgeler ve özel içerikler korunur. Örnek müşteriler veya teknik irtibatlar gerçek kayıt gibi eklenmez. Teknik ekip kayıtları işletmenin kendi işleri içindir; dış satış ağı ve bayilik başvuru akışı bulunmaz.
